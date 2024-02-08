@@ -1,5 +1,7 @@
-﻿using PluginAPI.Core.Attributes;
+﻿using PluginAPI.Core;
+using PluginAPI.Core.Attributes;
 using PluginAPI.Enums;
+using SwiftNPCs.HarmonyPatching;
 
 namespace SwiftNPCs
 {
@@ -9,7 +11,7 @@ namespace SwiftNPCs
         /// Singleton for the SwiftNPC API base plugin class. 
         /// This can be used anywhere to access the base class.
         /// </summary>
-        public static Plugin? Instance;
+        public static Plugin Instance;
 
         private const string Author = "SwiftKraft";
 
@@ -24,6 +26,16 @@ namespace SwiftNPCs
         public void Init()
         {
             Instance = this;
+
+            Log.Info("SwiftNPCs Loaded! ");
+
+            HarmonyPatcher.InitHarmony();
+        }
+
+        [PluginUnload]
+        public void Deinit()
+        {
+            HarmonyPatcher.DeinitHarmony();
         }
     }
 }

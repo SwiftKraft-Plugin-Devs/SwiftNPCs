@@ -1,12 +1,34 @@
-﻿using UnityEngine;
+﻿using PlayerRoles.FirstPersonControl;
+using PluginAPI.Core;
+using SwiftNPCs.Core.World;
+using UnityEngine;
 
 namespace SwiftNPCs.Core.Management
 {
-    public class AIPlayerProfile(int connId, ReferenceHub hub)
+    public class AIPlayerProfile
     {
-        public readonly int ConnectionID = connId;
+        public readonly AIDataProfileBase Data;
 
-        public readonly ReferenceHub ReferenceHub = hub;
+        public readonly int ConnectionID;
+
+        public readonly ReferenceHub ReferenceHub;
+
+        public readonly Player Player;
+
+        /// <summary>
+        /// The component on the world player
+        /// </summary>
+        public AIPlayer WorldPlayer;
+
+        public AIPlayerProfile(int connId, ReferenceHub hub, AIPlayer world, AIDataProfileBase data)
+        {
+            ConnectionID = connId;
+            ReferenceHub = hub;
+            WorldPlayer = world;
+            WorldPlayer.Profile = this;
+            Data = data;
+            Player = Player.Get(ReferenceHub);
+        }
 
         public Vector3 Position
         {
@@ -16,7 +38,19 @@ namespace SwiftNPCs.Core.Management
             }
             set
             {
-                ReferenceHub.transform.position = value;
+                ReferenceHub.TryOverridePosition(value, Vector3.zero);
+            }
+        }
+
+        public Vector3 Rotation
+        {
+            get
+            {
+                return ReferenceHub.transform.eulerAngles;
+            }
+            set
+            {
+                ReferenceHub.TryOverridePosition(Position, value);
             }
         }
     }
