@@ -6,18 +6,18 @@ namespace SwiftNPCs.Core.World
 {
     public class AIMovementEngine : AIAddon
     {
-        protected FirstPersonMovementModule FirstPersonMovement
+        public FirstPersonMovementModule FirstPersonMovement
         {
             get
             {
-                if (core.FirstPersonController != null)
-                    return core.FirstPersonController.FpcModule;
+                if (Core.FirstPersonController != null)
+                    return Core.FirstPersonController.FpcModule;
                 else
                     return null;
             }
         }
 
-        protected CharacterController CharCont
+        public CharacterController CharCont
         {
             get
             {
@@ -28,7 +28,7 @@ namespace SwiftNPCs.Core.World
             }
         }
 
-        protected FpcMouseLook MouseLook
+        public FpcMouseLook MouseLook
         {
             get
             {

@@ -31,13 +31,16 @@ namespace SwiftNPCs.Core.World
             }
         }
 
+        public AIMovementEngine MovementEngine;
+
+        private void Awake()
+        {
+            MovementEngine = gameObject.AddComponent<AIMovementEngine>();
+        }
+
         private void Start()
         {
-            Log.Info("Spawned");
-
             Profile.ReferenceHub.nicknameSync.DisplayName = Profile.Data.Name;
-
-            gameObject.AddComponent<AIMovementEngine>();
         }
     }
 }
