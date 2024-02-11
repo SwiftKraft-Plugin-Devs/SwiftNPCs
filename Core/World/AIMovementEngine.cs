@@ -57,7 +57,7 @@ namespace SwiftNPCs.Core.World
             }
         }
 
-        public float LookSpeed = 720f;
+        public float LookSpeed = 90f;
 
         public Vector3 WishDir;
 
@@ -86,21 +86,18 @@ namespace SwiftNPCs.Core.World
             transform.rotation = rotation;
         }
 
-        // Testing
         private void FixedUpdate()
         {
-            WishDir = transform.forward;
+            // WishDir = transform.forward;
+            // TargetLookRot = Quaternion.LookRotation(transform.right, Vector3.up);
 
+            CurrentLookRot = Quaternion.RotateTowards(CurrentLookRot, TargetLookRot, LookSpeed * Time.fixedDeltaTime);
             UpdateMove(WishDir);
         }
 
         private void Update()
         {
-            TargetLookRot = Quaternion.LookRotation(transform.right);
-            LookSpeed = 15f;
-
-            CurrentLookRot = Quaternion.RotateTowards(CurrentLookRot, TargetLookRot, LookSpeed * Time.deltaTime);
-            UpdateLook(TargetLookRot);
+            UpdateLook(CurrentLookRot);
         }
 
         public enum MovementState

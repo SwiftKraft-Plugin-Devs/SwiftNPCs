@@ -16,7 +16,9 @@ namespace SwiftNPCs.Core.World
 
         public AIPlayerProfile Profile;
 
-        public PlayerRoleBase CurrentRole => Profile.ReferenceHub.roleManager.CurrentRole;
+        public PlayerRoleBase CurrentRole => ReferenceHub.roleManager.CurrentRole;
+
+        public ReferenceHub ReferenceHub => Profile.ReferenceHub;
 
         public IFpcRole FirstPersonController
         {

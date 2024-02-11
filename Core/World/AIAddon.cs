@@ -6,6 +6,8 @@ namespace SwiftNPCs.Core.World
     {
         protected AIPlayer core;
 
+        protected ReferenceHub ReferenceHub => core.ReferenceHub;
+
         private void Awake()
         {
             core = GetComponent<AIPlayer>();
