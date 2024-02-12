@@ -60,11 +60,22 @@ namespace SwiftNPCs.Core.World
         public float LookSpeed = 90f;
 
         public Vector3 WishDir;
+        public Vector3 LookDir
+        {
+            get => TargetLookRot * Vector3.forward;
+            set => TargetLookRot = Quaternion.LookRotation(value.normalized, Vector3.up);
+        }
+        public Vector3 LookPos
+        {
+            get => ReferenceHub.PlayerCameraReference.position + TargetLookRot * Vector3.forward;
+            set => LookDir = (value - ReferenceHub.PlayerCameraReference.position).normalized;
+        }
 
         public Quaternion TargetLookRot;
-        public Quaternion CurrentLookRot;
 
         public MovementState State;
+
+        protected Quaternion CurrentLookRot;
 
         public void UpdateMove(Vector3 wishDir)
         {

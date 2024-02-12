@@ -32,10 +32,12 @@ namespace SwiftNPCs.Core.World
         }
 
         public AIMovementEngine MovementEngine;
+        public AIModuleRunner ModuleRunner;
 
         private void Awake()
         {
             MovementEngine = gameObject.AddComponent<AIMovementEngine>();
+            ModuleRunner = gameObject.AddComponent<AIModuleRunner>();
         }
 
         private void Start()
