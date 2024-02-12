@@ -90,10 +90,9 @@ namespace SwiftNPCs.Core.World
             if (FirstPersonMovement == null)
                 return;
 
-            Vector3 euler = rotation.eulerAngles;
+            Vector3 direction = rotation * Vector3.forward;
 
-            MouseLook.CurrentVertical = -euler.x;
-            MouseLook.CurrentHorizontal = euler.y;
+            MouseLook.LookAtDirection(direction);
             transform.rotation = rotation;
         }
 

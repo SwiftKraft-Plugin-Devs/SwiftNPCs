@@ -30,7 +30,7 @@ namespace SwiftNPCs.Core.World.AIModules
                 Vector3 direction = GetMoveDirection();
 
                 Parent.MovementEngine.WishDir = direction;
-                Parent.MovementEngine.LookPos = Target.Position;
+                Parent.MovementEngine.LookPos = Target.Camera.position;
             }
 
             CheckTransitions();

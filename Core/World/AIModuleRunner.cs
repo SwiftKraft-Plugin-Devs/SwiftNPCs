@@ -5,6 +5,7 @@ using PluginAPI.Core;
 using SwiftNPCs.Core.World.AIModules;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
 namespace SwiftNPCs.Core.World
@@ -25,6 +26,8 @@ namespace SwiftNPCs.Core.World
         public ItemBase CurrentItem => ReferenceHub.inventory.CurInstance;
 
         public PlayerRoleBase RoleBase => ReferenceHub.roleManager.CurrentRole;
+
+        public Vector3 Position => ReferenceHub.transform.position;
 
         public RoleTypeId Role => ReferenceHub.roleManager.CurrentRole.RoleTypeId;
 
@@ -86,6 +89,14 @@ namespace SwiftNPCs.Core.World
             CurrentModule = module;
             temp?.End(CurrentModule);
             CurrentModule.Start(temp);
+        }
+
+        public bool HasLOS(Player p)
+        {
+            if (p == null)
+                return true;
+
+            return !Physics.Linecast(Position, p.Position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore);
         }
 
         public bool HasFollowTarget
