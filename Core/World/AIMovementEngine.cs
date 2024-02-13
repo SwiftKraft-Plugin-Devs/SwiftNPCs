@@ -6,18 +6,18 @@ namespace SwiftNPCs.Core.World
 {
     public class AIMovementEngine : AIAddon
     {
-        protected FirstPersonMovementModule FirstPersonMovement
+        public FirstPersonMovementModule FirstPersonMovement
         {
             get
             {
-                if (core.FirstPersonController != null)
-                    return core.FirstPersonController.FpcModule;
+                if (Core.FirstPersonController != null)
+                    return Core.FirstPersonController.FpcModule;
                 else
                     return null;
             }
         }
 
-        protected CharacterController CharCont
+        public CharacterController CharCont
         {
             get
             {
@@ -28,7 +28,7 @@ namespace SwiftNPCs.Core.World
             }
         }
 
-        protected FpcMouseLook MouseLook
+        public FpcMouseLook MouseLook
         {
             get
             {
@@ -57,14 +57,25 @@ namespace SwiftNPCs.Core.World
             }
         }
 
-        public float LookSpeed = 720f;
+        public float LookSpeed = 90f;
 
         public Vector3 WishDir;
+        public Vector3 LookDir
+        {
+            get => TargetLookRot * Vector3.forward;
+            set => TargetLookRot = Quaternion.LookRotation(value.normalized, Vector3.up);
+        }
+        public Vector3 LookPos
+        {
+            get => ReferenceHub.PlayerCameraReference.position + TargetLookRot * Vector3.forward;
+            set => LookDir = (value - ReferenceHub.PlayerCameraReference.position).normalized;
+        }
 
         public Quaternion TargetLookRot;
-        public Quaternion CurrentLookRot;
 
         public MovementState State;
+
+        protected Quaternion CurrentLookRot;
 
         public void UpdateMove(Vector3 wishDir)
         {
@@ -79,28 +90,24 @@ namespace SwiftNPCs.Core.World
             if (FirstPersonMovement == null)
                 return;
 
-            Vector3 euler = rotation.eulerAngles;
+            Vector3 direction = rotation * Vector3.forward;
 
-            MouseLook.CurrentVertical = -euler.x;
-            MouseLook.CurrentHorizontal = euler.y;
+            MouseLook.LookAtDirection(direction);
             transform.rotation = rotation;
         }
 
-        // Testing
         private void FixedUpdate()
         {
-            WishDir = transform.forward;
+            // WishDir = transform.forward;
+            // TargetLookRot = Quaternion.LookRotation(transform.right, Vector3.up);
 
+            CurrentLookRot = Quaternion.RotateTowards(CurrentLookRot, TargetLookRot, LookSpeed * Time.fixedDeltaTime);
             UpdateMove(WishDir);
         }
 
         private void Update()
         {
-            TargetLookRot = Quaternion.LookRotation(transform.right);
-            LookSpeed = 15f;
-
-            CurrentLookRot = Quaternion.RotateTowards(CurrentLookRot, TargetLookRot, LookSpeed * Time.deltaTime);
-            UpdateLook(TargetLookRot);
+            UpdateLook(CurrentLookRot);
         }
 
         public enum MovementState

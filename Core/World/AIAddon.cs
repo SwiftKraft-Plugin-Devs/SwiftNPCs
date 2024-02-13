@@ -4,11 +4,13 @@ namespace SwiftNPCs.Core.World
 {
     public abstract class AIAddon : MonoBehaviour
     {
-        protected AIPlayer core;
+        public AIPlayer Core;
+
+        public ReferenceHub ReferenceHub => Core.ReferenceHub;
 
         private void Awake()
         {
-            core = GetComponent<AIPlayer>();
+            Core = GetComponent<AIPlayer>();
             Init();
         }
 

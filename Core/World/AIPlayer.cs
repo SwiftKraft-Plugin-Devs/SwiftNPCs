@@ -16,7 +16,9 @@ namespace SwiftNPCs.Core.World
 
         public AIPlayerProfile Profile;
 
-        public PlayerRoleBase CurrentRole => Profile.ReferenceHub.roleManager.CurrentRole;
+        public PlayerRoleBase CurrentRole => ReferenceHub.roleManager.CurrentRole;
+
+        public ReferenceHub ReferenceHub => Profile.ReferenceHub;
 
         public IFpcRole FirstPersonController
         {
@@ -29,13 +31,18 @@ namespace SwiftNPCs.Core.World
             }
         }
 
+        public AIMovementEngine MovementEngine;
+        public AIModuleRunner ModuleRunner;
+
+        private void Awake()
+        {
+            MovementEngine = gameObject.AddComponent<AIMovementEngine>();
+            ModuleRunner = gameObject.AddComponent<AIModuleRunner>();
+        }
+
         private void Start()
         {
-            Log.Info("Spawned");
-
             Profile.ReferenceHub.nicknameSync.DisplayName = Profile.Data.Name;
-
-            gameObject.AddComponent<AIMovementEngine>();
         }
     }
 }
