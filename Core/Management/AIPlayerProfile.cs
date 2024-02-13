@@ -30,6 +30,12 @@ namespace SwiftNPCs.Core.Management
             Player = Player.Get(ReferenceHub);
         }
 
+        public string DisplayNickname
+        {
+            get => Player.DisplayNickname;
+            set => Player.DisplayNickname = value;
+        }
+
         public Vector3 Position
         {
             get

@@ -17,7 +17,7 @@ namespace SwiftNPCs.Core.Management
         /// <summary>
         /// Creates a fake client and adds it to the registered list.
         /// </summary>
-        public static AIPlayerProfile CreateAIPlayer(AIDataProfileBase profile)
+        public static AIPlayerProfile CreateAIPlayer(this AIDataProfileBase profile)
         {
             int id = 100 + Registered.Count;
             GameObject playerBody = Object.Instantiate(NetworkManager.singleton.playerPrefab);
@@ -30,7 +30,7 @@ namespace SwiftNPCs.Core.Management
             return prof;
         }
 
-        public static AIPlayerProfile GetAIPlayer(int aiId)
+        public static AIPlayerProfile GetAIPlayer(this int aiId)
         {
             if (aiId >= Registered.Count)
                 return null;
@@ -38,11 +38,27 @@ namespace SwiftNPCs.Core.Management
             return Registered[aiId];
         }
 
-        public static Player AIIDToPlayer(int aiId)
+        public static Player AIIDToPlayer(this int aiId)
         {
             if (Player.TryGet(GetAIPlayer(aiId).ReferenceHub, out Player player))
                 return player;
             return null;
         }
+
+        public static AIPlayerProfile GetAI(this Player p)
+        {
+            foreach (AIPlayerProfile prof in Registered)
+                if (prof.Player == p)
+                    return prof;
+            return null;
+        }
+
+        public static bool TryGetAI(this Player p, out AIPlayerProfile ai)
+        {
+            ai = p.GetAI();
+            return ai != null;
+        }
+
+        public static bool IsAI(this Player p) => p.TryGetAI(out _);
     }
 }

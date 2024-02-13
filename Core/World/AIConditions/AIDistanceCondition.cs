@@ -11,6 +11,9 @@ namespace SwiftNPCs.Core.World.AIConditions
 
         public float GetDistance(Player p)
         {
+            if (p == null)
+                return Mathf.Infinity;
+
             return Vector3.Distance(Position, p.Position);
         }
 

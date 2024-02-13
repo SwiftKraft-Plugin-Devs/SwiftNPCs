@@ -1,6 +1,7 @@
 ﻿using PluginAPI.Core;
 using PluginAPI.Core.Attributes;
 using PluginAPI.Enums;
+using PluginAPI.Events;
 using SwiftNPCs.HarmonyPatching;
 
 namespace SwiftNPCs
@@ -27,9 +28,11 @@ namespace SwiftNPCs
         {
             Instance = this;
 
-            Log.Info("SwiftNPCs Loaded! ");
-
             HarmonyPatcher.InitHarmony();
+
+            EventManager.RegisterEvents<EventHandler>(this);
+
+            Log.Info("SwiftNPCs Loaded! ");
         }
 
         [PluginUnload]

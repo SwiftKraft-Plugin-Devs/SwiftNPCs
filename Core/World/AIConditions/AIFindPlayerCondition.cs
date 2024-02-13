@@ -26,7 +26,7 @@ namespace SwiftNPCs.Core.World.AIConditions
 
         public Player FindTarget()
         {
-            List<Player> players = UtilityFunctions.GetPlayersIgnoreJoin();
+            List<Player> players = Player.GetPlayers();
 
             players.RemoveAll((p) => p.ReferenceHub == ReferenceHub || !CanTarget(p) || Vector3.Distance(Position, p.Position) >= SearchDistance);
 
@@ -43,6 +43,6 @@ namespace SwiftNPCs.Core.World.AIConditions
             return res;
         }
 
-        public virtual bool CanTarget(Player p) => p != null && p.IsAlive && p.Role.GetFaction() == Runner.Role.GetFaction();
+        public virtual bool CanTarget(Player p) => p != null && p.IsAlive && p.Role.GetFaction() == Runner.Role.GetFaction() && ParentModule.Parent.HasLOS(p, out _);
     }
 }

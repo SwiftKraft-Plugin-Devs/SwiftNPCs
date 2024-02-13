@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace SwiftNPCs.Core.World
 {
+    public delegate void OnAIPlayerDamage(Player attacker);
+    public delegate void OnAIPlayerChangeRole(RoleTypeId role);
+
     public class AIPlayer : MonoBehaviour
     {
         /// <summary>
@@ -31,6 +34,9 @@ namespace SwiftNPCs.Core.World
             }
         }
 
+        public OnAIPlayerDamage OnDamage;
+        public OnAIPlayerChangeRole OnRoleChange;
+
         public AIMovementEngine MovementEngine;
         public AIModuleRunner ModuleRunner;
 
@@ -40,9 +46,7 @@ namespace SwiftNPCs.Core.World
             ModuleRunner = gameObject.AddComponent<AIModuleRunner>();
         }
 
-        private void Start()
-        {
-            Profile.ReferenceHub.nicknameSync.DisplayName = Profile.Data.Name;
-        }
+        public void Damage(Player attacker) => OnDamage?.Invoke(attacker);
+        public void RoleChange(RoleTypeId role) => OnRoleChange?.Invoke(role);
     }
 }

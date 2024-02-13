@@ -12,7 +12,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void ReceiveData<T>(T data)
         {
-            if (!(data is Player p) || !Parent.HasLOS(p))
+            if (!(data is Player p) || !Parent.HasLOS(p, out _))
                 return;
 
             LookTarget = p;
@@ -24,7 +24,7 @@ namespace SwiftNPCs.Core.World.AIModules
         {
             CheckTransitions();
 
-            if (LookTarget != null && !Parent.HasLOS(LookTarget))
+            if (LookTarget != null && !Parent.HasLOS(LookTarget, out _))
                 LookTarget = null;
         }
     }
