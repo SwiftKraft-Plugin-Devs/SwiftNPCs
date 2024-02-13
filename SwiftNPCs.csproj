@@ -14,37 +14,37 @@
 
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>..\..\..\..\..\..\..\SCP_DLLS\0Harmony.dll</HintPath>
+      <HintPath>$(SCPSLREFERENCES)\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\..\..\..\..\..\SCP_DLLS\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>$(SCPSLREFERENCES)\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\..\..\..\SCP_DLLS\Assembly-CSharp-Publicized.dll</HintPath>
+      <HintPath>$(SCPSLREFERENCES)\Assembly-CSharp-Publicized.dll</HintPath>
     </Reference>
     <Reference Include="CommandSystem.Core">
-      <HintPath>..\..\..\..\..\..\..\SCP_DLLS\CommandSystem.Core.dll</HintPath>
+      <HintPath>$(SCPSLREFERENCES)\CommandSystem.Core.dll</HintPath>
     </Reference>
     <Reference Include="Mirror">
-      <HintPath>..\..\..\..\..\..\..\SCP_DLLS\Mirror-Publicized.dll</HintPath>
+      <HintPath>$(SCPSLREFERENCES)\Mirror-Publicized.dll</HintPath>
     </Reference>
     <Reference Include="NorthwoodLib">
-      <HintPath>..\..\..\..\..\..\..\SCP_DLLS\NorthwoodLib.dll</HintPath>
+      <HintPath>$(SCPSLREFERENCES)\NorthwoodLib.dll</HintPath>
     </Reference>
     <Reference Include="Pooling">
-      <HintPath>..\..\..\..\..\..\..\SCP_DLLS\Pooling.dll</HintPath>
+      <HintPath>$(SCPSLREFERENCES)\Pooling.dll</HintPath>
     </Reference>
     <Reference Include="SwiftAPI">
-      <HintPath>..\..\..\..\..\..\..\SCP_DLLS\SwiftAPI.dll</HintPath>
+      <HintPath>$(SCPSLREFERENCES)\SwiftAPI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\..\..\SCP_DLLS\UnityEngine.dll</HintPath>
+      <HintPath>$(SCPSLREFERENCES)\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\..\..\..\..\SCP_DLLS\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(SCPSLREFERENCES)\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>..\..\..\..\..\..\..\SCP_DLLS\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>$(SCPSLREFERENCES)\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
   </ItemGroup>
 
