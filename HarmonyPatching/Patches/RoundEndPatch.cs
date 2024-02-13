@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 using NorthwoodLib.Pools;
-using SwiftNPCs.Core.World;
+using SwiftNPCs.Core.Management;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -17,7 +17,7 @@ namespace SwiftNPCs.HarmonyPatching.Patches
                 .GetMethod("MoveNext", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
         };
 
-        public static bool Skip(ReferenceHub hub) => hub.TryGetComponent(out AIPlayer _);
+        public static bool Skip(ReferenceHub hub) => hub.IsAI();
 
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {

@@ -1,7 +1,6 @@
 ﻿using Mirror;
 using PluginAPI.Core;
 using SwiftNPCs.Core.World;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -46,23 +45,29 @@ namespace SwiftNPCs.Core.Management
             return null;
         }
 
-        public static AIPlayerProfile GetAI(this Player p)
+        public static AIPlayerProfile GetAI(this Player p) => p.ReferenceHub.GetAI();
+
+        public static AIPlayerProfile GetAI(this ReferenceHub p)
         {
             foreach (AIPlayerProfile prof in Registered)
-                if (prof.Player == p)
+                if (prof.ReferenceHub == p)
                     return prof;
             return null;
         }
 
-        public static bool TryGetAI(this Player p, out AIPlayerProfile ai)
+        public static bool TryGetAI(this Player p, out AIPlayerProfile ai) => p.ReferenceHub.TryGetAI(out ai);
+
+        public static bool TryGetAI(this ReferenceHub p, out AIPlayerProfile ai)
         {
             ai = p.GetAI();
             return ai != null;
         }
 
-        public static bool IsAI(this Player p) => p.TryGetAI(out _);
+        public static bool IsAI(this Player p) => p.ReferenceHub.IsAI();
 
-        public static void Delete(this AIPlayerProfile prof) 
+        public static bool IsAI(this ReferenceHub p) => p.TryGetAI(out _);
+
+        public static void Delete(this AIPlayerProfile prof)
         {
             Registered.Remove(prof);
             NetworkServer.RemovePlayerForConnection(prof.Connection, true);
