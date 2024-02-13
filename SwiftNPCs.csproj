@@ -48,8 +48,4 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="HarmonyPatching\Patches\" />
-  </ItemGroup>
-
 </Project>

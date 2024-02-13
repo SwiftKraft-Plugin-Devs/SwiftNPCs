@@ -1,4 +1,5 @@
-﻿using PlayerRoles.FirstPersonControl;
+﻿using Mirror;
+using PlayerRoles.FirstPersonControl;
 using PluginAPI.Core;
 using SwiftNPCs.Core.World;
 using UnityEngine;
@@ -8,6 +9,8 @@ namespace SwiftNPCs.Core.Management
     public class AIPlayerProfile
     {
         public readonly AIDataProfileBase Data;
+
+        public readonly NetworkConnection Connection;
 
         public readonly int ConnectionID;
 
@@ -20,8 +23,9 @@ namespace SwiftNPCs.Core.Management
         /// </summary>
         public AIPlayer WorldPlayer;
 
-        public AIPlayerProfile(int connId, ReferenceHub hub, AIPlayer world, AIDataProfileBase data)
+        public AIPlayerProfile(NetworkConnection con, int connId, ReferenceHub hub, AIPlayer world, AIDataProfileBase data)
         {
+            Connection = con;
             ConnectionID = connId;
             ReferenceHub = hub;
             WorldPlayer = world;

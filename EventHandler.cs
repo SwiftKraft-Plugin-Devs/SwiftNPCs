@@ -29,8 +29,8 @@ namespace SwiftNPCs
             List<Player> players = Player.GetPlayers();
 
             foreach (Player p in players)
-                if (p.IsAI())
-                    p.Kick("Remove AI");
+                if (p.TryGetAI(out AIPlayerProfile prof))
+                    prof.Delete();
         }
     }
 }

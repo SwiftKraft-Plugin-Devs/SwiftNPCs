@@ -1,6 +1,7 @@
 ﻿using Mirror;
 using PluginAPI.Core;
 using SwiftNPCs.Core.World;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -25,7 +26,7 @@ namespace SwiftNPCs.Core.Management
             NetworkServer.AddPlayerForConnection(fakeClient, playerBody);
             ReferenceHub hub = playerBody.GetComponent<ReferenceHub>();
             AIPlayer aiCont = playerBody.AddComponent<AIPlayer>();
-            AIPlayerProfile prof = new AIPlayerProfile(id, hub, aiCont, profile);
+            AIPlayerProfile prof = new AIPlayerProfile(fakeClient, id, hub, aiCont, profile);
             Registered.Add(prof);
             return prof;
         }
@@ -60,5 +61,12 @@ namespace SwiftNPCs.Core.Management
         }
 
         public static bool IsAI(this Player p) => p.TryGetAI(out _);
+
+        public static void Delete(this AIPlayerProfile prof) 
+        {
+            Registered.Remove(prof);
+            NetworkServer.RemovePlayerForConnection(prof.Connection, true);
+            Object.Destroy(prof.WorldPlayer.gameObject);
+        }
     }
 }

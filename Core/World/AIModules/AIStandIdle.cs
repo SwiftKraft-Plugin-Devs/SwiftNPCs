@@ -4,19 +4,13 @@ namespace SwiftNPCs.Core.World.AIModules
 {
     public class AIStandIdle : AIModuleBase
     {
-        public Player LookTarget;
+        public Player LookTarget => Parent.FollowTarget;
 
         public override void End(AIModuleBase next) { }
 
         public override void Init() { }
 
-        public override void ReceiveData<T>(T data)
-        {
-            if (!(data is Player p) || !Parent.HasLOS(p, out _))
-                return;
-
-            LookTarget = p;
-        }
+        public override void ReceiveData<T>(T data) { }
 
         public override void Start(AIModuleBase prev) { }
 
@@ -24,8 +18,8 @@ namespace SwiftNPCs.Core.World.AIModules
         {
             CheckTransitions();
 
-            if (LookTarget != null && !Parent.HasLOS(LookTarget, out _))
-                LookTarget = null;
+            if (LookTarget != null)
+                Parent.MovementEngine.LookPos = LookTarget.Camera.position;
         }
     }
 }

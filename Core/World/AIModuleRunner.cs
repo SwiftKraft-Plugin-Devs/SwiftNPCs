@@ -2,6 +2,7 @@
 using InventorySystem.Items;
 using PlayerRoles;
 using PluginAPI.Core;
+using SwiftNPCs.Core.Management;
 using SwiftNPCs.Core.World.AIModules;
 using System;
 using System.Collections.Generic;
@@ -79,7 +80,7 @@ namespace SwiftNPCs.Core.World
             RetargetTimer = 0f;
 
             if (role == RoleTypeId.None || role == RoleTypeId.Spectator)
-                Core.Profile.Player.Kick("Died");
+                Core.Profile.Delete();
         }
 
         public T AddModule<T>() where T : AIModuleBase
