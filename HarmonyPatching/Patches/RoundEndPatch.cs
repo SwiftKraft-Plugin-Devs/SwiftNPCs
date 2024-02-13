@@ -1,13 +1,9 @@
 ﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using NorthwoodLib.Pools;
 using SwiftNPCs.Core.World;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace SwiftNPCs.HarmonyPatching.Patches
 {

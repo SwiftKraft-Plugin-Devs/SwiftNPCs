@@ -13,7 +13,7 @@ namespace SwiftNPCs.Core.Management
         /// <summary>
         /// List of registered AI Players.
         /// </summary>
-        public static readonly List<AIPlayerProfile> Registered = new List<AIPlayerProfile>();
+        public static readonly List<AIPlayerProfile> Registered = new();
 
         /// <summary>
         /// Creates a fake client and adds it to the registered list.

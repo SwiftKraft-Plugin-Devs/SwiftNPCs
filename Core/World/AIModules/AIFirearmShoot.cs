@@ -1,7 +1,6 @@
 ﻿using InventorySystem.Items;
 using InventorySystem.Items.Firearms;
 using InventorySystem.Items.Firearms.BasicMessages;
-using InventorySystem.Items.Firearms.Modules;
 using MEC;
 using PluginAPI.Core;
 using System.Collections.Generic;
