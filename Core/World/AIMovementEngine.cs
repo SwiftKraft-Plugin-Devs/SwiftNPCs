@@ -46,11 +46,13 @@ namespace SwiftNPCs.Core.World
                 if (FirstPersonMovement != null)
                     switch (State)
                     {
-                        case MovementState.Walk:
+                        case PlayerMovementState.Walking:
                             return FirstPersonMovement.WalkSpeed;
-                        case MovementState.Sprint:
+                        case PlayerMovementState.Sprinting:
                             return FirstPersonMovement.SprintSpeed;
-                        case MovementState.Crouch:
+                        case PlayerMovementState.Sneaking:
+                            return FirstPersonMovement.SneakSpeed;
+                        case PlayerMovementState.Crouching:
                             return FirstPersonMovement.CrouchSpeed;
                     }
                 return 0f;
@@ -73,7 +75,11 @@ namespace SwiftNPCs.Core.World
 
         public Quaternion TargetLookRot;
 
-        public MovementState State;
+        public PlayerMovementState State
+        {
+            get => FirstPersonMovement.CurrentMovementState;
+            set => FirstPersonMovement.CurrentMovementState = value;
+        }
 
         protected Quaternion CurrentLookRot;
 
@@ -108,13 +114,6 @@ namespace SwiftNPCs.Core.World
         private void Update()
         {
             UpdateLook(CurrentLookRot);
-        }
-
-        public enum MovementState
-        {
-            Walk,
-            Sprint,
-            Crouch
         }
     }
 }
