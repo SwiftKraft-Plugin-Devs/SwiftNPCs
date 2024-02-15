@@ -53,7 +53,11 @@ namespace SwiftNPCs.Core.World.AIModules
                 MovementEngine.LookPos = waypoint;
 
                 if (!Path.TryGetDistance(Position, CurrentIndex, out float dist) || dist < Path.WaypointRadius)
+                {
                     CurrentIndex++;
+                    if (CurrentIndex >= Path.Waypoints.Count)
+                        Path = null;
+                }
             }
         }
 

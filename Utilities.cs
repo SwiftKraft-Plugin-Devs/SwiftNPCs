@@ -1,15 +1,8 @@
 ﻿using PlayerRoles;
-using PluginAPI.Core;
 using SwiftNPCs.Core.Management;
-using SwiftNPCs.Core.World;
+using SwiftNPCs.Core.Pathing;
 using SwiftNPCs.Core.World.AIConditions;
 using SwiftNPCs.Core.World.AIModules;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace SwiftNPCs
@@ -41,6 +34,23 @@ namespace SwiftNPCs
             s.AddTransition(i, new AIHasEnemyTargetCondition() { Reverse = true });
 
             prof.WorldPlayer.ModuleRunner.ActivateModule(i);
+
+            return prof;
+        }
+
+        public static AIPlayerProfile CreatePathAI(RoleTypeId role, Vector3 position, Path p)
+        {
+            AIPlayerProfile prof = AIPlayerManager.CreateAIPlayer(new AIDataProfileBase("Path Bot"));
+            prof.DisplayNickname = "Path Bot " + prof.Player.PlayerId;
+
+            prof.ReferenceHub.roleManager.ServerSetRole(role, RoleChangeReason.None, RoleSpawnFlags.None);
+            prof.Position = position;
+
+            AIFollowPath f = prof.WorldPlayer.ModuleRunner.AddModule<AIFollowPath>();
+            f.Path = p;
+            f.InitPath();
+
+            prof.WorldPlayer.ModuleRunner.ActivateModule(f);
 
             return prof;
         }

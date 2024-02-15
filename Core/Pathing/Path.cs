@@ -79,5 +79,10 @@ namespace SwiftNPCs.Core.Pathing
 
             return index;
         }
+
+        public override string ToString()
+        {
+            return "Start Position: " + (Waypoints.Count > 0 ? Waypoints[0] : "None");
+        }
     }
 }

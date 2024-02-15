@@ -2,9 +2,6 @@
 using PlayerRoles;
 using PluginAPI.Core;
 using SwiftAPI.Commands;
-using SwiftNPCs.Core.Management;
-using SwiftNPCs.Core.World.AIConditions;
-using SwiftNPCs.Core.World.AIModules;
 using System;
 
 namespace SwiftNPCs.Core.Commands.Utility
