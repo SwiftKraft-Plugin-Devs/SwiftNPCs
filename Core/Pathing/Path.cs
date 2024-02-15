@@ -7,6 +7,8 @@ namespace SwiftNPCs.Core.Pathing
     {
         public readonly List<Vector3> Waypoints = new();
 
+        public float WaypointRadius = 1f;
+
         public void AddWaypoint(Vector3 point) => Waypoints.Add(point);
 
         public void RemoveWaypoint(int index) => Waypoints.RemoveAt(index);
@@ -32,11 +34,12 @@ namespace SwiftNPCs.Core.Pathing
             return false;
         }
 
-        public bool TryGetNextDirection(int current, out Vector3 direction)
+        public bool TryGetNextDirection(int current, out Vector3 direction, out Vector3 next)
         {
-            if (!TryGetWaypoint(current, out Vector3 curr) || !TryGetWaypoint(current + 1, out Vector3 next))
+            if (!TryGetWaypoint(current, out Vector3 curr) || !TryGetWaypoint(current + 1, out next))
             {
                 direction = Vector3.zero;
+                next = Vector3.zero;
                 return false;
             }
 
@@ -44,10 +47,9 @@ namespace SwiftNPCs.Core.Pathing
             return true;
         }
 
-        public bool TryGetNextDirection(Vector3 currentPos, int current, out Vector3 direction, out float distance)
+        public bool TryGetNextDirection(int current, out Vector3 direction)
         {
-            TryGetDistance(currentPos, current + 1, out distance);
-            return TryGetNextDirection(current, out direction);
+            return TryGetNextDirection(current, out direction, out _);
         }
 
         public bool TryGetDistance(Vector3 currentPos, int current, out float distance)
@@ -60,6 +62,22 @@ namespace SwiftNPCs.Core.Pathing
 
             distance = Vector3.Distance(currentPos, waypoint);
             return true;
+        }
+
+        public int GetNearestIndex(Vector3 currentPos)
+        {
+            int index = -1; 
+            float smallestDistance = Mathf.Infinity;
+            for (int i = 0; i < Waypoints.Count; i++)
+            {
+                if (TryGetDistance(currentPos, i, out float dist) && dist < smallestDistance)
+                {
+                    smallestDistance = dist;
+                    index = i;
+                }
+            }
+
+            return index;
         }
     }
 }

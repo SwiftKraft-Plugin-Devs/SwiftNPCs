@@ -30,9 +30,7 @@ namespace SwiftNPCs.Core.World.AIModules
         {
             if (HasTarget)
             {
-                Vector3 direction = GetMoveDirection();
-
-                Parent.MovementEngine.WishDir = direction;
+                Parent.MovementEngine.WishDir = GetMoveDirection();
                 Parent.MovementEngine.LookPos = Target.Camera.position;
                 if (DistanceToTarget > SprintDistance)
                     Parent.MovementEngine.State = PlayerMovementState.Sprinting;
