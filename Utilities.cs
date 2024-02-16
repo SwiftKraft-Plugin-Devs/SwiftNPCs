@@ -38,6 +38,29 @@ namespace SwiftNPCs
             return prof;
         }
 
+        public static AIPlayerProfile CreateStaticAI(RoleTypeId role, Vector3 position)
+        {
+            AIPlayerProfile prof = new AIDataProfileBase("Static Bot").CreateAIPlayer();
+            prof.DisplayNickname = "Static Bot " + prof.Player.PlayerId;
+
+            prof.ReferenceHub.roleManager.ServerSetRole(role, RoleChangeReason.None, RoleSpawnFlags.None);
+            prof.Position = position;
+
+            AIStandIdle i = prof.WorldPlayer.ModuleRunner.AddModule<AIStandIdle>();
+            AIFirearmShoot s = prof.WorldPlayer.ModuleRunner.AddModule<AIFirearmShoot>();
+
+            i.AddTransition(s, new AIHasEnemyTargetCondition() { Reverse = true }, new AIFindEnemyCondition() { SearchDistance = 50f });
+            i.AddTransition(s, new AIHasEnemyTargetCondition(), new AIEnemyDistanceCondition() { Distance = 50f }, new AIEnemyLOSCondition());
+
+            s.AddTransition(i, new AIEnemyDistanceCondition() { Reverse = true, Distance = 50f });
+            s.AddTransition(i, new AIEnemyLOSCondition() { Reverse = true });
+            s.AddTransition(i, new AIHasEnemyTargetCondition() { Reverse = true });
+
+            prof.WorldPlayer.ModuleRunner.ActivateModule(i);
+
+            return prof;
+        }
+
         public static AIPlayerProfile CreatePathAI(RoleTypeId role, Vector3 position, Path p)
         {
             AIPlayerProfile prof = new AIDataProfileBase("Path Bot").CreateAIPlayer();

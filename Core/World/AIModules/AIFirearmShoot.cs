@@ -20,6 +20,31 @@ namespace SwiftNPCs.Core.World.AIModules
         public bool HasLOS(out Vector3 pos) => Parent.HasLOSOnEnemy(out pos);
         public bool HasTarget => Parent.HasEnemyTarget;
 
+        public bool IsAiming
+        {
+            get
+            {
+                if (TryGetFirearm(out Firearm f))
+                    return f.AdsModule.ServerAds;
+                return false;
+            }
+            set
+            {
+                if (TryGetFirearm(out Firearm f))
+                {
+                    if (value == f.AdsModule.ServerAds)
+                        return;
+
+                    if (value)
+                        new RequestMessage(f.ItemSerial, RequestType.AdsIn);
+                    else
+                        new RequestMessage(f.ItemSerial, RequestType.AdsOut);
+
+                    f.AdsModule.ServerAds = value;
+                }
+            }
+        }
+
         protected float Timer;
 
         protected FirearmState State;
@@ -82,6 +107,8 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public IEnumerator<float> Reload(Firearm f)
         {
+            IsAiming = false;
+
             if (StartReload(f))
             {
                 yield return Timing.WaitForSeconds(4f);
@@ -115,6 +142,8 @@ namespace SwiftNPCs.Core.World.AIModules
         {
             if (State != FirearmState.Standby || !f.EquipperModule.Standby || f.Status.Ammo <= 0)
                 return false;
+
+            IsAiming = true;
 
             if (f.HitregModule.ClientCalculateHit(out ShotMessage shot))
             {

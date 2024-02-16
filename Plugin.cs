@@ -22,7 +22,7 @@ namespace SwiftNPCs
 
         private const string Version = "Alpha v0.0.1";
 
-        [PluginPriority(LoadPriority.Lowest)]
+        [PluginPriority(LoadPriority.High)]
         [PluginEntryPoint(Name, Version, Description, Author)]
         public void Init()
         {
