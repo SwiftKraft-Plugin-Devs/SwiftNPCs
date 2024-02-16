@@ -1,23 +1,20 @@
-﻿using PlayerRoles;
+﻿using CommandSystem;
+using PlayerRoles;
 using PluginAPI.Core;
 using SwiftAPI.Commands;
 using SwiftNPCs.Core.Management;
-using SwiftNPCs.Core.Pathing;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SwiftNPCs.Core.Commands.Utility
 {
+    [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class SpawnStaticAI : CommandBase
     {
         public override string GetCommandName() => "spawnstaticai";
 
         public override string GetDescription() => "Spawns a static AI.";
 
-        public override string[] GetAliases() => ["spsai"];
+        public override string[] GetAliases() => ["sstai"];
 
         public override PlayerPermissions[] GetPerms() => [PlayerPermissions.PlayersManagement];
 
