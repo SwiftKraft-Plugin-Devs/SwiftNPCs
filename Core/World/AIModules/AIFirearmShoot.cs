@@ -1,6 +1,8 @@
-﻿using InventorySystem.Items;
+﻿using InventorySystem;
+using InventorySystem.Items;
 using InventorySystem.Items.Firearms;
 using InventorySystem.Items.Firearms.BasicMessages;
+using InventorySystem.Items.Firearms.Modules;
 using MEC;
 using PluginAPI.Core;
 using System.Collections.Generic;
@@ -76,7 +78,7 @@ namespace SwiftNPCs.Core.World.AIModules
                     State = FirearmState.Standby;
 
                 if (f.Status.Ammo <= 0)
-                    Timing.RunCoroutine(Reload(f));
+                    StartReload(f);
                 else if (HasLOS(out _))
                     Shoot(f);
                 else
@@ -111,56 +113,35 @@ namespace SwiftNPCs.Core.World.AIModules
             return firearm != null;
         }
 
-        public IEnumerator<float> Reload(Firearm f)
+        public bool StartReload(Firearm f)
         {
             IsAiming = false;
 
-            if (StartReload(f))
-            {
-                yield return Timing.WaitForSeconds(4f);
-                EndReload(f);
-            }
-        }
-
-        public bool EndReload(Firearm f)
-        {
-            if (f == null)
+            if (f == null || State != FirearmState.Standby || !f.EquipperModule.Standby || !f.ActionModule.Standby || !f.AdsModule.Standby || !f.AmmoManagerModule.Standby || !f.HitregModule.Standby || f.Status.Ammo >= f.AmmoManagerModule.MaxAmmo)
                 return false;
 
-            new RequestMessage(f.ItemSerial, RequestType.ReloadStop).SendToAuthenticated();
-            f.Status = new FirearmStatus(f.AmmoManagerModule.MaxAmmo, FirearmStatusFlags.MagazineInserted | FirearmStatusFlags.Chambered, f.Status.Attachments);
-
-            return true;
-        }
-
-        public bool StartReload(Firearm f)
-        {
-            if (f == null || State != FirearmState.Standby || f.Status.Ammo >= f.AmmoManagerModule.MaxAmmo)
-                return false;
-
+            Parent.Inventory.ServerAddAmmo(f.AmmoType, f.AmmoManagerModule.MaxAmmo);
+            f.AmmoManagerModule.ServerTryReload();
             new RequestMessage(f.ItemSerial, RequestType.Reload).SendToAuthenticated();
-            State = FirearmState.Reloading;
 
             return true;
         }
 
         public bool Shoot(Firearm f)
         {
-            if (State != FirearmState.Standby || !f.InspectorModule.Standby || !f.EquipperModule.Standby || !f.ActionModule.Standby || !f.AdsModule.Standby || !f.AmmoManagerModule.Standby || !f.HitregModule.Standby || f.Status.Ammo <= 0)
+            if (f.Status.Ammo <= 0 || State != FirearmState.Standby || !f.EquipperModule.Standby || !f.ActionModule.Standby || !f.AdsModule.Standby || !f.AmmoManagerModule.Standby || !f.HitregModule.Standby)
                 return false;
 
             IsAiming = true;
 
-            if (f.HitregModule.ClientCalculateHit(out ShotMessage shot))
+            State = FirearmState.Shooting;
+            Timer = 1f / f.ActionModule.CyclicRate;
+
+            if (f.ActionModule.ServerAuthorizeShot() && f.HitregModule.ClientCalculateHit(out ShotMessage shot))
             {
                 f.HitregModule.ServerProcessShot(shot);
-                if (f.ActionModule.ServerAuthorizeShot())
-                {
-                    State = FirearmState.Shooting;
-                    Timer = 1f / f.ActionModule.CyclicRate;
-                    f.UpdateAnims();
-                    return true;
-                }
+                f.UpdateAnims();
+                return true;
             }
 
             return false;
@@ -169,8 +150,7 @@ namespace SwiftNPCs.Core.World.AIModules
         public enum FirearmState
         {
             Standby,
-            Shooting,
-            Reloading
+            Shooting
         }
     }
 }
