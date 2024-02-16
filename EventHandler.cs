@@ -1,4 +1,6 @@
-﻿using PluginAPI.Core;
+﻿using Achievements.Handlers;
+using PlayerStatsSystem;
+using PluginAPI.Core;
 using PluginAPI.Core.Attributes;
 using PluginAPI.Enums;
 using PluginAPI.Events;
@@ -10,10 +12,17 @@ namespace SwiftNPCs
     public class EventHandler
     {
         [PluginEvent(ServerEventType.PlayerDamage)]
-        public void PlayerDamage(PlayerDamageEvent _event)
+        public bool PlayerDamage(PlayerDamageEvent _event)
         {
             if (_event.Target.TryGetAI(out AIPlayerProfile prof))
+            {
                 prof.WorldPlayer.Damage(_event.Player);
+
+                if (_event.DamageHandler is UniversalDamageHandler dmg && dmg.TranslationId == DeathTranslations.Falldown.Id)
+                    return false;
+            }
+
+            return true;
         }
 
         [PluginEvent(ServerEventType.PlayerChangeRole)]
