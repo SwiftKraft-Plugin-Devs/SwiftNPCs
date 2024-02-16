@@ -1,5 +1,4 @@
 ﻿using PlayerRoles.FirstPersonControl;
-using PluginAPI.Core;
 using UnityEngine;
 
 namespace SwiftNPCs.Core.World
@@ -43,7 +42,7 @@ namespace SwiftNPCs.Core.World
         {
             get
             {
-                if (FirstPersonMovement != null)
+                if (FirstPersonMovement != null && SpeedOverride <= 0f)
                     switch (State)
                     {
                         case PlayerMovementState.Walking:
@@ -55,10 +54,13 @@ namespace SwiftNPCs.Core.World
                         case PlayerMovementState.Crouching:
                             return FirstPersonMovement.CrouchSpeed;
                     }
+                else if (SpeedOverride > 0f)
+                    return SpeedOverride;
                 return 0f;
             }
         }
 
+        public float SpeedOverride = -1f;
         public float LookSpeed = 90f;
 
         public Vector3 WishDir;
@@ -85,7 +87,7 @@ namespace SwiftNPCs.Core.World
 
         public void UpdateMove(Vector3 wishDir)
         {
-            if (FirstPersonMovement == null)
+            if (FirstPersonMovement == null || wishDir == Vector3.zero)
                 return;
 
             CharCont.Move(wishDir * (CurrentSpeed * Time.fixedDeltaTime));

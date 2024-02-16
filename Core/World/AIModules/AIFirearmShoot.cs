@@ -36,9 +36,9 @@ namespace SwiftNPCs.Core.World.AIModules
                         return;
 
                     if (value)
-                        new RequestMessage(f.ItemSerial, RequestType.AdsIn);
+                        new RequestMessage(f.ItemSerial, RequestType.AdsIn).SendToAuthenticated();
                     else
-                        new RequestMessage(f.ItemSerial, RequestType.AdsOut);
+                        new RequestMessage(f.ItemSerial, RequestType.AdsOut).SendToAuthenticated();
 
                     f.AdsModule.ServerAds = value;
                 }
@@ -82,7 +82,7 @@ namespace SwiftNPCs.Core.World.AIModules
                 else
                     Target = null;
 
-                if (!HasTarget)
+                if (!HasTarget && State == FirearmState.Standby)
                     IsAiming = false;
             }
             else
@@ -146,7 +146,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public bool Shoot(Firearm f)
         {
-            if (State != FirearmState.Standby || !f.EquipperModule.Standby || f.Status.Ammo <= 0)
+            if (State != FirearmState.Standby || !f.InspectorModule.Standby || !f.EquipperModule.Standby || !f.ActionModule.Standby || !f.AdsModule.Standby || !f.AmmoManagerModule.Standby || !f.HitregModule.Standby || f.Status.Ammo <= 0)
                 return false;
 
             IsAiming = true;
