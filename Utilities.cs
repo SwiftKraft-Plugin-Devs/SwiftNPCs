@@ -11,7 +11,7 @@ namespace SwiftNPCs
     {
         public static AIPlayerProfile CreateBasicAI(RoleTypeId role, Vector3 position)
         {
-            AIPlayerProfile prof = AIPlayerManager.CreateAIPlayer(new AIDataProfileBase("Bot"));
+            AIPlayerProfile prof = new AIDataProfileBase("Bot").CreateAIPlayer();
             prof.DisplayNickname = "Bot " + prof.Player.PlayerId;
 
             prof.ReferenceHub.roleManager.ServerSetRole(role, RoleChangeReason.None, RoleSpawnFlags.None);
@@ -40,7 +40,7 @@ namespace SwiftNPCs
 
         public static AIPlayerProfile CreatePathAI(RoleTypeId role, Vector3 position, Path p)
         {
-            AIPlayerProfile prof = AIPlayerManager.CreateAIPlayer(new AIDataProfileBase("Path Bot"));
+            AIPlayerProfile prof = new AIDataProfileBase("Path Bot").CreateAIPlayer();
             prof.DisplayNickname = "Path Bot " + prof.Player.PlayerId;
 
             prof.ReferenceHub.roleManager.ServerSetRole(role, RoleChangeReason.None, RoleSpawnFlags.None);

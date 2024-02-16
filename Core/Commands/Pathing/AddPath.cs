@@ -7,13 +7,13 @@ namespace SwiftNPCs.Core.Commands.Pathing
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class AddPath : CommandBase
     {
-        public override string[] GetAliases() => new string[] { "apath" };
+        public override string[] GetAliases() => ["apath"];
 
         public override string GetCommandName() => "addpath";
 
         public override string GetDescription() => "Creates an AI path.";
 
-        public override PlayerPermissions[] GetPerms() => new PlayerPermissions[] { PlayerPermissions.RoundEvents };
+        public override PlayerPermissions[] GetPerms() => [PlayerPermissions.RoundEvents];
 
         public override bool Function(string[] args, ICommandSender sender, out string result)
         {

@@ -7,13 +7,13 @@ namespace SwiftNPCs.Core.Commands.Pathing
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class ClearPaths : CommandBase
     {
-        public override string[] GetAliases() => new string[] { "cpath" };
+        public override string[] GetAliases() => ["cpath"];
 
         public override string GetCommandName() => "clearpaths";
 
         public override string GetDescription() => "Clears all AI paths.";
 
-        public override PlayerPermissions[] GetPerms() => new PlayerPermissions[] { PlayerPermissions.RoundEvents };
+        public override PlayerPermissions[] GetPerms() => [PlayerPermissions.RoundEvents];
 
         public override bool Function(string[] args, ICommandSender sender, out string result)
         {

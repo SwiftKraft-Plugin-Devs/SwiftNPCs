@@ -13,9 +13,9 @@ namespace SwiftNPCs.Core.Commands.Utility
 
         public override string GetDescription() => "Spawns a basic AI.";
 
-        public override string[] GetAliases() => new string[] { "sai", "spai" };
+        public override string[] GetAliases() => ["sai", "spai"];
 
-        public override PlayerPermissions[] GetPerms() => new PlayerPermissions[] { PlayerPermissions.PlayersManagement };
+        public override PlayerPermissions[] GetPerms() => [PlayerPermissions.PlayersManagement];
 
         public override bool PlayerBasedFunction(Player player, string[] args, out string result)
         {

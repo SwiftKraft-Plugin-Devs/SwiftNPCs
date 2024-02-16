@@ -12,7 +12,7 @@ namespace SwiftNPCs.Core.Management
         /// <summary>
         /// List of registered AI Players.
         /// </summary>
-        public static readonly List<AIPlayerProfile> Registered = new();
+        public static readonly List<AIPlayerProfile> Registered = [];
 
         /// <summary>
         /// Creates a fake client and adds it to the registered list.
@@ -25,7 +25,7 @@ namespace SwiftNPCs.Core.Management
             NetworkServer.AddPlayerForConnection(fakeClient, playerBody);
             ReferenceHub hub = playerBody.GetComponent<ReferenceHub>();
             AIPlayer aiCont = playerBody.AddComponent<AIPlayer>();
-            AIPlayerProfile prof = new AIPlayerProfile(fakeClient, id, hub, aiCont, profile);
+            AIPlayerProfile prof = new(fakeClient, id, hub, aiCont, profile);
             Registered.Add(prof);
             return prof;
         }

@@ -8,13 +8,13 @@ namespace SwiftNPCs.Core.Commands.Pathing
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class AddWaypoint : CommandBase
     {
-        public override string[] GetAliases() => new string[] { "awp" };
+        public override string[] GetAliases() => ["awp"];
 
         public override string GetCommandName() => "addwaypoint";
 
         public override string GetDescription() => "Creates a waypoint for an AI path.";
 
-        public override PlayerPermissions[] GetPerms() => new PlayerPermissions[] { PlayerPermissions.RoundEvents };
+        public override PlayerPermissions[] GetPerms() => [PlayerPermissions.RoundEvents];
 
         public override bool GetRequirePlayer() => true;
 

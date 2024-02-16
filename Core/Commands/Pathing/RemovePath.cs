@@ -7,13 +7,13 @@ namespace SwiftNPCs.Core.Commands.Pathing
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class RemovePath : CommandBase
     {
-        public override string[] GetAliases() => new string[] { "rpath", "deletepath", "dpath" };
+        public override string[] GetAliases() => ["rpath", "deletepath", "dpath"];
 
         public override string GetCommandName() => "removepath";
 
         public override string GetDescription() => "Deletes an AI path.";
 
-        public override PlayerPermissions[] GetPerms() => new PlayerPermissions[] { PlayerPermissions.RoundEvents };
+        public override PlayerPermissions[] GetPerms() => [PlayerPermissions.RoundEvents];
 
         public override bool Function(string[] args, ICommandSender sender, out string result)
         {

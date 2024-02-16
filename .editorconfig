@@ -2,3 +2,9 @@
 
 # CA2211: Non-constant fields should not be visible
 dotnet_diagnostic.CA2211.severity = none
+
+# IDE0051: Remove unused private members
+dotnet_diagnostic.IDE0051.severity = none
+
+# IDE0060: Remove unused parameter
+dotnet_diagnostic.IDE0060.severity = none

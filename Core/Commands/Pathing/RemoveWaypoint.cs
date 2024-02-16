@@ -8,13 +8,13 @@ namespace SwiftNPCs.Core.Commands.Pathing
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class RemoveWaypoint : CommandBase
     {
-        public override string[] GetAliases() => new string[] { "rwp", "deletewaypoint", "dwp" };
+        public override string[] GetAliases() => ["rwp", "deletewaypoint", "dwp"];
 
         public override string GetCommandName() => "removewaypoint";
 
         public override string GetDescription() => "Deletes a waypoint for an AI path.";
 
-        public override PlayerPermissions[] GetPerms() => new PlayerPermissions[] { PlayerPermissions.RoundEvents };
+        public override PlayerPermissions[] GetPerms() => [PlayerPermissions.RoundEvents];
 
         public override bool GetRequirePlayer() => true;
 

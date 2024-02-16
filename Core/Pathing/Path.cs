@@ -5,7 +5,7 @@ namespace SwiftNPCs.Core.Pathing
 {
     public class Path
     {
-        public readonly List<Vector3> Waypoints = new();
+        public readonly List<Vector3> Waypoints = [];
 
         public float WaypointRadius = 1f;
 

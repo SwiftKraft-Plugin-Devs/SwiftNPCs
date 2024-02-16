@@ -8,7 +8,7 @@ namespace SwiftNPCs.Core.Pathing
 {
     public static class PathManager
     {
-        public static readonly List<Path> Paths = new();
+        public static readonly List<Path> Paths = [];
 
         public static Path AddPath(out int index)
         {

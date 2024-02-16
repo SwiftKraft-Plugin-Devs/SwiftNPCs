@@ -10,8 +10,7 @@ namespace SwiftNPCs.HarmonyPatching
 
         public static void InitHarmony()
         {
-            if (Instance == null)
-                Instance = new Harmony("com.SwiftKraft.SwiftNPCs.API");
+            Instance ??= new Harmony("com.SwiftKraft.SwiftNPCs.API");
 
             try { Instance.PatchAll(); }
             catch (Exception e) { Log.Error("Harmony Patching Failed! \n" + e?.ToString()); }

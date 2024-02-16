@@ -7,7 +7,7 @@ namespace SwiftNPCs.Core.World.AIModules
     {
         public AIModuleRunner Parent;
 
-        public readonly List<Transition> Transitions = new List<Transition>();
+        public readonly List<Transition> Transitions = [];
 
         public abstract void Init();
 
@@ -26,7 +26,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public Transition AddTransition(AIModuleBase next, params AIConditionBase[] conds)
         {
-            Transition temp = new Transition(this, next, conds);
+            Transition temp = new(this, next, conds);
             Transitions.Add(temp);
             return temp;
         }
@@ -56,7 +56,7 @@ namespace SwiftNPCs.Core.World.AIModules
             public AIModuleBase Parent;
             public AIModuleBase Next;
 
-            public readonly List<AIConditionBase> Conditions = new List<AIConditionBase>();
+            public readonly List<AIConditionBase> Conditions = [];
 
             public Transition(AIModuleBase parent, AIModuleBase next, params AIConditionBase[] conds)
             {

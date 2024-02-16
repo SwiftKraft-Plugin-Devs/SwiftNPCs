@@ -8,13 +8,13 @@ namespace SwiftNPCs.Core.Commands.Pathing
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class ClearWaypoints : CommandBase
     {
-        public override string[] GetAliases() => new string[] { "cwp" };
+        public override string[] GetAliases() => ["cwp"];
 
         public override string GetCommandName() => "clearwaypoints";
 
         public override string GetDescription() => "Clears all waypoints for an AI path.";
 
-        public override PlayerPermissions[] GetPerms() => new PlayerPermissions[] { PlayerPermissions.RoundEvents };
+        public override PlayerPermissions[] GetPerms() => [PlayerPermissions.RoundEvents];
 
         public override bool GetRequirePlayer() => true;
 

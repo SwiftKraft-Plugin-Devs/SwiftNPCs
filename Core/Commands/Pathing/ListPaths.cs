@@ -7,7 +7,7 @@ namespace SwiftNPCs.Core.Commands.Pathing
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class ListPaths : CommandBase
     {
-        public override string[] GetAliases() => new string[] { "lpath" };
+        public override string[] GetAliases() => ["lpath"];
 
         public override string GetCommandName() => "listpath";
 

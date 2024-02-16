@@ -30,7 +30,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void ReceiveData<T>(T data)
         {
-            if (!(data is Player p))
+            if (data is not Player p)
                 return;
 
             Target = p;

@@ -1,12 +1,7 @@
 ﻿namespace SwiftNPCs.Core.Management
 {
-    public class AIDataProfileBase
+    public class AIDataProfileBase(string name)
     {
-        public string Name;
-
-        public AIDataProfileBase(string name)
-        {
-            Name = name;
-        }
+        public string Name = name;
     }
 }

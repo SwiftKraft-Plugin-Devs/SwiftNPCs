@@ -14,9 +14,9 @@ namespace SwiftNPCs.Core.Commands.Utility
 
         public override string GetDescription() => "Spawns a path AI.";
 
-        public override string[] GetAliases() => new string[] { "sptai" };
+        public override string[] GetAliases() => ["sptai"];
 
-        public override PlayerPermissions[] GetPerms() => new PlayerPermissions[] { PlayerPermissions.PlayersManagement };
+        public override PlayerPermissions[] GetPerms() => [PlayerPermissions.PlayersManagement];
 
         public override bool PlayerBasedFunction(Player player, string[] args, out string result)
         {

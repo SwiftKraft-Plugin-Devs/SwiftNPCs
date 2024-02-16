@@ -14,7 +14,7 @@ namespace SwiftNPCs.Core.World
     {
         public const float RetargetTime = 2f;
 
-        public readonly List<AIModuleBase> Modules = new List<AIModuleBase>();
+        public readonly List<AIModuleBase> Modules = [];
 
         public AIModuleBase CurrentModule;
 

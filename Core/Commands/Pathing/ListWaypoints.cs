@@ -8,7 +8,7 @@ namespace SwiftNPCs.Core.Commands.Pathing
     [CommandHandler(typeof(RemoteAdminCommandHandler))]
     public class ListWaypoints : CommandBase
     {
-        public override string[] GetAliases() => new string[] { "lwp" };
+        public override string[] GetAliases() => ["lwp"];
 
         public override string GetCommandName() => "listwaypoints";
 
