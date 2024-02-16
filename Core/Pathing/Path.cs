@@ -7,7 +7,7 @@ namespace SwiftNPCs.Core.Pathing
     {
         public readonly List<Vector3> Waypoints = [];
 
-        public float WaypointRadius = 1f;
+        public float WaypointRadius = 0.25f;
 
         public void AddWaypoint(Vector3 point) => Waypoints.Add(point);
 

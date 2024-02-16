@@ -49,7 +49,10 @@ namespace SwiftNPCs.Core.World.AIModules
 
         protected FirearmState State;
 
-        public override void End(AIModuleBase next) { }
+        public override void End(AIModuleBase next)
+        {
+            IsAiming = false;
+        }
 
         public override void Init() { }
 
@@ -78,6 +81,9 @@ namespace SwiftNPCs.Core.World.AIModules
                     Shoot(f);
                 else
                     Target = null;
+
+                if (!HasTarget)
+                    IsAiming = false;
             }
             else
             {
