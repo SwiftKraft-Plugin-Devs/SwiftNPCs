@@ -25,6 +25,13 @@ namespace SwiftNPCs
             return true;
         }
 
+        [PluginEvent(ServerEventType.PlayerDeath)]
+        public void PlayerDeath(PlayerDeathEvent _event)
+        {
+            if (_event.Player.TryGetAI(out AIPlayerProfile prof))
+                prof.ReferenceHub.transform.eulerAngles = new(0f, prof.ReferenceHub.transform.eulerAngles.y, 0f);
+        }
+
         [PluginEvent(ServerEventType.PlayerChangeRole)]
         public void PlayerChangeRole(PlayerChangeRoleEvent _event)
         {

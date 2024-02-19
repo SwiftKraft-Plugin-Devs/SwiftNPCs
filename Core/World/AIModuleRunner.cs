@@ -174,7 +174,7 @@ namespace SwiftNPCs.Core.World
             {
                 if (EnemyTarget == null)
                     return false;
-                else if (!EnemyTarget.IsAlive || EnemyTarget.Role.GetFaction() == Role.GetFaction())
+                else if (!EnemyTarget.IsAlive || EnemyTarget.IsOffline || EnemyTarget.Role.GetFaction() == Role.GetFaction())
                 {
                     EnemyTarget = null;
                     return false;
