@@ -7,6 +7,7 @@ using SwiftNPCs.Core.World.AIModules;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace SwiftNPCs.Core.World
 {
@@ -144,17 +145,17 @@ namespace SwiftNPCs.Core.World
                     position = p.Position;
                     return true;
                 }
-                else if (!Physics.Linecast(CameraPosition, p.Camera.position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
+                else if (!Physics.Linecast(CameraPosition, p.Camera.position + Vector3.down * Random.Range(0.1f, 0.3f), AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
                 {
-                    position = p.Camera.position;
+                    position = p.Camera.position + Vector3.down * Random.Range(0.1f, 0.3f);
                     return true;
                 }
             }
             else
             {
-                if (!Physics.Linecast(CameraPosition, p.Camera.position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
+                if (!Physics.Linecast(CameraPosition, p.Camera.position + Vector3.down * Random.Range(0.1f, 0.3f), AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
                 {
-                    position = p.Camera.position;
+                    position = p.Camera.position + Vector3.down * Random.Range(0.1f, 0.3f);
                     return true;
                 }
                 else if (!Physics.Linecast(CameraPosition, p.Position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
