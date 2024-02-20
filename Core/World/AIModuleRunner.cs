@@ -129,7 +129,7 @@ namespace SwiftNPCs.Core.World
             CurrentModule.Start(temp);
         }
 
-        public bool HasLOS(Player p, out Vector3 position)
+        public bool HasLOS(Player p, out Vector3 position, bool prioritizeHead = false)
         {
             if (p == null)
             {
@@ -137,15 +137,31 @@ namespace SwiftNPCs.Core.World
                 return false;
             }
 
-            if (!Physics.Linecast(CameraPosition, p.Position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
+            if (!prioritizeHead)
             {
-                position = p.Position;
-                return true;
+                if (!Physics.Linecast(CameraPosition, p.Position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
+                {
+                    position = p.Position;
+                    return true;
+                }
+                else if (!Physics.Linecast(CameraPosition, p.Camera.position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
+                {
+                    position = p.Camera.position;
+                    return true;
+                }
             }
-            else if (!Physics.Linecast(CameraPosition, p.Camera.position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
+            else
             {
-                position = p.Camera.position;
-                return true;
+                if (!Physics.Linecast(CameraPosition, p.Camera.position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
+                {
+                    position = p.Camera.position;
+                    return true;
+                }
+                else if (!Physics.Linecast(CameraPosition, p.Position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
+                {
+                    position = p.Position;
+                    return true;
+                }
             }
 
             position = Vector3.zero;
@@ -174,7 +190,7 @@ namespace SwiftNPCs.Core.World
             {
                 if (EnemyTarget == null)
                     return false;
-                else if (!EnemyTarget.IsAlive || EnemyTarget.IsOffline || EnemyTarget.Role.GetFaction() == Role.GetFaction())
+                else if (EnemyTarget.ReferenceHub == null || EnemyTarget.GameObject == null || !EnemyTarget.IsAlive || EnemyTarget.Role.GetFaction() == Role.GetFaction())
                 {
                     EnemyTarget = null;
                     return false;
@@ -184,6 +200,6 @@ namespace SwiftNPCs.Core.World
             }
         }
 
-        public bool HasLOSOnEnemy(out Vector3 pos) { pos = Vector3.zero; return HasEnemyTarget && HasLOS(EnemyTarget, out pos); }
+        public bool HasLOSOnEnemy(out Vector3 pos, bool prioritizeHead = false) { pos = Vector3.zero; return HasEnemyTarget && HasLOS(EnemyTarget, out pos, prioritizeHead); }
     }
 }

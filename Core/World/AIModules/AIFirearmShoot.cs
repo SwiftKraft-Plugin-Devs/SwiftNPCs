@@ -19,7 +19,7 @@ namespace SwiftNPCs.Core.World.AIModules
             set => Parent.EnemyTarget = value;
         }
 
-        public bool HasLOS(out Vector3 pos) => Parent.HasLOSOnEnemy(out pos);
+        public bool HasLOS(out Vector3 pos) => Parent.HasLOSOnEnemy(out pos, Headshots);
         public bool HasTarget => Parent.HasEnemyTarget;
 
         public bool IsAiming
@@ -46,6 +46,8 @@ namespace SwiftNPCs.Core.World.AIModules
                 }
             }
         }
+
+        public bool Headshots;
 
         protected float Timer;
 
