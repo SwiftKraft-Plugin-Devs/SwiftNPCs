@@ -1,4 +1,5 @@
 ﻿using Achievements.Handlers;
+using InventorySystem.Items.ThrowableProjectiles;
 using PlayerStatsSystem;
 using PluginAPI.Core;
 using PluginAPI.Core.Attributes;

@@ -2,10 +2,7 @@
 using InventorySystem.Items;
 using InventorySystem.Items.Firearms;
 using InventorySystem.Items.Firearms.BasicMessages;
-using InventorySystem.Items.Firearms.Modules;
-using MEC;
 using PluginAPI.Core;
-using System.Collections.Generic;
 using UnityEngine;
 using Utils.Networking;
 
@@ -58,7 +55,10 @@ namespace SwiftNPCs.Core.World.AIModules
             IsAiming = false;
         }
 
-        public override void Init() { }
+        public override void Init()
+        {
+            Headshots = Random.Range(0, 2) == 0;
+        }
 
         public override void ReceiveData<T>(T data)
         {

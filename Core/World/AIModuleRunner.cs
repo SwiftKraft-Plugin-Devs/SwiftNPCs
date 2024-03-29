@@ -1,5 +1,6 @@
 ﻿using InventorySystem;
 using InventorySystem.Items;
+using InventorySystem.Items.ThrowableProjectiles;
 using PlayerRoles;
 using PluginAPI.Core;
 using SwiftNPCs.Core.Management;
@@ -36,6 +37,7 @@ namespace SwiftNPCs.Core.World
         public RoleTypeId Role => ReferenceHub.roleManager.CurrentRole.RoleTypeId;
 
         protected float RetargetTimer;
+        protected float AimOffset;
 
         private void Start()
         {
@@ -49,6 +51,8 @@ namespace SwiftNPCs.Core.World
             Core.OnRoleChange -= OnRoleChange;
             Core.OnDamage += OnDamage;
             Core.OnRoleChange += OnRoleChange;
+
+            AimOffset = Random.Range(0.18f, 0.31f);
         }
 
         private void FixedUpdate()
@@ -142,25 +146,25 @@ namespace SwiftNPCs.Core.World
             {
                 if (!Physics.Linecast(CameraPosition, p.Position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
                 {
-                    position = p.Position;
+                    position = p.Position + Vector3.up * AimOffset;
                     return true;
                 }
-                else if (!Physics.Linecast(CameraPosition, p.Camera.position + Vector3.down * Random.Range(0.1f, 0.3f), AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
+                else if (!Physics.Linecast(CameraPosition, p.Camera.position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
                 {
-                    position = p.Camera.position + Vector3.down * Random.Range(0.1f, 0.3f);
+                    position = p.Camera.position + Vector3.down * AimOffset;
                     return true;
                 }
             }
             else
             {
-                if (!Physics.Linecast(CameraPosition, p.Camera.position + Vector3.down * Random.Range(0.1f, 0.3f), AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
+                if (!Physics.Linecast(CameraPosition, p.Camera.position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
                 {
-                    position = p.Camera.position + Vector3.down * Random.Range(0.1f, 0.3f);
+                    position = p.Camera.position + Vector3.down * AimOffset;
                     return true;
                 }
                 else if (!Physics.Linecast(CameraPosition, p.Position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
                 {
-                    position = p.Position;
+                    position = p.Position + Vector3.up * AimOffset;
                     return true;
                 }
             }
