@@ -1,15 +1,8 @@
 ﻿using InventorySystem;
-using InventorySystem.Items.Firearms;
 using InventorySystem.Items;
 using InventorySystem.Items.ThrowableProjectiles;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
 using PluginAPI.Core;
-using static UnityEngine.GraphicsBuffer;
+using UnityEngine;
 
 namespace SwiftNPCs.Core.World.AIModules
 {
@@ -26,6 +19,8 @@ namespace SwiftNPCs.Core.World.AIModules
         public bool HasLOS(out Vector3 pos) => Parent.HasLOSOnEnemy(out pos, RightClick);
 
         public float Delay = 1f;
+        public float DistanceOffsetScaler = 0.25f;
+        public float DistanceOffsetCap = 10f;
 
         public bool RightClick;
         public bool InfiniteGrenades = false;
@@ -61,7 +56,7 @@ namespace SwiftNPCs.Core.World.AIModules
             }
 
             if (HasLOS(out Vector3 pos))
-                Parent.MovementEngine.LookPos = pos;
+                Parent.MovementEngine.LookPos = pos + Mathf.Clamp(Vector3.Distance(Parent.EnemyTarget.Position, Parent.CameraPosition) * DistanceOffsetScaler, 0f, DistanceOffsetCap) * Vector3.up;
 
             CheckTransitions();
         }
