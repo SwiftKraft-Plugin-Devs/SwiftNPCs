@@ -19,7 +19,7 @@ namespace SwiftNPCs.Core.Management
         /// </summary>
         public static AIPlayerProfile CreateAIPlayer(this AIDataProfileBase profile)
         {
-            int id = 100 + Registered.Count;
+            int id = 1000 + Registered.Count;
             GameObject playerBody = Object.Instantiate(NetworkManager.singleton.playerPrefab);
             var fakeClient = new FakeClient(id);
             NetworkServer.AddPlayerForConnection(fakeClient, playerBody);
