@@ -16,15 +16,18 @@ namespace SwiftNPCs.Core.World.AIModules
             set => Parent.FollowTarget = value;
         }
 
-        public override void End(AIModuleBase next)
+        public override void Init()
+        {
+            Tags = ["Movement"];
+        }
+
+        public override void OnDisabled()
         {
             Parent.MovementEngine.WishDir = Vector3.zero;
             Parent.MovementEngine.State = PlayerMovementState.Walking;
         }
 
-        public override void Init() { }
-
-        public override void Start(AIModuleBase prev) { }
+        public override void OnEnabled() { }
 
         public override void Tick()
         {
@@ -37,8 +40,6 @@ namespace SwiftNPCs.Core.World.AIModules
                 else
                     Parent.MovementEngine.State = TargetFpc.CurrentMovementState;
             }
-
-            CheckTransitions();
         }
 
         public virtual Vector3 GetMoveDirection()
@@ -47,14 +48,6 @@ namespace SwiftNPCs.Core.World.AIModules
                 return Vector3.zero;
 
             return (Target.Position - Position).normalized;
-        }
-
-        public override void ReceiveData<T>(T data)
-        {
-            if (data is not Player p)
-                return;
-
-            Target = p;
         }
 
         public bool HasTarget => Parent.HasFollowTarget;

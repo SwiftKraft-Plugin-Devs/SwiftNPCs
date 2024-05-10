@@ -15,32 +15,22 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public int CurrentIndex;
 
-        public override void End(AIModuleBase next)
+        public override void Init()
+        {
+            Tags = ["Movement"];
+            InitPath();
+        }
+
+        public override void OnDisabled()
         {
             MovementEngine.WishDir = Vector3.zero;
             MovementEngine.State = PlayerMovementState.Walking;
         }
 
-        public override void Init()
-        {
-            InitPath();
-        }
-
-        public override void ReceiveData<T>(T data)
-        {
-            if (data is not Path p)
-                return;
-
-            Path = p;
-            InitPath();
-        }
-
-        public override void Start(AIModuleBase prev) { }
+        public override void OnEnabled() { }
 
         public override void Tick()
         {
-            CheckTransitions();
-
             if (Path == null)
             {
                 MovementEngine.WishDir = Vector3.zero;

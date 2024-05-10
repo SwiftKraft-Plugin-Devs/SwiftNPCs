@@ -1,6 +1,5 @@
 ﻿using InventorySystem;
 using InventorySystem.Items;
-using InventorySystem.Items.ThrowableProjectiles;
 using PlayerRoles;
 using PluginAPI.Core;
 using SwiftNPCs.Core.Management;
@@ -17,8 +16,6 @@ namespace SwiftNPCs.Core.World
         public const float RetargetTime = 2f;
 
         public readonly List<AIModuleBase> Modules = [];
-
-        public AIModuleBase CurrentModule;
 
         public Player EnemyTarget;
         public Player FollowTarget;
@@ -60,7 +57,8 @@ namespace SwiftNPCs.Core.World
             if (RetargetTimer > 0f)
                 RetargetTimer -= Time.fixedDeltaTime;
 
-            CurrentModule?.Tick();
+            foreach (AIModuleBase module in Modules)
+                module.Tick();
         }
 
         private void OnDestroy()
@@ -117,21 +115,18 @@ namespace SwiftNPCs.Core.World
             Modules.Remove(module);
         }
 
-        public void ActivateModule(int index)
+        public void ActivateModule(int index, bool status)
         {
             if (index < Modules.Count && index >= 0)
-                ActivateModule(Modules[index]);
+                ActivateModule(Modules[index], status);
         }
 
-        public void ActivateModule(AIModuleBase module)
+        public void ActivateModule(AIModuleBase module, bool status)
         {
             if (!Modules.Contains(module))
                 return;
 
-            AIModuleBase temp = CurrentModule;
-            CurrentModule = module;
-            temp?.End(CurrentModule);
-            CurrentModule.Start(temp);
+            module.Enabled = status;
         }
 
         public bool HasLOS(Player p, out Vector3 position, bool prioritizeHead = false)

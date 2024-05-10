@@ -50,25 +50,18 @@ namespace SwiftNPCs.Core.World.AIModules
 
         protected FirearmState State;
 
-        public override void End(AIModuleBase next)
+        public override void OnDisabled()
         {
             IsAiming = false;
         }
 
+        public override void OnEnabled() { }
+
         public override void Init()
         {
+            Tags = ["Attacker"];
             Headshots = Random.Range(0, 2) == 0;
         }
-
-        public override void ReceiveData<T>(T data)
-        {
-            if (data is not Player p)
-                return;
-
-            Target = p;
-        }
-
-        public override void Start(AIModuleBase prev) { }
 
         public override void Tick()
         {
@@ -98,8 +91,6 @@ namespace SwiftNPCs.Core.World.AIModules
 
             if (HasLOS(out Vector3 pos))
                 Parent.MovementEngine.LookPos = pos;
-
-            CheckTransitions();
         }
 
         public Firearm GetFirearm()

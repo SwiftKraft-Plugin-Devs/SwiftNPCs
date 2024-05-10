@@ -27,19 +27,14 @@ namespace SwiftNPCs.Core.World.AIModules
 
         float delay;
 
-        public override void End(AIModuleBase next) { }
-
-        public override void Init() { }
-
-        public override void ReceiveData<T>(T data)
+        public override void Init()
         {
-            if (data is not Player p)
-                return;
-
-            Target = p;
+            Tags = ["Attacker"];
         }
 
-        public override void Start(AIModuleBase prev) { }
+        public override void OnDisabled() { }
+
+        public override void OnEnabled() { }
 
         public override void Tick()
         {
@@ -57,8 +52,6 @@ namespace SwiftNPCs.Core.World.AIModules
 
             if (HasLOS(out Vector3 pos))
                 Parent.MovementEngine.LookPos = pos + Mathf.Clamp(Vector3.Distance(Parent.EnemyTarget.Position, Parent.CameraPosition) * DistanceOffsetScaler, 0f, DistanceOffsetCap) * Vector3.up;
-
-            CheckTransitions();
         }
 
         public void Throw(ThrowableItem item)
