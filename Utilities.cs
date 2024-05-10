@@ -21,19 +21,29 @@ namespace SwiftNPCs
             AIStandIdle i = prof.WorldPlayer.ModuleRunner.AddModule<AIStandIdle>();
             AISimpleFollow f = prof.WorldPlayer.ModuleRunner.AddModule<AISimpleFollow>();
             AIFirearmShoot s = prof.WorldPlayer.ModuleRunner.AddModule<AIFirearmShoot>();
+            AIGrenadeThrow g = prof.WorldPlayer.ModuleRunner.AddModule<AIGrenadeThrow>();
 
             i.AddTransition(f, new AIHasFollowTargetCondition() { Reverse = true }, new AIFindPlayerCondition() { SearchDistance = followDistance });
             i.AddTransition(f, new AIHasFollowTargetCondition(), new AIFollowDistanceCondition() { Reverse = true, Distance = startFollowDistance });
-            i.AddTransition(s, new AIHasEnemyTargetCondition() { Reverse = true }, new AIFindEnemyCondition() { SearchDistance = enemyDistance });
-            i.AddTransition(s, new AIHasEnemyTargetCondition(), new AIEnemyDistanceCondition() { Distance = enemyDistance }, new AIEnemyLOSCondition());
+            i.AddTransition(s, new AIHasItemCategoryCondition() { Category = ItemCategory.Firearm }, new AIHasEnemyTargetCondition() { Reverse = true }, new AIFindEnemyCondition() { SearchDistance = enemyDistance });
+            i.AddTransition(s, new AIHasItemCategoryCondition() { Category = ItemCategory.Firearm }, new AIHasEnemyTargetCondition(), new AIEnemyDistanceCondition() { Distance = enemyDistance }, new AIEnemyLOSCondition());
+            i.AddTransition(g, new AIHasItemCategoryCondition() { Category = ItemCategory.Grenade }, new AIHasEnemyTargetCondition() { Reverse = true }, new AIFindEnemyCondition() { SearchDistance = enemyDistance });
+            i.AddTransition(g, new AIHasItemCategoryCondition() { Category = ItemCategory.Grenade }, new AIEnemyDistanceCondition() { Distance = enemyDistance }, new AIEnemyLOSCondition());
 
             f.AddTransition(i, new AIHasFollowTargetCondition() { Reverse = true });
             f.AddTransition(i, new AIFollowDistanceCondition() { Distance = stopFollowDistance });
+            f.AddTransition(s, new AIHasItemCategoryCondition() { Category = ItemCategory.Firearm }, new AIHasEnemyTargetCondition() { Reverse = true }, new AIFindEnemyCondition() { SearchDistance = enemyDistance });
+            f.AddTransition(s, new AIHasItemCategoryCondition() { Category = ItemCategory.Firearm }, new AIHasEnemyTargetCondition(), new AIEnemyDistanceCondition() { Distance = enemyDistance }, new AIEnemyLOSCondition());
+            f.AddTransition(g, new AIHasItemCategoryCondition() { Category = ItemCategory.Grenade }, new AIHasEnemyTargetCondition() { Reverse = true }, new AIFindEnemyCondition() { SearchDistance = enemyDistance });
+            f.AddTransition(g, new AIHasItemCategoryCondition() { Category = ItemCategory.Grenade }, new AIEnemyDistanceCondition() { Distance = enemyDistance }, new AIEnemyLOSCondition());
 
             s.AddTransition(i, new AIEnemyDistanceCondition() { Reverse = true, Distance = enemyDistance });
-
             s.AddTransition(i, new AIEnemyLOSCondition() { Reverse = true });
             s.AddTransition(i, new AIHasEnemyTargetCondition() { Reverse = true });
+
+            g.AddTransition(i, new AIEnemyDistanceCondition() { Reverse = true, Distance = enemyDistance });
+            g.AddTransition(i, new AIEnemyLOSCondition() { Reverse = true });
+            g.AddTransition(i, new AIHasEnemyTargetCondition() { Reverse = true });
 
             prof.WorldPlayer.ModuleRunner.ActivateModule(i);
 
