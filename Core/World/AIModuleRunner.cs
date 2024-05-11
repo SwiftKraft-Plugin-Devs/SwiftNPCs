@@ -201,5 +201,7 @@ namespace SwiftNPCs.Core.World
         }
 
         public bool HasLOSOnEnemy(out Vector3 pos, bool prioritizeHead = false) { pos = Vector3.zero; return HasEnemyTarget && HasLOS(EnemyTarget, out pos, prioritizeHead); }
+
+        public bool IsEnemy(Player p) => 
     }
 }
