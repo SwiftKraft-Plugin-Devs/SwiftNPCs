@@ -21,6 +21,9 @@ namespace SwiftNPCs
             AIFirearmShoot s = prof.WorldPlayer.ModuleRunner.AddModule<AIFirearmShoot>();
             AIGrenadeThrow g = prof.WorldPlayer.ModuleRunner.AddModule<AIGrenadeThrow>();
 
+            i.SearchRadiusEnemy = 70f;
+            i.SearchRadiusFollow = 20f;
+
             return prof;
         }
 

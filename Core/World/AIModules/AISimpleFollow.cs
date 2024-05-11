@@ -6,6 +6,8 @@ namespace SwiftNPCs.Core.World.AIModules
 {
     public class AISimpleFollow : AIModuleBase
     {
+        public float FollowDistance = 5f;
+        public float FollowRandomRange = 2f;
         public float SprintDistance = 7f;
 
         public Vector3 Position => Parent.ReferenceHub.transform.position;
@@ -18,7 +20,8 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Init()
         {
-            Tags = ["Movement"];
+            Tags = [AIBehaviorBase.MoverTag];
+            FollowDistance -= Random.Range(0f, FollowRandomRange);
         }
 
         public override void OnDisabled()
@@ -31,7 +34,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Tick()
         {
-            if (HasTarget && Enabled)
+            if (Enabled && HasTarget && Parent.GetDistance(Target) >= FollowDistance)
             {
                 Parent.MovementEngine.WishDir = GetMoveDirection();
                 Parent.MovementEngine.LookPos = Target.Camera.position;

@@ -10,7 +10,10 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public Player LookTarget => Parent.FollowTarget;
 
-        public override void Init() { }
+        public override void Init()
+        {
+            Tags = [AIBehaviorBase.DetectorTag];
+        }
 
         public override void OnDisabled() { }
 
@@ -21,18 +24,24 @@ namespace SwiftNPCs.Core.World.AIModules
             if (Parent.RetargetTimer <= 0f)
             {
                 Parent.RetargetTimer = AIModuleRunner.RetargetTime;
+
                 List<Player> players = Player.GetPlayers();
+
                 Player target = null;
                 Player follow = null;
+
                 foreach (Player p in players)
                 {
                     if (Parent.WithinDistance(p, SearchRadiusEnemy) && Parent.CanTarget(p) && (target == null || Parent.GetDistance(target) > Parent.GetDistance(p)))
                         target = p;
-                    else if (Parent.WithinDistance(p, SearchRadiusFollow) && Parent.CanFollow(p) && (follow == null || Parent.GetDistance(follow) > Parent.GetDistance(p)))
+                    else if (!Parent.HasFollowTarget && Parent.WithinDistance(p, SearchRadiusFollow) && Parent.CanFollow(p) && (follow == null || Parent.GetDistance(follow) > Parent.GetDistance(p)))
                         follow = p;
                 }
+
                 Parent.EnemyTarget = target;
-                Parent.FollowTarget = follow;
+
+                if (!Parent.HasFollowTarget)
+                    Parent.FollowTarget = follow;
             }
 
             if (!Enabled)

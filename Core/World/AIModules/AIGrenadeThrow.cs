@@ -29,7 +29,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Init()
         {
-            Tags = ["Attacker"];
+            Tags = [AIBehaviorBase.AttackerTag];
         }
 
         public override void OnDisabled() { }

@@ -9,6 +9,9 @@
             get => enabled;
             set
             {
+                if (enabled == value)
+                    return;
+
                 enabled = value;
 
                 if (enabled)

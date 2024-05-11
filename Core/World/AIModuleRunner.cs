@@ -118,18 +118,19 @@ namespace SwiftNPCs.Core.World
             Modules.Remove(module);
         }
 
-        public void ActivateModule(int index, bool status)
+        public void ChangeModule(int index, bool status)
         {
             if (index < Modules.Count && index >= 0)
-                ActivateModule(Modules[index], status);
+                ChangeModule(Modules[index], status);
         }
 
-        public void ActivateModule(AIModuleBase module, bool status)
-        {
-            if (!Modules.Contains(module))
-                return;
+        public void ChangeModule(AIModuleBase module, bool status) => module.Enabled = status;
 
-            module.Enabled = status;
+        public void ChangeModule(string tag, bool status)
+        {
+            foreach (AIModuleBase mod in Modules)
+                if (mod.HasTag(tag))
+                    ChangeModule(mod, status);
         }
 
         public bool HasLOS(Player p, out Vector3 position, bool prioritizeHead = false)

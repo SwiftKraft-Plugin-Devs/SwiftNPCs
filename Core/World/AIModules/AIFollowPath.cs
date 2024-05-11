@@ -17,7 +17,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Init()
         {
-            Tags = ["Movement"];
+            Tags = [AIBehaviorBase.MoverTag];
             InitPath();
         }
 
