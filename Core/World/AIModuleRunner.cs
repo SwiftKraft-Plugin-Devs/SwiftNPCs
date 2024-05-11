@@ -1,7 +1,9 @@
-﻿using InventorySystem;
+﻿using CustomPlayerEffects;
+using InventorySystem;
 using InventorySystem.Items;
 using PlayerRoles;
 using PluginAPI.Core;
+using SwiftAPI.API.ServerVariables;
 using SwiftNPCs.Core.Management;
 using SwiftNPCs.Core.World.AIModules;
 using System;
@@ -13,7 +15,7 @@ namespace SwiftNPCs.Core.World
 {
     public class AIModuleRunner : AIAddon
     {
-        public const float RetargetTime = 2f;
+        public const float RetargetTime = 1f;
 
         public readonly List<AIModuleBase> Modules = [];
 
@@ -33,7 +35,8 @@ namespace SwiftNPCs.Core.World
 
         public RoleTypeId Role => ReferenceHub.roleManager.CurrentRole.RoleTypeId;
 
-        protected float RetargetTimer;
+        public float RetargetTimer;
+
         protected float AimOffset;
 
         private void Start()
@@ -202,6 +205,38 @@ namespace SwiftNPCs.Core.World
 
         public bool HasLOSOnEnemy(out Vector3 pos, bool prioritizeHead = false) { pos = Vector3.zero; return HasEnemyTarget && HasLOS(EnemyTarget, out pos, prioritizeHead); }
 
-        public bool IsEnemy(Player p) => 
+        public const string NoKOS = "npckos";
+
+        public static bool DisableKOS => ServerVariableManager.TryGetVar(NoKOS, out ServerVariable svar) && bool.TryParse(svar.Value, out bool v) && !v;
+
+        public bool CanTarget(Player p) =>
+            p != null
+            && p.IsAlive
+            && !p.IsDisarmed
+            && !p.IsGodModeEnabled
+            && !IsInvisible(p)
+            && IsEnemy(p)
+            && (!DisableKOS || !IsCivilian(p) || IsArmed(p))
+            && HasLOS(p, out _);
+
+        public bool CanFollow(Player p) =>
+            p != null
+            && p.IsAlive
+            && !p.IsGodModeEnabled
+            && !IsInvisible(p)
+            && !IsEnemy(p)
+            && HasLOS(p, out _);
+
+        public bool IsCivilian(Player p) => p.Role == RoleTypeId.ClassD || p.Role == RoleTypeId.Scientist;
+
+        public bool IsArmed(Player p) => p.CurrentItem != null && p.CurrentItem.Category == ItemCategory.Firearm;
+
+        public bool IsInvisible(Player p) => p.EffectsManager.TryGetEffect(out Invisible inv) && inv.IsEnabled;
+
+        public bool IsEnemy(Player p) => p.Role.GetFaction() != Role.GetFaction();
+
+        public float GetDistance(Player p) => Vector3.Distance(Position, p.Position);
+
+        public bool WithinDistance(Player p, float dist) => GetDistance(p) <= dist;
     }
 }

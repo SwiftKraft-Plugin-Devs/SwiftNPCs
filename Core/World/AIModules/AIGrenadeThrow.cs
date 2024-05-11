@@ -38,6 +38,9 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Tick()
         {
+            if (!Enabled)
+                return;
+
             if (delay > 0f)
                 delay -= Time.fixedDeltaTime;
 

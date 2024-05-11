@@ -5,7 +5,8 @@ namespace SwiftNPCs.Core.World.AIModules
 {
     public class AIScanner : AIModuleBase
     {
-        public float SearchRadius;
+        public float SearchRadiusEnemy = 70f;
+        public float SearchRadiusFollow = 20f;
 
         public Player LookTarget => Parent.FollowTarget;
 
@@ -17,11 +18,21 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Tick()
         {
-            List<Player> players = Player.GetPlayers();
-
-            foreach (Player p in players)
+            if (Parent.RetargetTimer <= 0f)
             {
-                if ()
+                Parent.RetargetTimer = AIModuleRunner.RetargetTime;
+                List<Player> players = Player.GetPlayers();
+                Player target = null;
+                Player follow = null;
+                foreach (Player p in players)
+                {
+                    if (Parent.WithinDistance(p, SearchRadiusEnemy) && Parent.CanTarget(p) && (target == null || Parent.GetDistance(target) > Parent.GetDistance(p)))
+                        target = p;
+                    else if (Parent.WithinDistance(p, SearchRadiusFollow) && Parent.CanFollow(p) && (follow == null || Parent.GetDistance(follow) > Parent.GetDistance(p)))
+                        follow = p;
+                }
+                Parent.EnemyTarget = target;
+                Parent.FollowTarget = follow;
             }
 
             if (!Enabled)

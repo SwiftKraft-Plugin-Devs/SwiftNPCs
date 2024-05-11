@@ -65,6 +65,9 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Tick()
         {
+            if (!Enabled)
+                return;
+
             if (TryGetFirearm(out Firearm f))
             {
                 if (Timer > 0f)

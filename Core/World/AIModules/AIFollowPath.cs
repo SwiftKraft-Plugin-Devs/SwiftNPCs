@@ -31,6 +31,9 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Tick()
         {
+            if (!Enabled)
+                return;
+
             if (Path == null)
             {
                 MovementEngine.WishDir = Vector3.zero;

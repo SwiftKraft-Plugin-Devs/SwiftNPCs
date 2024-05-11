@@ -31,7 +31,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Tick()
         {
-            if (HasTarget)
+            if (HasTarget && Enabled)
             {
                 Parent.MovementEngine.WishDir = GetMoveDirection();
                 Parent.MovementEngine.LookPos = Target.Camera.position;
