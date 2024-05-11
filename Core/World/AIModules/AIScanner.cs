@@ -27,6 +27,15 @@ namespace SwiftNPCs.Core.World.AIModules
 
                 List<Player> players = Player.GetPlayers();
 
+                if (!Parent.CanTarget(Parent.EnemyTarget))
+                    Parent.EnemyTarget = null;
+
+                if (!Parent.CanFollow(Parent.FollowTarget))
+                    Parent.FollowTarget = null;
+
+                Log.Info("Follow: " + Parent.FollowTarget?.DisplayNickname);
+                Log.Info("Enemy: " + Parent.EnemyTarget?.DisplayNickname);
+
                 Player target = null;
                 Player follow = null;
 
@@ -40,15 +49,9 @@ namespace SwiftNPCs.Core.World.AIModules
 
                 Parent.EnemyTarget = target;
 
-                if (!Parent.HasFollowTarget)
+                if (follow != null)
                     Parent.FollowTarget = follow;
             }
-
-            if (!Enabled)
-                return;
-
-            if (LookTarget != null)
-                Parent.MovementEngine.LookPos = LookTarget.Camera.position;
         }
     }
 }

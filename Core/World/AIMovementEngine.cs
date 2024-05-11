@@ -67,7 +67,7 @@ namespace SwiftNPCs.Core.World
         public Vector3 LookDir
         {
             get => TargetLookRot * Vector3.forward;
-            set => TargetLookRot = Quaternion.LookRotation(value.normalized, Vector3.up);
+            set => TargetLookRot = value != Vector3.zero ? Quaternion.LookRotation(value.normalized, Vector3.up) : Quaternion.identity;
         }
         public Vector3 LookPos
         {
@@ -75,7 +75,7 @@ namespace SwiftNPCs.Core.World
             set => LookDir = (value - ReferenceHub.PlayerCameraReference.position).normalized;
         }
 
-        public Quaternion TargetLookRot;
+        public Quaternion TargetLookRot { get; set; }
 
         public PlayerMovementState State
         {

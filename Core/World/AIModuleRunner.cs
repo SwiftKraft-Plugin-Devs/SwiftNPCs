@@ -8,6 +8,7 @@ using SwiftNPCs.Core.Management;
 using SwiftNPCs.Core.World.AIModules;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -118,19 +119,64 @@ namespace SwiftNPCs.Core.World
             Modules.Remove(module);
         }
 
-        public void ChangeModule(int index, bool status)
+        public void ChangeModule(bool status)
         {
-            if (index < Modules.Count && index >= 0)
-                ChangeModule(Modules[index], status);
+            foreach (AIModuleBase mod in Modules)
+                ChangeModule(mod, status);
         }
 
-        public void ChangeModule(AIModuleBase module, bool status) => module.Enabled = status;
+        public bool ChangeModule(int index, bool status)
+        {
+            if (index < Modules.Count && index >= 0)
+                return ChangeModule(Modules[index], status);
+            return false;
+        }
+
+        public bool ChangeModule(AIModuleBase module, bool status)
+        {
+            if (status && !module.Condition())
+                return false;
+            module.Enabled = status;
+            return true;
+        }
 
         public void ChangeModule(string tag, bool status)
         {
             foreach (AIModuleBase mod in Modules)
                 if (mod.HasTag(tag))
                     ChangeModule(mod, status);
+        }
+
+        public AIModuleBase[] GetModulesByTag(string tag) => [.. Modules.FindAll((a) => a.HasTag(tag))];
+
+        public AIModuleBase[] GetModulesByTagRandom(string tag) => GetModulesByTag(tag).OrderBy(_ => Guid.NewGuid()).ToArray();
+
+        public AIModuleBase GetRandomModuleByTag(string tag) => Modules.FindAll((a) => a.HasTag(tag)).RandomItem();
+
+        public bool ActivateRandomModuleByTag(string tag, out AIModuleBase mod, bool single = false)
+        {
+            if (single)
+                ChangeModule(tag, false);
+
+            AIModuleBase[] mods = GetModulesByTagRandom(tag);
+
+            foreach (AIModuleBase m in mods)
+                if (ChangeModule(m, true))
+                {
+                    mod = m;
+                    return true;
+                }
+
+            mod = null;
+            return false;
+        }
+
+        public bool HasItemOfCategory(ItemCategory cat)
+        {
+            foreach (ItemBase item in Inventory.UserInventory.Items.Values)
+                if (item.Category == cat)
+                    return true;
+            return false;
         }
 
         public bool HasLOS(Player p, out Vector3 position, bool prioritizeHead = false)
@@ -212,6 +258,7 @@ namespace SwiftNPCs.Core.World
 
         public bool CanTarget(Player p) =>
             p != null
+            && p.ReferenceHub != ReferenceHub
             && p.IsAlive
             && !p.IsDisarmed
             && !p.IsGodModeEnabled
@@ -222,6 +269,7 @@ namespace SwiftNPCs.Core.World
 
         public bool CanFollow(Player p) =>
             p != null
+            && p.ReferenceHub != ReferenceHub
             && p.IsAlive
             && !p.IsGodModeEnabled
             && !IsInvisible(p)

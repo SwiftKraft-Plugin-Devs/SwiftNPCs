@@ -1,4 +1,5 @@
 ﻿using PlayerRoles.FirstPersonControl;
+using PluginAPI.Core;
 using SwiftNPCs.Core.Pathing;
 using UnityEngine;
 using UserSettings;
@@ -44,6 +45,7 @@ namespace SwiftNPCs.Core.World.AIModules
             {
                 MovementEngine.WishDir = GetDirection(waypoint);
                 MovementEngine.LookPos = waypoint;
+                Log.Info("Looking path");
 
                 if (!Path.TryGetDistance(Position, CurrentIndex, out float dist) || dist < Path.WaypointRadius)
                 {

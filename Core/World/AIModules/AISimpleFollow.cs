@@ -43,6 +43,8 @@ namespace SwiftNPCs.Core.World.AIModules
                 else
                     Parent.MovementEngine.State = TargetFpc.CurrentMovementState;
             }
+            else
+                Parent.MovementEngine.WishDir = Vector3.zero;
         }
 
         public virtual Vector3 GetMoveDirection()

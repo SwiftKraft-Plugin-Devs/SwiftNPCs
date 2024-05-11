@@ -2,6 +2,8 @@
 {
     public abstract class AIModuleBase
     {
+        public virtual float Duration => 5f;
+
         protected string[] Tags = [];
 
         public bool Enabled
@@ -23,7 +25,7 @@
 
         public AIModuleRunner Parent { get; set; }
 
-        private bool enabled;
+        private bool enabled = true;
 
         public abstract void Init();
 
@@ -32,6 +34,8 @@
         public abstract void OnDisabled();
 
         public abstract void Tick();
+
+        public virtual bool Condition() => true;
 
         public bool HasTag(string tag) => Tags.Contains(tag);
     }

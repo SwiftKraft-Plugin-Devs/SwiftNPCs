@@ -50,6 +50,8 @@ namespace SwiftNPCs.Core.World.AIModules
 
         protected FirearmState State;
 
+        public override bool Condition() => Parent.HasItemOfCategory(ItemCategory.Firearm);
+
         public override void OnDisabled()
         {
             IsAiming = false;
@@ -65,7 +67,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Tick()
         {
-            if (!Enabled)
+            if (!Enabled || !Parent.HasEnemyTarget)
                 return;
 
             if (TryGetFirearm(out Firearm f))
@@ -93,7 +95,10 @@ namespace SwiftNPCs.Core.World.AIModules
             }
 
             if (HasLOS(out Vector3 pos))
+            {
                 Parent.MovementEngine.LookPos = pos;
+                Log.Info("Looking firearm");
+            }
         }
 
         public Firearm GetFirearm()
@@ -115,7 +120,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
             if (f == null || State != FirearmState.Standby || !f.EquipperModule.Standby || !f.ActionModule.Standby || !f.AdsModule.Standby || !f.AmmoManagerModule.Standby || !f.HitregModule.Standby || f.Status.Ammo >= f.AmmoManagerModule.MaxAmmo)
                 return false;
-
+            // Temp
             Parent.Inventory.ServerAddAmmo(f.AmmoType, f.AmmoManagerModule.MaxAmmo);
             f.AmmoManagerModule.ServerTryReload();
             new RequestMessage(f.ItemSerial, RequestType.Reload).SendToAuthenticated();

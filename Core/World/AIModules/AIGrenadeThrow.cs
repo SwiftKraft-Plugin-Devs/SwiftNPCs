@@ -8,6 +8,8 @@ namespace SwiftNPCs.Core.World.AIModules
 {
     public class AIGrenadeThrow : AIModuleBase
     {
+        public override float Duration => 2.5f;
+
         public Inventory Inventory => Parent.Inventory;
 
         public Player Target
@@ -32,13 +34,15 @@ namespace SwiftNPCs.Core.World.AIModules
             Tags = [AIBehaviorBase.AttackerTag];
         }
 
+        public override bool Condition() => Parent.HasItemOfCategory(ItemCategory.Grenade);
+
         public override void OnDisabled() { }
 
         public override void OnEnabled() { }
 
         public override void Tick()
         {
-            if (!Enabled)
+            if (!Enabled || !Parent.HasEnemyTarget)
                 return;
 
             if (delay > 0f)
@@ -54,7 +58,10 @@ namespace SwiftNPCs.Core.World.AIModules
             }
 
             if (HasLOS(out Vector3 pos))
+            {
                 Parent.MovementEngine.LookPos = pos + Mathf.Clamp(Vector3.Distance(Parent.EnemyTarget.Position, Parent.CameraPosition) * DistanceOffsetScaler, 0f, DistanceOffsetCap) * Vector3.up;
+                Log.Info("Looking grenade");
+            }
         }
 
         public void Throw(ThrowableItem item)
