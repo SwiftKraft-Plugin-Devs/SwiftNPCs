@@ -16,22 +16,6 @@
         {
             if (!Enabled)
                 return;
-
-            if (Parent.HasEnemyTarget)
-            {
-                Parent.ChangeModule(AttackerTag, true);
-                Parent.ChangeModule(MoverTag, false);
-            }
-            else if (Parent.HasFollowTarget)
-            {
-                Parent.ChangeModule(AttackerTag, false);
-                Parent.ChangeModule(MoverTag, true);
-            }
-            else
-            {
-                Parent.ChangeModule(AttackerTag, false);
-                Parent.ChangeModule(MoverTag, false);
-            }
         }
     }
 }
