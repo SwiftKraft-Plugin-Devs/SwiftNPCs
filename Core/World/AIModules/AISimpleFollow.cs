@@ -34,14 +34,18 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Tick()
         {
-            if (Enabled && HasTarget && Parent.GetDistance(Target) >= FollowDistance)
+            if (Enabled && HasTarget)
             {
-                Parent.MovementEngine.WishDir = GetMoveDirection();
                 Parent.MovementEngine.LookPos = Target.Camera.position;
-                if (DistanceToTarget > SprintDistance)
-                    Parent.MovementEngine.State = PlayerMovementState.Sprinting;
-                else
-                    Parent.MovementEngine.State = TargetFpc.CurrentMovementState;
+
+                if (Parent.GetDistance(Target) >= FollowDistance)
+                {
+                    Parent.MovementEngine.WishDir = GetMoveDirection();
+                    if (DistanceToTarget > SprintDistance)
+                        Parent.MovementEngine.State = PlayerMovementState.Sprinting;
+                    else
+                        Parent.MovementEngine.State = TargetFpc.CurrentMovementState;
+                }
             }
             else
                 Parent.MovementEngine.WishDir = Vector3.zero;
