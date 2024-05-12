@@ -8,7 +8,7 @@ namespace SwiftNPCs.Core.World.AIModules
 {
     public class AIGrenadeThrow : AIModuleBase
     {
-        public override float Duration => 2.5f;
+        public override float Duration => 2f;
 
         public Inventory Inventory => Parent.Inventory;
 
@@ -20,7 +20,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public bool HasLOS(out Vector3 pos) => Parent.HasLOSOnEnemy(out pos);
 
-        public float Delay = 3f;
+        public float Delay = 1f;
         public float DistanceOffsetScaler = 0.25f;
         public float DistanceOffsetCap = 10f;
         public float RightClickDistance = 5f;

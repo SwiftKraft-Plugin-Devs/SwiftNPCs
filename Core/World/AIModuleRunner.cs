@@ -164,7 +164,6 @@ namespace SwiftNPCs.Core.World
                 if (ChangeModule(m, true))
                 {
                     mod = m;
-                    Log.Info("Activating module: " + mod?.GetType());
                     return true;
                 }
             mod = null;

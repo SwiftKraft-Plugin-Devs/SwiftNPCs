@@ -47,6 +47,8 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public bool Headshots;
 
+        public float HipfireRange = 7f;
+
         protected float Timer;
 
         protected FirearmState State;
@@ -71,7 +73,7 @@ namespace SwiftNPCs.Core.World.AIModules
             if (!Enabled)
                 return;
 
-            if (!Parent.HasEnemyTarget)
+            if (!HasTarget)
             {
                 IsAiming = false;
                 return;
@@ -133,7 +135,7 @@ namespace SwiftNPCs.Core.World.AIModules
             if (f.Status.Ammo <= 0 || State != FirearmState.Standby || !f.EquipperModule.Standby || !f.ActionModule.Standby || !f.AdsModule.Standby || !f.AmmoManagerModule.Standby || !f.HitregModule.Standby)
                 return false;
 
-            IsAiming = true;
+            IsAiming = HasTarget && (Vector3.Distance(Target.Position, Parent.CameraPosition) > HipfireRange);
 
             State = FirearmState.Shooting;
             Timer = 1f / f.ActionModule.CyclicRate;
