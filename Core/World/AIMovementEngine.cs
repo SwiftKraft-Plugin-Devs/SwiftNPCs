@@ -61,7 +61,7 @@ namespace SwiftNPCs.Core.World
         }
 
         public float SpeedOverride = -1f;
-        public float LookSpeed = 90f;
+        public float LookSpeed = 180f;
 
         public Vector3 WishDir;
         public Vector3 LookDir

@@ -16,7 +16,7 @@ namespace SwiftNPCs.Core.World
 {
     public class AIModuleRunner : AIAddon
     {
-        public const float RetargetTime = 1f;
+        public const float RetargetTime = 0.25f;
 
         public readonly List<AIModuleBase> Modules = [];
 

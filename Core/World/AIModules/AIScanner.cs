@@ -33,9 +33,6 @@ namespace SwiftNPCs.Core.World.AIModules
                 if (!Parent.CanFollow(Parent.FollowTarget))
                     Parent.FollowTarget = null;
 
-                Log.Info("Follow: " + Parent.FollowTarget?.DisplayNickname);
-                Log.Info("Enemy: " + Parent.EnemyTarget?.DisplayNickname);
-
                 Player target = null;
                 Player follow = null;
 
