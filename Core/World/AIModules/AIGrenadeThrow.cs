@@ -18,13 +18,13 @@ namespace SwiftNPCs.Core.World.AIModules
             set => Parent.EnemyTarget = value;
         }
 
-        public bool HasLOS(out Vector3 pos) => Parent.HasLOSOnEnemy(out pos, RightClick);
+        public bool HasLOS(out Vector3 pos) => Parent.HasLOSOnEnemy(out pos);
 
         public float Delay = 3f;
         public float DistanceOffsetScaler = 0.25f;
         public float DistanceOffsetCap = 10f;
+        public float RightClickDistance = 5f;
 
-        public bool RightClick;
         public bool InfiniteGrenades = false;
 
         float delay;
@@ -51,11 +51,7 @@ namespace SwiftNPCs.Core.World.AIModules
             if (TryGetThrowable(out ThrowableItem throwable))
                 Throw(throwable);
             else
-            {
-                foreach (ItemBase item in Parent.Inventory.UserInventory.Items.Values)
-                    if (item is ThrowableItem t)
-                        Parent.Inventory.ServerSelectItem(t.ItemSerial);
-            }
+                Parent.EquipItem<ThrowableItem>();
 
             if (HasLOS(out Vector3 pos))
                 Parent.MovementEngine.LookPos = pos + Mathf.Clamp(Vector3.Distance(Parent.EnemyTarget.Position, Parent.CameraPosition) * DistanceOffsetScaler, 0f, DistanceOffsetCap) * Vector3.up;
@@ -67,10 +63,14 @@ namespace SwiftNPCs.Core.World.AIModules
                 return;
 
             delay = Delay;
+
+            bool rClick = Parent.GetDistance(Parent.EnemyTarget) <= RightClickDistance;
+
             if (InfiniteGrenades)
                 Parent.Core.Profile.Player.AddItem(item.ItemTypeId);
+
             item.ServerProcessInitiation();
-            item.ServerProcessThrowConfirmation(!RightClick, Parent.CameraPosition, Parent.ReferenceHub.transform.rotation, Vector3.zero);
+            item.ServerProcessThrowConfirmation(!rClick, Parent.CameraPosition, Parent.ReferenceHub.transform.rotation, Vector3.zero);
         }
 
         public ThrowableItem GetThrowable()

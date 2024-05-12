@@ -1,6 +1,7 @@
 ﻿using CustomPlayerEffects;
 using InventorySystem;
 using InventorySystem.Items;
+using InventorySystem.Items.ThrowableProjectiles;
 using PlayerRoles;
 using PluginAPI.Core;
 using SwiftAPI.API.ServerVariables;
@@ -155,18 +156,17 @@ namespace SwiftNPCs.Core.World
 
         public bool ActivateRandomModuleByTag(string tag, out AIModuleBase mod, bool single = false)
         {
+            AIModuleBase[] mods = GetModulesByTagRandom(tag);
             if (single)
                 ChangeModule(tag, false);
-
-            AIModuleBase[] mods = GetModulesByTagRandom(tag);
 
             foreach (AIModuleBase m in mods)
                 if (ChangeModule(m, true))
                 {
                     mod = m;
+                    Log.Info("Activating module: " + mod?.GetType());
                     return true;
                 }
-
             mod = null;
             return false;
         }
@@ -216,6 +216,14 @@ namespace SwiftNPCs.Core.World
 
             position = Vector3.zero;
             return false;
+        }
+
+        public void EquipItem<T>() where T : ItemBase
+        {
+            Inventory.CurInstance = null;
+            foreach (ItemBase item in Inventory.UserInventory.Items.Values)
+                if (item is T t)
+                    Inventory.ServerSelectItem(t.ItemSerial);
         }
 
         public bool HasFollowTarget
@@ -278,7 +286,7 @@ namespace SwiftNPCs.Core.World
 
         public bool IsCivilian(Player p) => p.Role == RoleTypeId.ClassD || p.Role == RoleTypeId.Scientist;
 
-        public bool IsArmed(Player p) => p.CurrentItem != null && p.CurrentItem.Category == ItemCategory.Firearm;
+        public bool IsArmed(Player p) => p.CurrentItem != null && (p.CurrentItem.Category == ItemCategory.Firearm || p.CurrentItem.Category == ItemCategory.Grenade);
 
         public bool IsInvisible(Player p) => p.EffectsManager.TryGetEffect(out Invisible inv) && inv.IsEnabled;
 

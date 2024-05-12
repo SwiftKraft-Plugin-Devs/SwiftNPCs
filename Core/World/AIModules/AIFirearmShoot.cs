@@ -2,6 +2,7 @@
 using InventorySystem.Items;
 using InventorySystem.Items.Firearms;
 using InventorySystem.Items.Firearms.BasicMessages;
+using InventorySystem.Items.ThrowableProjectiles;
 using PluginAPI.Core;
 using UnityEngine;
 using Utils.Networking;
@@ -94,11 +95,7 @@ namespace SwiftNPCs.Core.World.AIModules
                     IsAiming = false;
             }
             else
-            {
-                foreach (ItemBase item in Parent.Inventory.UserInventory.Items.Values)
-                    if (item is Firearm firearm)
-                        Parent.Inventory.ServerSelectItem(firearm.ItemSerial);
-            }
+                Parent.EquipItem<Firearm>();
 
             if (HasLOS(out Vector3 pos))
                 Parent.MovementEngine.LookPos = pos;
