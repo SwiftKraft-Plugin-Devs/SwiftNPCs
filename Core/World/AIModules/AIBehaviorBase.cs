@@ -19,12 +19,15 @@ namespace SwiftNPCs.Core.World.AIModules
         public override void Tick()
         {
             if (Timer > 0f)
+            {
                 Timer -= Time.fixedDeltaTime;
+                return;
+            }
 
             if (!Enabled)
                 return;
 
-            if (Timer <= 0f && Parent.HasEnemyTarget && Parent.ActivateRandomModuleByTag(AttackerTag, out AIModuleBase mod, true))
+            if (Parent.HasEnemyTarget && Parent.ActivateRandomModuleByTag(AttackerTag, out AIModuleBase mod, true))
             {
                 Timer = mod.Duration;
                 Parent.ChangeModule(MoverTag, false);

@@ -20,7 +20,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public bool HasLOS(out Vector3 pos) => Parent.HasLOSOnEnemy(out pos, RightClick);
 
-        public float Delay = 1f;
+        public float Delay = 3f;
         public float DistanceOffsetScaler = 0.25f;
         public float DistanceOffsetCap = 10f;
 
@@ -34,7 +34,7 @@ namespace SwiftNPCs.Core.World.AIModules
             Tags = [AIBehaviorBase.AttackerTag];
         }
 
-        public override bool Condition() => Parent.HasItemOfCategory(ItemCategory.Grenade);
+        public override bool Condition() => Parent.HasItemOfCategory(ItemCategory.Grenade) && delay <= 0f;
 
         public override void OnDisabled() { }
 
@@ -42,11 +42,11 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Tick()
         {
-            if (!Enabled || !Parent.HasEnemyTarget)
-                return;
-
             if (delay > 0f)
                 delay -= Time.fixedDeltaTime;
+
+            if (!Enabled || !Parent.HasEnemyTarget)
+                return;
 
             if (TryGetThrowable(out ThrowableItem throwable))
                 Throw(throwable);
@@ -58,10 +58,7 @@ namespace SwiftNPCs.Core.World.AIModules
             }
 
             if (HasLOS(out Vector3 pos))
-            {
                 Parent.MovementEngine.LookPos = pos + Mathf.Clamp(Vector3.Distance(Parent.EnemyTarget.Position, Parent.CameraPosition) * DistanceOffsetScaler, 0f, DistanceOffsetCap) * Vector3.up;
-                Log.Info("Looking grenade");
-            }
         }
 
         public void Throw(ThrowableItem item)

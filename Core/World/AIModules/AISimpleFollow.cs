@@ -6,8 +6,8 @@ namespace SwiftNPCs.Core.World.AIModules
 {
     public class AISimpleFollow : AIModuleBase
     {
-        public float FollowDistance = 3.5f;
-        public float FollowRandomRange = 3f;
+        public float FollowDistance = 4f;
+        public float FollowRandomRange = 2f;
         public float SprintDistance = 7f;
 
         public Vector3 Position => Parent.ReferenceHub.transform.position;

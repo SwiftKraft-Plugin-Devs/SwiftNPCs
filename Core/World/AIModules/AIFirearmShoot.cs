@@ -67,8 +67,14 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Tick()
         {
-            if (!Enabled || !Parent.HasEnemyTarget)
+            if (!Enabled)
                 return;
+
+            if (!Parent.HasEnemyTarget)
+            {
+                IsAiming = false;
+                return;
+            }
 
             if (TryGetFirearm(out Firearm f))
             {
@@ -95,10 +101,7 @@ namespace SwiftNPCs.Core.World.AIModules
             }
 
             if (HasLOS(out Vector3 pos))
-            {
                 Parent.MovementEngine.LookPos = pos;
-                Log.Info("Looking firearm");
-            }
         }
 
         public Firearm GetFirearm()
