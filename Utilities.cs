@@ -46,6 +46,7 @@ namespace SwiftNPCs
             AIScanner i = prof.WorldPlayer.ModuleRunner.AddModule<AIScanner>();
             AIFirearmShoot s = prof.WorldPlayer.ModuleRunner.AddModule<AIFirearmShoot>();
             AIGrenadeThrow g = prof.WorldPlayer.ModuleRunner.AddModule<AIGrenadeThrow>();
+            prof.WorldPlayer.ModuleRunner.AddModule<AIBehaviorBase>();
 
             g.InfiniteGrenades = true;
 

@@ -24,13 +24,13 @@ namespace SwiftNPCs.Core.World.AIModules
         {
             get
             {
-                if (TryGetFirearm(out Firearm f))
+                if (Parent.TryGetItem(out Firearm f))
                     return f.AdsModule.ServerAds;
                 return false;
             }
             set
             {
-                if (TryGetFirearm(out Firearm f))
+                if (Parent.TryGetItem(out Firearm f))
                 {
                     if (value == f.AdsModule.ServerAds)
                         return;
@@ -79,7 +79,7 @@ namespace SwiftNPCs.Core.World.AIModules
                 return;
             }
 
-            if (TryGetFirearm(out Firearm f))
+            if (Parent.TryGetItem(out Firearm f))
             {
                 if (Timer > 0f)
                     Timer -= Time.fixedDeltaTime;
@@ -101,19 +101,6 @@ namespace SwiftNPCs.Core.World.AIModules
 
             if (HasLOS(out Vector3 pos))
                 Parent.MovementEngine.LookPos = pos;
-        }
-
-        public Firearm GetFirearm()
-        {
-            if (Parent.CurrentItem is Firearm f)
-                return f;
-            return null;
-        }
-
-        public bool TryGetFirearm(out Firearm firearm)
-        {
-            firearm = GetFirearm();
-            return firearm != null;
         }
 
         public bool StartReload(Firearm f)

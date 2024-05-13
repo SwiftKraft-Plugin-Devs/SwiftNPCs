@@ -1,8 +1,9 @@
 ﻿using CustomPlayerEffects;
 using InventorySystem;
 using InventorySystem.Items;
-using InventorySystem.Items.ThrowableProjectiles;
+using InventorySystem.Items.Firearms;
 using PlayerRoles;
+using PlayerStatsSystem;
 using PluginAPI.Core;
 using SwiftAPI.API.ServerVariables;
 using SwiftNPCs.Core.Management;
@@ -17,6 +18,9 @@ namespace SwiftNPCs.Core.World
 {
     public class AIModuleRunner : AIAddon
     {
+        public static bool Frozen => ServerVariableManager.TryGetVar(FrozenVar, out ServerVariable v) && bool.TryParse(v.Value, out bool b) && b;
+
+        public const string FrozenVar = "freezenpcs";
         public const float RetargetTime = 0.25f;
 
         public readonly List<AIModuleBase> Modules = [];
@@ -36,6 +40,16 @@ namespace SwiftNPCs.Core.World
         public Vector3 CameraPosition => ReferenceHub.PlayerCameraReference.position;
 
         public RoleTypeId Role => ReferenceHub.roleManager.CurrentRole.RoleTypeId;
+
+        public HealthStat Health
+        {
+            get
+            {
+                if (!ReferenceHub.playerStats.TryGetModule(out HealthStat stat))
+                    return null;
+                return stat;
+            }
+        }
 
         public float RetargetTimer;
 
@@ -59,6 +73,9 @@ namespace SwiftNPCs.Core.World
 
         private void FixedUpdate()
         {
+            if (Frozen)
+                return;
+
             if (RetargetTimer > 0f)
                 RetargetTimer -= Time.fixedDeltaTime;
 
@@ -217,12 +234,42 @@ namespace SwiftNPCs.Core.World
             return false;
         }
 
-        public void EquipItem<T>() where T : ItemBase
+        public bool EquipItem<T>() where T : ItemBase
         {
             Inventory.CurInstance = null;
+            if (HasItem(out T t))
+            {
+                Inventory.ServerSelectItem(t.ItemSerial);
+                return true;
+            }
+            return false;
+        }
+
+        public bool HasItem<T>(out T it) where T : ItemBase
+        {
             foreach (ItemBase item in Inventory.UserInventory.Items.Values)
                 if (item is T t)
-                    Inventory.ServerSelectItem(t.ItemSerial);
+                {
+                    it = t;
+                    return true;
+                }
+            it = null;
+            return false;
+        }
+
+        public bool HasItem<T>() where T : ItemBase => HasItem<T>(out _);
+
+        public T GetItem<T>() where T : ItemBase
+        {
+            if (CurrentItem is T t)
+                return t;
+            return null;
+        }
+
+        public bool TryGetItem<T>(out T item) where T : ItemBase
+        {
+            item = GetItem<T>();
+            return item != null;
         }
 
         public bool HasFollowTarget

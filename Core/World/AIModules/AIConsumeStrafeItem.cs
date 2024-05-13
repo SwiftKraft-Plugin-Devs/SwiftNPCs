@@ -1,6 +1,12 @@
-﻿namespace SwiftNPCs.Core.World.AIModules
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SwiftNPCs.Core.World.AIModules
 {
-    public class AIFirearmStrafeShoot : AIFirearmShoot
+    public class AIConsumeStrafeItem : AIConsumeItem
     {
         public Strafer Strafer { get; private set; }
 
@@ -22,7 +28,7 @@
         {
             base.Tick();
 
-            if (!Enabled || !HasTarget)
+            if (!Enabled)
                 return;
 
             Strafer.Tick();

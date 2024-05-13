@@ -48,7 +48,7 @@ namespace SwiftNPCs.Core.World.AIModules
             if (!Enabled || !Parent.HasEnemyTarget)
                 return;
 
-            if (TryGetThrowable(out ThrowableItem throwable))
+            if (Parent.TryGetItem(out ThrowableItem throwable))
                 Throw(throwable);
             else
                 Parent.EquipItem<ThrowableItem>();
@@ -71,19 +71,6 @@ namespace SwiftNPCs.Core.World.AIModules
 
             item.ServerProcessInitiation();
             item.ServerProcessThrowConfirmation(!rClick, Parent.CameraPosition, Parent.ReferenceHub.transform.rotation, Vector3.zero);
-        }
-
-        public ThrowableItem GetThrowable()
-        {
-            if (Parent.CurrentItem is ThrowableItem item)
-                return item;
-            return null;
-        }
-
-        public bool TryGetThrowable(out ThrowableItem item)
-        {
-            item = GetThrowable();
-            return item != null;
         }
     }
 }
