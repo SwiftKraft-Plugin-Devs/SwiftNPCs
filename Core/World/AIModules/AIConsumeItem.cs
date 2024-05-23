@@ -57,6 +57,9 @@ namespace SwiftNPCs.Core.World.AIModules
                 Consume(con);
             else
                 Parent.EquipItem<Consumable>();
+
+            if (Parent.HasLOSOnEnemy(out Vector3 pos))
+                Parent.MovementEngine.LookPos = pos;
         }
 
         public void Consume(Consumable item)

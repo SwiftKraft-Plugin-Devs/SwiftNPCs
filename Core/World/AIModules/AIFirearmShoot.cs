@@ -2,7 +2,6 @@
 using InventorySystem.Items;
 using InventorySystem.Items.Firearms;
 using InventorySystem.Items.Firearms.BasicMessages;
-using InventorySystem.Items.ThrowableProjectiles;
 using PluginAPI.Core;
 using UnityEngine;
 using Utils.Networking;
@@ -46,6 +45,7 @@ namespace SwiftNPCs.Core.World.AIModules
         }
 
         public bool Headshots;
+        public bool InfiniteAmmo = true;
 
         public float HipfireRange = 7f;
 
@@ -107,14 +107,19 @@ namespace SwiftNPCs.Core.World.AIModules
         {
             IsAiming = false;
 
-            if (f == null || State != FirearmState.Standby || !f.EquipperModule.Standby || !f.ActionModule.Standby || !f.AdsModule.Standby || !f.AmmoManagerModule.Standby || !f.HitregModule.Standby || f.Status.Ammo >= f.AmmoManagerModule.MaxAmmo)
+            if (f == null || State != FirearmState.Standby)
                 return false;
-            // Temp
-            Parent.Inventory.ServerAddAmmo(f.AmmoType, f.AmmoManagerModule.MaxAmmo);
-            f.AmmoManagerModule.ServerTryReload();
-            new RequestMessage(f.ItemSerial, RequestType.Reload).SendToAuthenticated();
 
-            return true;
+            if (InfiniteAmmo && Parent.Inventory.GetCurAmmo(f.AmmoType) < f.AmmoManagerModule.MaxAmmo)
+                Parent.Inventory.ServerAddAmmo(f.AmmoType, f.AmmoManagerModule.MaxAmmo);
+
+            if (f.AmmoManagerModule.ServerTryReload())
+            {
+                new RequestMessage(f.ItemSerial, RequestType.Reload).SendToAuthenticated();
+                return true;
+            }
+
+            return false;
         }
 
         public bool Shoot(Firearm f)

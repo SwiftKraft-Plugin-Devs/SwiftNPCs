@@ -1,10 +1,18 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace SwiftNPCs.Core.Pathing
 {
     public class Path
     {
+        public Path() { }
+
+        public Path(NavMeshPath path)
+        {
+            Waypoints = [.. path.corners];
+        }
+
         public readonly List<Vector3> Waypoints = [];
 
         public float WaypointRadius = 0.25f;
@@ -66,7 +74,7 @@ namespace SwiftNPCs.Core.Pathing
 
         public int GetNearestIndex(Vector3 currentPos)
         {
-            int index = -1; 
+            int index = -1;
             float smallestDistance = Mathf.Infinity;
             for (int i = 0; i < Waypoints.Count; i++)
             {

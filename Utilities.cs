@@ -20,6 +20,8 @@ namespace SwiftNPCs
             AISimpleFollow f = prof.WorldPlayer.ModuleRunner.AddModule<AISimpleFollow>();
             AIFirearmShoot s = prof.WorldPlayer.ModuleRunner.AddModule<AIFirearmStrafeShoot>();
             AIGrenadeThrow g = prof.WorldPlayer.ModuleRunner.AddModule<AIGrenadeThrow>();
+            AIConsumeStrafeItem c = prof.WorldPlayer.ModuleRunner.AddModule<AIConsumeStrafeItem>();
+            c.Enabled = false;
             prof.WorldPlayer.ModuleRunner.AddModule<AIBehaviorBase>();
 
             i.SearchRadiusEnemy = 70f;

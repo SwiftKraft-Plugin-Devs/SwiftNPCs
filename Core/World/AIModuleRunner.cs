@@ -1,10 +1,13 @@
 ﻿using CustomPlayerEffects;
+using Interactables.Interobjects;
+using Interactables.Interobjects.DoorUtils;
 using InventorySystem;
 using InventorySystem.Items;
-using InventorySystem.Items.Firearms;
+using InventorySystem.Items.Keycards;
 using PlayerRoles;
 using PlayerStatsSystem;
 using PluginAPI.Core;
+using PluginAPI.Core.Doors;
 using SwiftAPI.API.ServerVariables;
 using SwiftNPCs.Core.Management;
 using SwiftNPCs.Core.World.AIModules;
@@ -22,6 +25,8 @@ namespace SwiftNPCs.Core.World
 
         public const string FrozenVar = "freezenpcs";
         public const float RetargetTime = 0.25f;
+
+        public float DotViewMinimum = 0.25f;
 
         public readonly List<AIModuleBase> Modules = [];
 
@@ -41,6 +46,16 @@ namespace SwiftNPCs.Core.World
 
         public RoleTypeId Role => ReferenceHub.roleManager.CurrentRole.RoleTypeId;
 
+        public KeycardPermissions Permissions
+        {
+            get
+            {
+                if (CurrentItem == null || CurrentItem is not KeycardItem item)
+                    return KeycardPermissions.None;
+                return item.Permissions;
+            }
+        }
+
         public HealthStat Health
         {
             get
@@ -52,6 +67,7 @@ namespace SwiftNPCs.Core.World
         }
 
         public float RetargetTimer;
+        public bool CanStealth = false;
 
         protected float AimOffset;
 
@@ -234,26 +250,44 @@ namespace SwiftNPCs.Core.World
             return false;
         }
 
-        public bool EquipItem<T>() where T : ItemBase
+        public bool IsInView(Player p) => !CanStealth || GetDotProduct(p.Position) >= DotViewMinimum;
+
+        public bool EquipItem<T>(Predicate<T> filter) where T : ItemBase
         {
-            Inventory.CurInstance = null;
-            if (HasItem(out T t))
-            {
-                Inventory.ServerSelectItem(t.ItemSerial);
-                return true;
-            }
-            return false;
+            if (!HasItem(out T t, filter))
+                return false;
+
+            EquipItem(t.ItemSerial);
+            return true;
         }
 
-        public bool HasItem<T>(out T it) where T : ItemBase
+        public bool EquipItem<T>() where T : ItemBase => EquipItem<T>(null);
+
+        public void EquipItem(ushort serial)
+        { 
+            Inventory.CurInstance = null;
+            Inventory.ServerSelectItem(serial); 
+        }
+
+        public bool HasItem<T>(out T it, Predicate<T> filter) where T : ItemBase
         {
             foreach (ItemBase item in Inventory.UserInventory.Items.Values)
-                if (item is T t)
+                if (item is T t && (filter == null || filter.Invoke(t)))
                 {
                     it = t;
                     return true;
                 }
             it = null;
+            return false;
+        }
+
+        public bool HasItem<T>(out T it) where T : ItemBase => HasItem(out it, null);
+
+        public bool HasItem(ushort serial)
+        {
+            foreach (ItemBase item in Inventory.UserInventory.Items.Values)
+                if (item.ItemSerial == serial)
+                    return true;
             return false;
         }
 
@@ -272,13 +306,61 @@ namespace SwiftNPCs.Core.World
             return item != null;
         }
 
+        public List<T> GetAllItems<T>() where T : ItemBase
+        {
+            List<T> list = [];
+            foreach (ItemBase item in Inventory.UserInventory.Items.Values)
+                if (item is T t)
+                    list.Add(t);
+            return list;
+        }
+
+        /// <summary>
+        /// Using Vector3.Dot().
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns>1f if looking exactly at the object, 0f if perpendicular and -1f if opposite.</returns>
+        public float GetDotProduct(Vector3 position) => MovementEngine.GetDotProduct(position);
+
+        public bool TrySetDoor(FacilityDoor door, bool state)
+        {
+            if (!CanAccessDoor(door))
+                EquipItem<KeycardItem>((i) => CheckPermissions(i.Permissions, door));
+
+            float st = door.OriginalObject.GetExactState();
+            if (!CanAccessDoor(door) || door.OriginalObject.NetworkTargetState == state || (st > 0f && st < 1f))
+                return false;
+
+            door.OriginalObject.NetworkTargetState = state;
+            return true;
+        }
+
+        public bool CanAccessDoor(FacilityDoor door)  => CheckPermissions(Permissions, door);
+
+        public bool CheckPermissions(KeycardPermissions perms, FacilityDoor door) => perms.HasFlagFast(door.Permissions);
+
+        public KeycardItem GetKeycardForDoor(FacilityDoor door)
+        {
+            List<KeycardItem> keycards = GetAllItems<KeycardItem>();
+            foreach (KeycardItem item in keycards)
+                if (CheckPermissions(item.Permissions, door))
+                    return item;
+            return null;
+        }
+
+        public bool TryGetKeycardForDoor(FacilityDoor door, out KeycardItem item)
+        {
+            item = GetKeycardForDoor(door);
+            return item != null;
+        }
+
         public bool HasFollowTarget
         {
             get
             {
                 if (FollowTarget == null)
                     return false;
-                else if (!FollowTarget.IsAlive)
+                else if (!CanFollow(FollowTarget))
                 {
                     FollowTarget = null;
                     return false;
@@ -294,7 +376,7 @@ namespace SwiftNPCs.Core.World
             {
                 if (EnemyTarget == null)
                     return false;
-                else if (EnemyTarget.ReferenceHub == null || EnemyTarget.GameObject == null || !EnemyTarget.IsAlive || EnemyTarget.Role.GetFaction() == Role.GetFaction())
+                else if (!CanTarget(EnemyTarget))
                 {
                     EnemyTarget = null;
                     return false;
@@ -327,8 +409,7 @@ namespace SwiftNPCs.Core.World
             && p.IsAlive
             && !p.IsGodModeEnabled
             && !IsInvisible(p)
-            && !IsEnemy(p)
-            && HasLOS(p, out _);
+            && !IsEnemy(p);
 
         public bool IsCivilian(Player p) => p.Role == RoleTypeId.ClassD || p.Role == RoleTypeId.Scientist;
 

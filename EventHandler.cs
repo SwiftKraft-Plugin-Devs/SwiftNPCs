@@ -6,7 +6,10 @@ using PluginAPI.Core.Attributes;
 using PluginAPI.Enums;
 using PluginAPI.Events;
 using SwiftNPCs.Core.Management;
+using SwiftNPCs.Core.Pathing;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
 
 namespace SwiftNPCs
 {
@@ -48,6 +51,12 @@ namespace SwiftNPCs
             foreach (Player p in players)
                 if (p.TryGetAI(out AIPlayerProfile prof))
                     prof.Delete();
+        }
+
+        [PluginEvent(ServerEventType.RoundStart)]
+        public void RoundStart(RoundStartEvent _event)
+        {
+            NavMeshManager.BuildNavMesh();
         }
     }
 }

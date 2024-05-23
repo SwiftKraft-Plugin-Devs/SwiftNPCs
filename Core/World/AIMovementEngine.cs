@@ -1,5 +1,7 @@
 ﻿using PlayerRoles.FirstPersonControl;
+using PluginAPI.Core;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace SwiftNPCs.Core.World
 {
@@ -61,7 +63,7 @@ namespace SwiftNPCs.Core.World
         }
 
         public float SpeedOverride = -1f;
-        public float LookSpeed = 180f;
+        public float LookSpeed = 200f;
 
         public Vector3 WishDir;
         public Vector3 LookDir
@@ -84,6 +86,7 @@ namespace SwiftNPCs.Core.World
         }
 
         protected Quaternion CurrentLookRot;
+        protected Vector3 CurrentLookDir => CurrentLookRot * Vector3.forward;
 
         public void UpdateMove(Vector3 wishDir)
         {
@@ -117,5 +120,7 @@ namespace SwiftNPCs.Core.World
         {
             UpdateLook(CurrentLookRot);
         }
+
+        public float GetDotProduct(Vector3 position) => Vector3.Dot(CurrentLookDir, (position - transform.position).normalized);
     }
 }

@@ -1,5 +1,7 @@
-﻿using PlayerRoles.FirstPersonControl;
+﻿using CommandSystem.Commands.RemoteAdmin.Doors;
+using PlayerRoles.FirstPersonControl;
 using PluginAPI.Core;
+using PluginAPI.Core.Doors;
 using UnityEngine;
 
 namespace SwiftNPCs.Core.World.AIModules
@@ -9,6 +11,8 @@ namespace SwiftNPCs.Core.World.AIModules
         public float FollowDistance = 4f;
         public float FollowRandomRange = 2f;
         public float SprintDistance = 7f;
+        public float DoorDistance = 1.5f;
+        public float DoorFacing = 1.5f;
 
         public Vector3 Position => Parent.ReferenceHub.transform.position;
 
@@ -42,6 +46,9 @@ namespace SwiftNPCs.Core.World.AIModules
                     Parent.MovementEngine.State = PlayerMovementState.Sprinting;
                 else
                     Parent.MovementEngine.State = TargetFpc.CurrentMovementState;
+
+                if (TryGetDoor(out FacilityDoor door))
+                    Parent.TrySetDoor(door, true);
             }
             else
                 Parent.MovementEngine.WishDir = Vector3.zero;
@@ -54,6 +61,30 @@ namespace SwiftNPCs.Core.World.AIModules
 
             return (Target.Position - Position).normalized;
         }
+
+        public FacilityDoor GetDoor()
+        {
+            FacilityDoor door = null;
+            float doorDist = Mathf.Infinity;
+            foreach (FacilityDoor d in Facility.Doors)
+            {
+                float dist = GetDoorDistance(d);
+                if (dist <= DoorDistance && Parent.GetDotProduct(d.Position) > 0f && (door == null || dist < doorDist))
+                {
+                    door = d;
+                    doorDist = dist;
+                }
+            }
+            return door;
+        }
+
+        public bool TryGetDoor(out FacilityDoor door)
+        {
+            door = GetDoor();
+            return door != null;
+        }
+
+        public float GetDoorDistance(FacilityDoor door) => Vector3.Distance(door.Position, Parent.Position);
 
         public bool HasTarget => Parent.HasFollowTarget;
 

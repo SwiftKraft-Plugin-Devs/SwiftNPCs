@@ -27,20 +27,14 @@ namespace SwiftNPCs.Core.World.AIModules
 
                 List<Player> players = Player.GetPlayers();
 
-                if (!Parent.CanTarget(Parent.EnemyTarget))
-                    Parent.EnemyTarget = null;
-
-                if (!Parent.CanFollow(Parent.FollowTarget))
-                    Parent.FollowTarget = null;
-
                 Player target = null;
                 Player follow = null;
 
                 foreach (Player p in players)
                 {
-                    if (Parent.WithinDistance(p, SearchRadiusEnemy) && Parent.CanTarget(p) && (target == null || Parent.GetDistance(target) > Parent.GetDistance(p)))
+                    if (Parent.WithinDistance(p, SearchRadiusEnemy) && Parent.CanTarget(p) && Parent.IsInView(p) && (target == null || Parent.GetDistance(target) > Parent.GetDistance(p)))
                         target = p;
-                    else if (!Parent.HasFollowTarget && Parent.WithinDistance(p, SearchRadiusFollow) && Parent.CanFollow(p) && (follow == null || Parent.GetDistance(follow) > Parent.GetDistance(p)))
+                    else if (!Parent.HasFollowTarget && Parent.WithinDistance(p, SearchRadiusFollow) && Parent.CanFollow(p) && Parent.IsInView(p) && (follow == null || Parent.GetDistance(follow) > Parent.GetDistance(p)))
                         follow = p;
                 }
 

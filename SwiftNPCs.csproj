@@ -41,6 +41,9 @@
     <Reference Include="UnityEngine">
       <HintPath>$(SCPSLREFERENCES)\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.AIModule">
+      <HintPath>..\..\..\..\..\..\..\SCP_DLLS\UnityEngine.AIModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.AnimationModule">
       <HintPath>$(SCPSLREFERENCES)\UnityEngine.AnimationModule.dll</HintPath>
     </Reference>
