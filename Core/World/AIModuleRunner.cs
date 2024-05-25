@@ -1,5 +1,4 @@
 ﻿using CustomPlayerEffects;
-using Interactables.Interobjects;
 using Interactables.Interobjects.DoorUtils;
 using InventorySystem;
 using InventorySystem.Items;
@@ -264,9 +263,9 @@ namespace SwiftNPCs.Core.World
         public bool EquipItem<T>() where T : ItemBase => EquipItem<T>(null);
 
         public void EquipItem(ushort serial)
-        { 
+        {
             Inventory.CurInstance = null;
-            Inventory.ServerSelectItem(serial); 
+            Inventory.ServerSelectItem(serial);
         }
 
         public bool HasItem<T>(out T it, Predicate<T> filter) where T : ItemBase
@@ -331,11 +330,13 @@ namespace SwiftNPCs.Core.World
             if (!CanAccessDoor(door) || door.OriginalObject.NetworkTargetState == state || (st > 0f && st < 1f))
                 return false;
 
-            door.OriginalObject.NetworkTargetState = state;
+            if (door.OriginalObject.NetworkTargetState != state)
+                door.OriginalObject.ServerInteract(ReferenceHub, 0);
+
             return true;
         }
 
-        public bool CanAccessDoor(FacilityDoor door)  => CheckPermissions(Permissions, door);
+        public bool CanAccessDoor(FacilityDoor door) => CheckPermissions(Permissions, door);
 
         public bool CheckPermissions(KeycardPermissions perms, FacilityDoor door) => perms.HasFlagFast(door.Permissions);
 

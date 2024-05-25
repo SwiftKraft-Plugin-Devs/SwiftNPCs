@@ -6,16 +6,23 @@ namespace SwiftNPCs.Core.Pathing
 {
     public class Path
     {
-        public Path() { }
-
-        public Path(NavMeshPath path)
-        {
-            Waypoints = [.. path.corners];
-        }
-
         public readonly List<Vector3> Waypoints = [];
 
-        public float WaypointRadius = 0.25f;
+        public float WaypointRadius = 0.75f;
+
+        public void OverridePath(NavMeshPath path, Vector3 endPoint = default)
+        {
+            ClearWaypoints();
+            Waypoints.AddRange(path.corners);
+
+            WaypointRadius = 1.2f;
+
+            if (Waypoints.Count > 0)
+                Waypoints.RemoveAt(0);
+
+            if (endPoint != default)
+                Waypoints.Add(endPoint);
+        }
 
         public void AddWaypoint(Vector3 point) => Waypoints.Add(point);
 

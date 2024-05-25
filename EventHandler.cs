@@ -5,6 +5,7 @@ using PluginAPI.Core;
 using PluginAPI.Core.Attributes;
 using PluginAPI.Enums;
 using PluginAPI.Events;
+using SwiftNPCs.Core.Commands.Utility;
 using SwiftNPCs.Core.Management;
 using SwiftNPCs.Core.Pathing;
 using System.Collections.Generic;
@@ -29,8 +30,8 @@ namespace SwiftNPCs
             return true;
         }
 
-        [PluginEvent(ServerEventType.PlayerDeath)]
-        public void PlayerDeath(PlayerDeathEvent _event)
+        [PluginEvent(ServerEventType.PlayerDying)]
+        public void PlayerDying(PlayerDyingEvent _event)
         {
             if (_event.Player.TryGetAI(out AIPlayerProfile prof))
                 prof.ReferenceHub.transform.eulerAngles = new(0f, prof.ReferenceHub.transform.eulerAngles.y, 0f);
@@ -53,10 +54,11 @@ namespace SwiftNPCs
                     prof.Delete();
         }
 
-        [PluginEvent(ServerEventType.RoundStart)]
-        public void RoundStart(RoundStartEvent _event)
+        [PluginEvent(ServerEventType.MapGenerated)]
+        public void MapGenerated(MapGeneratedEvent _event)
         {
-            NavMeshManager.BuildNavMesh();
+            NavMeshManager.InitializeMap();
+            TestNavMesh.Test();
         }
     }
 }

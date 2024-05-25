@@ -17,7 +17,7 @@ namespace SwiftNPCs
             prof.Position = position;
 
             AIScanner i = prof.WorldPlayer.ModuleRunner.AddModule<AIScanner>();
-            AISimpleFollow f = prof.WorldPlayer.ModuleRunner.AddModule<AISimpleFollow>();
+            AIWander f = prof.WorldPlayer.ModuleRunner.AddModule<AIWander>();
             AIFirearmShoot s = prof.WorldPlayer.ModuleRunner.AddModule<AIFirearmStrafeShoot>();
             AIGrenadeThrow g = prof.WorldPlayer.ModuleRunner.AddModule<AIGrenadeThrow>();
             AIConsumeStrafeItem c = prof.WorldPlayer.ModuleRunner.AddModule<AIConsumeStrafeItem>();
@@ -79,7 +79,7 @@ namespace SwiftNPCs
             prof.Position = position;
 
             AIScanner i = prof.WorldPlayer.ModuleRunner.AddModule<AIScanner>();
-            AISimpleFollow f = prof.WorldPlayer.ModuleRunner.AddModule<AISimpleFollow>();
+            AIFollow f = prof.WorldPlayer.ModuleRunner.AddModule<AIFollow>();
             AIGrenadeThrow s = prof.WorldPlayer.ModuleRunner.AddModule<AIGrenadeThrow>();
             prof.WorldPlayer.ModuleRunner.AddModule<AIBehaviorBase>();
 

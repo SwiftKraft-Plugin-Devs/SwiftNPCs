@@ -111,6 +111,9 @@ namespace SwiftNPCs.Core.World
         {
             // WishDir = transform.forward;
             // TargetLookRot = Quaternion.LookRotation(transform.right, Vector3.up);
+            CharCont.stepOffset = 0.35f;
+            CharCont.slopeLimit = 45f;
+            CharCont.skinWidth = 0.1f;
 
             CurrentLookRot = Quaternion.RotateTowards(CurrentLookRot, TargetLookRot, LookSpeed * Time.fixedDeltaTime);
             UpdateMove(WishDir);
