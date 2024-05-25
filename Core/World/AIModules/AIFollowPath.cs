@@ -58,7 +58,11 @@ namespace SwiftNPCs.Core.World.AIModules
                     MovementEngine.WishDir = GetDirection(waypoint);
 
                 if (LookAtWaypoint)
-                    MovementEngine.LookPos = waypoint;
+                {
+                    Vector3 w = waypoint;
+                    w.y = Parent.CameraPosition.y;
+                    MovementEngine.LookPos = w;
+                }
 
                 if (TryGetDoor(out FacilityDoor door))
                 {

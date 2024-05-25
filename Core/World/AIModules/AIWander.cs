@@ -38,7 +38,6 @@ namespace SwiftNPCs.Core.World.AIModules
             if ((AtDestination || timer <= 0f) && TryGetRandomRoomInZone(out FacilityRoom room))
             {
                 timer = WanderTimer;
-                Log.Info(room.GameObject.name);
                 SetDestination(room.Position);
             }
         }
