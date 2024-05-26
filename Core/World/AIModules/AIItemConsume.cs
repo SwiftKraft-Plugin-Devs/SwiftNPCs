@@ -5,7 +5,7 @@ using Utils.Networking;
 
 namespace SwiftNPCs.Core.World.AIModules
 {
-    public class AIConsumeItem : AIModuleBase
+    public class AIItemConsume : AIModuleBase
     {
         public float HealPercentage = 0.5f;
 

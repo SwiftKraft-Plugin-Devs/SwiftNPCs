@@ -1,4 +1,6 @@
 ﻿using CustomPlayerEffects;
+using Interactables;
+using Interactables.Interobjects;
 using Interactables.Interobjects.DoorUtils;
 using InventorySystem;
 using InventorySystem.Items;
@@ -331,14 +333,19 @@ namespace SwiftNPCs.Core.World
                 return false;
 
             if (door.OriginalObject.NetworkTargetState != state)
-                door.OriginalObject.ServerInteract(ReferenceHub, 0);
+            {
+                if (door.Room.TryGetComponent(out AirlockController cont, childSearch: true))
+                    cont.ToggleAirlock();
+                else
+                    door.OriginalObject.ServerInteract(ReferenceHub, 0);
+            }
 
             return true;
         }
 
         public bool CanAccessDoor(FacilityDoor door) => CheckPermissions(Permissions, door);
 
-        public bool CheckPermissions(KeycardPermissions perms, FacilityDoor door) => perms.HasFlagFast(door.Permissions);
+        public bool CheckPermissions(KeycardPermissions perms, FacilityDoor door) => perms.HasFlag(door.Permissions);
 
         public KeycardItem GetKeycardForDoor(FacilityDoor door)
         {

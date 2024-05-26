@@ -1,6 +1,6 @@
 ﻿namespace SwiftNPCs.Core.World.AIModules
 {
-    public class AIConsumeStrafeItem : AIConsumeItem
+    public class AIItemStrafeConsume : AIItemConsume
     {
         public Strafer Strafer { get; private set; }
 

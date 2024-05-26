@@ -1,6 +1,4 @@
-﻿using AdminToys;
-using Mirror;
-using PlayerRoles.FirstPersonControl;
+﻿using PlayerRoles.FirstPersonControl;
 using PluginAPI.Core;
 using PluginAPI.Core.Doors;
 using SwiftAPI.API.BreakableToys;
@@ -26,7 +24,7 @@ namespace SwiftNPCs.Core.World.AIModules
         public bool LookAtWaypoint = true;
         public bool EnableMovement = true;
 
-        public static bool DebugMode = true;
+        public static bool DebugMode = false;
 
         public readonly List<BreakableToyBase> Markers = [];
 

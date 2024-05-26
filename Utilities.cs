@@ -17,10 +17,10 @@ namespace SwiftNPCs
             prof.Position = position;
 
             AIScanner i = prof.WorldPlayer.ModuleRunner.AddModule<AIScanner>();
-            AIWander f = prof.WorldPlayer.ModuleRunner.AddModule<AIWander>();
+            AIFollow f = prof.WorldPlayer.ModuleRunner.AddModule<AIFollow>();
             AIFirearmShoot s = prof.WorldPlayer.ModuleRunner.AddModule<AIFirearmStrafeShoot>();
             AIGrenadeThrow g = prof.WorldPlayer.ModuleRunner.AddModule<AIGrenadeThrow>();
-            AIConsumeStrafeItem c = prof.WorldPlayer.ModuleRunner.AddModule<AIConsumeStrafeItem>();
+            AIItemStrafeConsume c = prof.WorldPlayer.ModuleRunner.AddModule<AIItemStrafeConsume>();
             c.Enabled = false;
             prof.WorldPlayer.ModuleRunner.AddModule<AIBehaviorBase>();
 

@@ -2,6 +2,7 @@
 using PluginAPI.Core.Zones;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace SwiftNPCs.Core.World.AIModules
 {
@@ -35,10 +36,10 @@ namespace SwiftNPCs.Core.World.AIModules
             if (timer > 0f)
                 timer -= Time.fixedDeltaTime;
 
-            if ((AtDestination || timer <= 0f) && TryGetRandomRoomInZone(out FacilityRoom room))
+            if ((AtDestination || timer <= 0f) && TryGetRandomRoomInZone(out FacilityRoom room) && NavMesh.SamplePosition(room.Position, out NavMeshHit _hit, 50f, NavMesh.AllAreas))
             {
                 timer = WanderTimer;
-                SetDestination(room.Position);
+                SetDestination(_hit.position);
             }
         }
     }
