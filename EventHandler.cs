@@ -1,16 +1,14 @@
-﻿using Achievements.Handlers;
-using InventorySystem.Items.ThrowableProjectiles;
+﻿using HarmonyLib;
+using MapGeneration;
 using PlayerStatsSystem;
 using PluginAPI.Core;
 using PluginAPI.Core.Attributes;
 using PluginAPI.Enums;
 using PluginAPI.Events;
-using SwiftNPCs.Core.Commands.Utility;
 using SwiftNPCs.Core.Management;
 using SwiftNPCs.Core.Pathing;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.AI;
+using System.Security.Cryptography;
 
 namespace SwiftNPCs
 {
@@ -58,7 +56,29 @@ namespace SwiftNPCs
         public void MapGenerated(MapGeneratedEvent _event)
         {
             NavMeshManager.InitializeMap();
-            TestNavMesh.Test();
+
+            foreach (RoomIdentifier rid in RoomIdentifier.AllRoomIdentifiers)
+            {
+                switch (rid.Name)
+                {
+                    case RoomName.LczCheckpointA:
+                    case RoomName.LczCheckpointB:
+                    case RoomName.HczCheckpointA:
+                    case RoomName.HczCheckpointB:
+                    case RoomName.EzGateA:
+                    case RoomName.EzGateB:
+                        Add(rid);
+                        break;
+                }
+            }
+
+            static void Add(RoomIdentifier rid)
+            {
+                if (Utilities.ZoneElevatorRooms.ContainsKey(rid.Zone))
+                    Utilities.ZoneElevatorRooms[rid.Zone].AddItem(rid);
+                else
+                    Utilities.ZoneElevatorRooms.Add(rid.Zone, [rid]);
+            }
         }
     }
 }

@@ -8,7 +8,10 @@ namespace SwiftNPCs.Core.World.AIModules
 {
     public class AIWander : AIPathfind
     {
-        public float WanderTimer = 10f;
+        public float WanderTimerMin = 10f;
+        public float WanderTimerMax = 30f;
+
+        public bool ActiveWhenFollow;
 
         float timer;
 
@@ -29,18 +32,31 @@ namespace SwiftNPCs.Core.World.AIModules
             return room != null;
         }
 
+        public override void Init()
+        {
+            base.Init();
+            Tags = [AIBehaviorBase.MoverTag];
+        }
+
         public override void Tick()
         {
-            base.Tick();
+            if (!Enabled || (!ActiveWhenFollow && Parent.HasFollowTarget))
+            {
+                ClearDestination();
+                timer = 0f;
+                return;
+            }
 
             if (timer > 0f)
                 timer -= Time.fixedDeltaTime;
 
             if ((AtDestination || timer <= 0f) && TryGetRandomRoomInZone(out FacilityRoom room) && NavMesh.SamplePosition(room.Position, out NavMeshHit _hit, 50f, NavMesh.AllAreas))
             {
-                timer = WanderTimer;
+                timer = Random.Range(WanderTimerMin, WanderTimerMax);
                 SetDestination(_hit.position);
             }
+
+            base.Tick();
         }
     }
 }

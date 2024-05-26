@@ -1,6 +1,5 @@
-﻿using PlayerRoles.FirstPersonControl;
-using PluginAPI.Core;
-using PluginAPI.Core.Doors;
+﻿using Interactables.Interobjects.DoorUtils;
+using PlayerRoles.FirstPersonControl;
 using SwiftAPI.API.BreakableToys;
 using SwiftNPCs.Core.Pathing;
 using System.Collections.Generic;
@@ -62,7 +61,7 @@ namespace SwiftNPCs.Core.World.AIModules
                     MovementEngine.LookPos = w;
                 }
 
-                if (TryGetDoor(out FacilityDoor door))
+                if (TryGetDoor(out DoorVariant door))
                 {
                     Parent.TrySetDoor(door, true);
                     OnSetDoor(door);
@@ -101,7 +100,7 @@ namespace SwiftNPCs.Core.World.AIModules
             Path = null;
         }
 
-        protected virtual void OnSetDoor(FacilityDoor door) { }
+        protected virtual void OnSetDoor(DoorVariant door) { }
 
         public Vector3 GetDirection(Vector3 waypoint)
         {
@@ -116,14 +115,14 @@ namespace SwiftNPCs.Core.World.AIModules
                 CurrentIndex = Path.GetNearestIndex(Position);
         }
 
-        public FacilityDoor GetDoor()
+        public DoorVariant GetDoor()
         {
-            FacilityDoor door = null;
+            DoorVariant door = null;
             float doorDist = Mathf.Infinity;
-            foreach (FacilityDoor d in Facility.Doors)
+            foreach (DoorVariant d in DoorVariant.AllDoors)
             {
                 float dist = GetDoorDistance(d);
-                if (dist <= DoorDistance && Parent.GetDotProduct(d.Position) > 0f && (door == null || dist < doorDist))
+                if (dist <= DoorDistance && Parent.GetDotProduct(d.transform.position) > 0f && (door == null || dist < doorDist))
                 {
                     door = d;
                     doorDist = dist;
@@ -132,17 +131,17 @@ namespace SwiftNPCs.Core.World.AIModules
             return door;
         }
 
-        public bool TryGetDoor(out FacilityDoor door)
+        public bool TryGetDoor(out DoorVariant door)
         {
             door = GetDoor();
             return door != null;
         }
 
-        public float GetDoorDistance(FacilityDoor door) => Vector3.Distance(door.Position, Parent.Position);
+        public float GetDoorDistance(DoorVariant door) => Vector3.Distance(door.transform.position, Parent.Position);
 
-        public Vector3 GetDoorDirection(FacilityDoor door)
+        public Vector3 GetDoorDirection(DoorVariant door)
         {
-            Vector3 pos = door.Position;
+            Vector3 pos = door.transform.position;
             pos.y = Parent.Position.y;
             return (pos - Parent.Position).normalized;
         }

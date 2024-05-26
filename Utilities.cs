@@ -1,13 +1,23 @@
-﻿using PlayerRoles;
+﻿using MapGeneration;
+using PlayerRoles;
 using SwiftNPCs.Core.Management;
 using SwiftNPCs.Core.Pathing;
 using SwiftNPCs.Core.World.AIModules;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SwiftNPCs
 {
     public static class Utilities
     {
+        public static readonly Dictionary<FacilityZone, RoomIdentifier[]> ZoneElevatorRooms = [];
+
+        public static bool TryGetComponentInParent<T>(this Component go, out T component) where T : Component
+        {
+            component = go.GetComponentInParent<T>();
+            return component != null;
+        }
+
         public static AIPlayerProfile CreateBasicAI(RoleTypeId role, Vector3 position, float enemyDistance = 50f, float followDistance = 10f, float startFollowDistance = 3f, float stopFollowDistance = 1f)
         {
             AIPlayerProfile prof = new AIDataProfileBase("Bot").CreateAIPlayer();
@@ -18,6 +28,7 @@ namespace SwiftNPCs
 
             AIScanner i = prof.WorldPlayer.ModuleRunner.AddModule<AIScanner>();
             AIFollow f = prof.WorldPlayer.ModuleRunner.AddModule<AIFollow>();
+            AIWander w = prof.WorldPlayer.ModuleRunner.AddModule<AIWander>();
             AIFirearmShoot s = prof.WorldPlayer.ModuleRunner.AddModule<AIFirearmStrafeShoot>();
             AIGrenadeThrow g = prof.WorldPlayer.ModuleRunner.AddModule<AIGrenadeThrow>();
             AIItemStrafeConsume c = prof.WorldPlayer.ModuleRunner.AddModule<AIItemStrafeConsume>();

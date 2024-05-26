@@ -32,7 +32,7 @@ namespace SwiftNPCs
 
             EventManager.RegisterEvents<EventHandler>(this);
 
-            Log.Info("SwiftNPCs Loaded! ");
+            Log.Info($"SwiftNPCs {Version} Loaded! ");
         }
 
         [PluginUnload]

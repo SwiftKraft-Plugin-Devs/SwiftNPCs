@@ -1,14 +1,14 @@
 ﻿using CustomPlayerEffects;
-using Interactables;
 using Interactables.Interobjects;
 using Interactables.Interobjects.DoorUtils;
 using InventorySystem;
 using InventorySystem.Items;
 using InventorySystem.Items.Keycards;
+using MapGeneration;
 using PlayerRoles;
 using PlayerStatsSystem;
 using PluginAPI.Core;
-using PluginAPI.Core.Doors;
+using PluginAPI.Core.Zones;
 using SwiftAPI.API.ServerVariables;
 using SwiftNPCs.Core.Management;
 using SwiftNPCs.Core.World.AIModules;
@@ -34,6 +34,8 @@ namespace SwiftNPCs.Core.World
         public Player EnemyTarget;
         public Player FollowTarget;
 
+        public RoomIdentifier Room => Core.Profile.Player.Room;
+
         public AIMovementEngine MovementEngine => Core.MovementEngine;
 
         public Inventory Inventory => ReferenceHub.inventory;
@@ -46,16 +48,6 @@ namespace SwiftNPCs.Core.World
         public Vector3 CameraPosition => ReferenceHub.PlayerCameraReference.position;
 
         public RoleTypeId Role => ReferenceHub.roleManager.CurrentRole.RoleTypeId;
-
-        public KeycardPermissions Permissions
-        {
-            get
-            {
-                if (CurrentItem == null || CurrentItem is not KeycardItem item)
-                    return KeycardPermissions.None;
-                return item.Permissions;
-            }
-        }
 
         public HealthStat Health
         {
@@ -323,40 +315,38 @@ namespace SwiftNPCs.Core.World
         /// <returns>1f if looking exactly at the object, 0f if perpendicular and -1f if opposite.</returns>
         public float GetDotProduct(Vector3 position) => MovementEngine.GetDotProduct(position);
 
-        public bool TrySetDoor(FacilityDoor door, bool state)
+        public bool TrySetDoor(DoorVariant door, bool state)
         {
-            if (!CanAccessDoor(door))
-                EquipItem<KeycardItem>((i) => CheckPermissions(i.Permissions, door));
+            if (door is CheckpointDoor checkpoint || door.TryGetComponentInParent(out checkpoint))
+                door = checkpoint;
 
-            float st = door.OriginalObject.GetExactState();
-            if (!CanAccessDoor(door) || door.OriginalObject.NetworkTargetState == state || (st > 0f && st < 1f))
+            if (!CanAccessDoor(door) && TryGetKeycardForDoor(door, out KeycardItem item))
+                EquipItem(item.ItemSerial);
+
+            float st = door.GetExactState();
+            if (!CanAccessDoor(door) || door.NetworkTargetState == state || (st > 0f && st < 1f))
                 return false;
 
-            if (door.OriginalObject.NetworkTargetState != state)
-            {
-                if (door.Room.TryGetComponent(out AirlockController cont, childSearch: true))
-                    cont.ToggleAirlock();
-                else
-                    door.OriginalObject.ServerInteract(ReferenceHub, 0);
-            }
+            if (door.NetworkTargetState != state)
+                door.ServerInteract(ReferenceHub, 0);
 
             return true;
         }
 
-        public bool CanAccessDoor(FacilityDoor door) => CheckPermissions(Permissions, door);
+        public bool CanAccessDoor(DoorVariant door) => CheckPermissions(CurrentItem, door);
 
-        public bool CheckPermissions(KeycardPermissions perms, FacilityDoor door) => perms.HasFlag(door.Permissions);
+        public bool CheckPermissions(ItemBase item, DoorVariant door) => door.RequiredPermissions.CheckPermissions(item, ReferenceHub);
 
-        public KeycardItem GetKeycardForDoor(FacilityDoor door)
+        public KeycardItem GetKeycardForDoor(DoorVariant door)
         {
             List<KeycardItem> keycards = GetAllItems<KeycardItem>();
             foreach (KeycardItem item in keycards)
-                if (CheckPermissions(item.Permissions, door))
+                if (CheckPermissions(item, door))
                     return item;
             return null;
         }
 
-        public bool TryGetKeycardForDoor(FacilityDoor door, out KeycardItem item)
+        public bool TryGetKeycardForDoor(DoorVariant door, out KeycardItem item)
         {
             item = GetKeycardForDoor(door);
             return item != null;
