@@ -1,14 +1,12 @@
 ﻿using Interactables.Interobjects;
 using MapGeneration;
-using SwiftNPCs.Core.Pathing;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using FacilityZone = MapGeneration.FacilityZone;
 
 namespace SwiftNPCs.Core.World.AIModules
 {
-    public class AIPathfind : AIFollowPath
+    public class AIPathfinder : AIFollowPath
     {
         public static ElevatorChamber[] Elevators => Object.FindObjectsOfType<ElevatorChamber>();
 
@@ -17,21 +15,20 @@ namespace SwiftNPCs.Core.World.AIModules
         public Vector3 NavPosition => NavMesh.SamplePosition(Position, out NavMeshHit _hit, 50f, NavMesh.AllAreas) ? _hit.position : default;
 
         public float RepathTimer = 0.2f;
+        public float DestinationRadius = 3f;
 
-        public bool AtDestination => Path == null || Vector3.Distance(TargetLocation, Position) <= Path.WaypointRadius;
+        public bool AtDestination => Path == null || Vector3.Distance(TargetLocation, Position) <= DestinationRadius;
 
         private float timer;
 
         public override void Init()
         {
-            base.Init();
-
-            Path ??= new();
+            Tags = [AIBehaviorBase.MoverTag];
         }
 
         public void SetDestination(Vector3 destination)
         {
-            TargetLocation = AdjustDestination(destination);
+            TargetLocation = destination;
         }
 
         public Vector3 AdjustDestination(Vector3 dest)
@@ -52,51 +49,51 @@ namespace SwiftNPCs.Core.World.AIModules
             if (Parent.Room.Zone == zone)
                 return dest;
 
-/*            switch (zone)
-            {
-                case FacilityZone.HeavyContainment:
-                    switch (Parent.Room.Zone)
-                    {
-                        case FacilityZone.Entrance:
-                            return dest;
-                        case FacilityZone.LightContainment:
-                            return LCZElevator();
-                        case FacilityZone.Surface:
-                            return SurfaceElevator();
-                    }
-                    break;
-                case FacilityZone.Entrance:
-                    switch (Parent.Room.Zone)
-                    {
-                        case FacilityZone.HeavyContainment:
-                            return dest;
-                        case FacilityZone.LightContainment:
-                            return LCZElevator();
-                        case FacilityZone.Surface:
-                            return SurfaceElevator();
-                    }
-                    break;
-                case FacilityZone.LightContainment:
-                    switch (Parent.Room.Zone)
-                    {
-                        case FacilityZone.HeavyContainment: 
-                        case FacilityZone.Entrance:
-                            return HCZElevator();
-                        case FacilityZone.Surface:
-                            return SurfaceElevator();
-                    }
-                    break;
-                case FacilityZone.Surface:
-                    switch (Parent.Room.Zone)
-                    {
-                        case FacilityZone.HeavyContainment:
-                        case FacilityZone.Entrance:
-                            return EZElevator();
-                        case FacilityZone.LightContainment:
-                            return LCZElevator();
-                    }
-                    break;
-            }*/
+            /*            switch (zone)
+                        {
+                            case FacilityZone.HeavyContainment:
+                                switch (Parent.Room.Zone)
+                                {
+                                    case FacilityZone.Entrance:
+                                        return dest;
+                                    case FacilityZone.LightContainment:
+                                        return LCZElevator();
+                                    case FacilityZone.Surface:
+                                        return SurfaceElevator();
+                                }
+                                break;
+                            case FacilityZone.Entrance:
+                                switch (Parent.Room.Zone)
+                                {
+                                    case FacilityZone.HeavyContainment:
+                                        return dest;
+                                    case FacilityZone.LightContainment:
+                                        return LCZElevator();
+                                    case FacilityZone.Surface:
+                                        return SurfaceElevator();
+                                }
+                                break;
+                            case FacilityZone.LightContainment:
+                                switch (Parent.Room.Zone)
+                                {
+                                    case FacilityZone.HeavyContainment: 
+                                    case FacilityZone.Entrance:
+                                        return HCZElevator();
+                                    case FacilityZone.Surface:
+                                        return SurfaceElevator();
+                                }
+                                break;
+                            case FacilityZone.Surface:
+                                switch (Parent.Room.Zone)
+                                {
+                                    case FacilityZone.HeavyContainment:
+                                    case FacilityZone.Entrance:
+                                        return EZElevator();
+                                    case FacilityZone.LightContainment:
+                                        return LCZElevator();
+                                }
+                                break;
+                        }*/
 
             return dest;
         }

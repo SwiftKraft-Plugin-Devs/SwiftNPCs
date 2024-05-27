@@ -12,6 +12,35 @@ namespace SwiftNPCs
     {
         public static readonly Dictionary<FacilityZone, RoomIdentifier[]> ZoneElevatorRooms = [];
 
+        public static readonly Dictionary<RoleTypeId, int> ClassWeights = new()
+        {
+            { RoleTypeId.None, int.MinValue },
+            { RoleTypeId.Spectator, int.MinValue },
+            { RoleTypeId.Filmmaker, int.MinValue },
+            { RoleTypeId.Overwatch, int.MinValue },
+            { RoleTypeId.CustomRole, int.MinValue },
+            { RoleTypeId.Scp079, int.MinValue },
+            { RoleTypeId.Tutorial, 0 },
+            { RoleTypeId.ClassD, 0 },
+            { RoleTypeId.Scientist, 0 },
+            { RoleTypeId.FacilityGuard, 1 },
+            { RoleTypeId.NtfPrivate, 2 },
+            { RoleTypeId.NtfSergeant, 3 },
+            { RoleTypeId.NtfSpecialist, 3 },
+            { RoleTypeId.NtfCaptain, 4 },
+            { RoleTypeId.ChaosRifleman, 2 },
+            { RoleTypeId.ChaosConscript, 2 },
+            { RoleTypeId.ChaosMarauder, 3 },
+            { RoleTypeId.ChaosRepressor, 4 },
+            { RoleTypeId.Scp0492, 0 },
+            { RoleTypeId.Scp049, 3 },
+            { RoleTypeId.Scp096, 3 },
+            { RoleTypeId.Scp173, 3 },
+            { RoleTypeId.Scp106, 3 },
+            { RoleTypeId.Scp939, 3 },
+            { RoleTypeId.Scp3114, 0 },
+        };
+
         public static bool TryGetComponentInParent<T>(this Component go, out T component) where T : Component
         {
             component = go.GetComponentInParent<T>();
@@ -27,10 +56,12 @@ namespace SwiftNPCs
             prof.Position = position;
 
             AIScanner i = prof.WorldPlayer.ModuleRunner.AddModule<AIScanner>();
+            AIPathfinder p = prof.WorldPlayer.ModuleRunner.AddModule<AIPathfinder>();
             AIFollow f = prof.WorldPlayer.ModuleRunner.AddModule<AIFollow>();
             AIWander w = prof.WorldPlayer.ModuleRunner.AddModule<AIWander>();
+            AIChaseEnemy ce = prof.WorldPlayer.ModuleRunner.AddModule<AIChaseEnemy>();
             AIFirearmShoot s = prof.WorldPlayer.ModuleRunner.AddModule<AIFirearmStrafeShoot>();
-            AIGrenadeThrow g = prof.WorldPlayer.ModuleRunner.AddModule<AIGrenadeThrow>();
+            AIGrenadeStrafeThrow g = prof.WorldPlayer.ModuleRunner.AddModule<AIGrenadeStrafeThrow>();
             AIItemStrafeConsume c = prof.WorldPlayer.ModuleRunner.AddModule<AIItemStrafeConsume>();
             c.Enabled = false;
             prof.WorldPlayer.ModuleRunner.AddModule<AIBehaviorBase>();
@@ -59,6 +90,7 @@ namespace SwiftNPCs
             AIScanner i = prof.WorldPlayer.ModuleRunner.AddModule<AIScanner>();
             AIFirearmShoot s = prof.WorldPlayer.ModuleRunner.AddModule<AIFirearmShoot>();
             AIGrenadeThrow g = prof.WorldPlayer.ModuleRunner.AddModule<AIGrenadeThrow>();
+            AIItemConsume c = prof.WorldPlayer.ModuleRunner.AddModule<AIItemConsume>();
             prof.WorldPlayer.ModuleRunner.AddModule<AIBehaviorBase>();
 
             g.InfiniteGrenades = true;
@@ -90,8 +122,10 @@ namespace SwiftNPCs
             prof.Position = position;
 
             AIScanner i = prof.WorldPlayer.ModuleRunner.AddModule<AIScanner>();
+            AIPathfinder p = prof.WorldPlayer.ModuleRunner.AddModule<AIPathfinder>();
             AIFollow f = prof.WorldPlayer.ModuleRunner.AddModule<AIFollow>();
             AIGrenadeThrow s = prof.WorldPlayer.ModuleRunner.AddModule<AIGrenadeThrow>();
+            AIItemConsume c = prof.WorldPlayer.ModuleRunner.AddModule<AIItemConsume>();
             prof.WorldPlayer.ModuleRunner.AddModule<AIBehaviorBase>();
 
             return prof;

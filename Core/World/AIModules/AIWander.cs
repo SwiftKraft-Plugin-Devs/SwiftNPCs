@@ -6,12 +6,14 @@ using UnityEngine.AI;
 
 namespace SwiftNPCs.Core.World.AIModules
 {
-    public class AIWander : AIPathfind
+    public class AIWander : AIModuleBase
     {
         public float WanderTimerMin = 10f;
         public float WanderTimerMax = 30f;
 
         public bool ActiveWhenFollow;
+
+        AIPathfinder Pathfinder;
 
         float timer;
 
@@ -34,15 +36,14 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Init()
         {
-            base.Init();
-            Tags = [AIBehaviorBase.MoverTag];
+            Pathfinder = Parent.GetModule<AIPathfinder>();
+            Tags = [AIBehaviorBase.AutonomyTag];
         }
 
         public override void Tick()
         {
             if (!Enabled || (!ActiveWhenFollow && Parent.HasFollowTarget))
             {
-                ClearDestination();
                 timer = 0f;
                 return;
             }
@@ -50,13 +51,24 @@ namespace SwiftNPCs.Core.World.AIModules
             if (timer > 0f)
                 timer -= Time.fixedDeltaTime;
 
-            if ((AtDestination || timer <= 0f) && TryGetRandomRoomInZone(out FacilityRoom room) && NavMesh.SamplePosition(room.Position, out NavMeshHit _hit, 50f, NavMesh.AllAreas))
+            if (Pathfinder.AtDestination || timer <= 0f)
+                SetDestination();
+        }
+
+        public void SetDestination()
+        {
+            if (TryGetRandomRoomInZone(out FacilityRoom room) && NavMesh.SamplePosition(room.Position, out NavMeshHit _hit, 50f, NavMesh.AllAreas))
             {
                 timer = Random.Range(WanderTimerMin, WanderTimerMax);
-                SetDestination(_hit.position);
+                Pathfinder.SetDestination(_hit.position);
             }
-
-            base.Tick();
         }
+
+        public override void OnEnabled()
+        {
+            SetDestination();
+        }
+
+        public override void OnDisabled() { }
     }
 }

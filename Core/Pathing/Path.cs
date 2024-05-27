@@ -8,14 +8,12 @@ namespace SwiftNPCs.Core.Pathing
     {
         public readonly List<Vector3> Waypoints = [];
 
-        public float WaypointRadius = 0.75f;
+        public float WaypointRadius = 1.5f;
 
         public void OverridePath(NavMeshPath path, Vector3 endPoint = default)
         {
             ClearWaypoints();
             Waypoints.AddRange(path.corners);
-
-            WaypointRadius = 1.2f;
 
             if (Waypoints.Count > 0)
                 Waypoints.RemoveAt(0);

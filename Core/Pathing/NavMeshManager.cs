@@ -1,4 +1,5 @@
-﻿using PluginAPI.Core;
+﻿using MapGeneration;
+using PluginAPI.Core;
 using PluginAPI.Core.Zones;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,10 +16,10 @@ namespace SwiftNPCs.Core.Pathing
             LayerMask layer = 0;
             List<int> layers = [];
 
-            foreach (FacilityRoom room in Facility.Rooms)
-                if (room.GameObject.activeSelf)
+            foreach (RoomIdentifier room in RoomIdentifier.AllRoomIdentifiers)
+                if (room.gameObject.activeSelf)
                 {
-                    Collider[] colliders = room.GameObject.GetComponentsInChildren<Collider>();
+                    Collider[] colliders = room.gameObject.GetComponentsInChildren<Collider>();
                     foreach (Collider col in colliders)
                         if (!layers.Contains(col.gameObject.layer))
                         {

@@ -8,7 +8,6 @@ using MapGeneration;
 using PlayerRoles;
 using PlayerStatsSystem;
 using PluginAPI.Core;
-using PluginAPI.Core.Zones;
 using SwiftAPI.API.ServerVariables;
 using SwiftNPCs.Core.Management;
 using SwiftNPCs.Core.World.AIModules;
@@ -22,12 +21,14 @@ namespace SwiftNPCs.Core.World
 {
     public class AIModuleRunner : AIAddon
     {
+        public static int PlayerFollowWeight = 2;
         public static bool Frozen => ServerVariableManager.TryGetVar(FrozenVar, out ServerVariable v) && bool.TryParse(v.Value, out bool b) && b;
 
         public const string FrozenVar = "freezenpcs";
         public const float RetargetTime = 0.25f;
 
         public float DotViewMinimum = 0.25f;
+        public float FollowDistanceMax = 400f;
 
         public readonly List<AIModuleBase> Modules = [];
 
@@ -49,14 +50,15 @@ namespace SwiftNPCs.Core.World
 
         public RoleTypeId Role => ReferenceHub.roleManager.CurrentRole.RoleTypeId;
 
-        public HealthStat Health
+        public HealthStat Health => GetStat<HealthStat>();
+        public AhpStat ArtificialHealth => GetStat<AhpStat>();
+        public StaminaStat Stamina => GetStat<StaminaStat>();
+
+        public T GetStat<T>() where T : StatBase
         {
-            get
-            {
-                if (!ReferenceHub.playerStats.TryGetModule(out HealthStat stat))
-                    return null;
-                return stat;
-            }
+            if (!ReferenceHub.playerStats.TryGetModule(out T stat))
+                return null;
+            return stat;
         }
 
         public float RetargetTimer;
@@ -356,11 +358,14 @@ namespace SwiftNPCs.Core.World
         {
             get
             {
-                if (FollowTarget == null)
-                    return false;
-                else if (!CanFollow(FollowTarget))
+                if (!CanFollow(FollowTarget))
                 {
-                    FollowTarget = null;
+                    if (FollowTarget != null)
+                    {
+                        OnLostFollow?.Invoke(FollowTarget, FollowTarget.Position);
+                        FollowTarget = null;
+                    }
+
                     return false;
                 }
 
@@ -372,11 +377,14 @@ namespace SwiftNPCs.Core.World
         {
             get
             {
-                if (EnemyTarget == null)
-                    return false;
-                else if (!CanTarget(EnemyTarget))
+                if (!CanTarget(EnemyTarget))
                 {
-                    EnemyTarget = null;
+                    if (EnemyTarget != null)
+                    {
+                        OnLostEnemy?.Invoke(EnemyTarget, EnemyTarget.Position);
+                        EnemyTarget = null;
+                    }
+
                     return false;
                 }
 
@@ -407,7 +415,24 @@ namespace SwiftNPCs.Core.World
             && p.IsAlive
             && !p.IsGodModeEnabled
             && !IsInvisible(p)
-            && !IsEnemy(p);
+            && !IsEnemy(p)
+            && WithinDistance(p, FollowDistanceMax);
+
+        public int GetFollowWeight(Player p)
+        {
+            int weight = 0;
+
+            if (!p.IsAI())
+                weight += PlayerFollowWeight;
+
+            if (Utilities.ClassWeights.ContainsKey(p.Role))
+                weight += Utilities.ClassWeights[p.Role];
+
+            if (Utilities.ClassWeights.ContainsKey(Role))
+                weight -= Utilities.ClassWeights[Role];
+
+            return weight;
+        }
 
         public bool IsCivilian(Player p) => p.Role == RoleTypeId.ClassD || p.Role == RoleTypeId.Scientist;
 
@@ -420,5 +445,8 @@ namespace SwiftNPCs.Core.World
         public float GetDistance(Player p) => Vector3.Distance(Position, p.Position);
 
         public bool WithinDistance(Player p, float dist) => GetDistance(p) <= dist;
+
+        public event Action<Player, Vector3> OnLostEnemy;
+        public event Action<Player, Vector3> OnLostFollow;
     }
 }

@@ -1,16 +1,16 @@
-﻿using CommandSystem.Commands.RemoteAdmin.Doors;
-using PlayerRoles.FirstPersonControl;
+﻿using PlayerRoles.FirstPersonControl;
 using PluginAPI.Core;
-using PluginAPI.Core.Doors;
 using UnityEngine;
 
 namespace SwiftNPCs.Core.World.AIModules
 {
-    public class AIFollow : AIPathfind
+    public class AIFollow : AIModuleBase
     {
         public float FollowDistance = 4f;
         public float FollowRandomRange = 2f;
         public float SprintDistance = 7f;
+
+        AIPathfinder Pathfinder;
 
         public Player Target
         {
@@ -20,35 +20,34 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Init()
         {
-            base.Init();
-            Tags = [AIBehaviorBase.MoverTag];
+            Pathfinder = Parent.GetModule<AIPathfinder>();
+            Tags = [AIBehaviorBase.AutonomyTag];
             FollowDistance -= Random.Range(0f, FollowRandomRange);
-            LookAtWaypoint = false;
         }
 
         public override void OnDisabled()
         {
-            base.OnDisabled();
-            Parent.MovementEngine.WishDir = Vector3.zero;
-            Parent.MovementEngine.State = PlayerMovementState.Walking;
+            Pathfinder.LookAtWaypoint = true;
         }
 
         public override void Tick()
         {
-            if (Enabled && HasTarget && Parent.GetDistance(Target) >= FollowDistance)
-            {
-                Parent.MovementEngine.LookPos = Target.Camera.position;
-                SetDestination(Target.Position);
-                if (DistanceToTarget > SprintDistance)
-                    Parent.MovementEngine.State = PlayerMovementState.Sprinting;
-                else
-                    Parent.MovementEngine.State = TargetFpc.CurrentMovementState;
-            }
-            else
-                ClearDestination();
+            if (!Enabled || !HasTarget || Parent.GetDistance(Target) < FollowDistance)
+                return;
 
-            base.Tick();
+            Pathfinder.LookAtWaypoint = Parent.HasLOS(Parent.FollowTarget, out _);
+
+            if (!Pathfinder.LookAtWaypoint)
+                Parent.MovementEngine.LookPos = Target.Camera.position;
+
+            Pathfinder.SetDestination(Target.Position);
+            if (DistanceToTarget > SprintDistance)
+                Parent.MovementEngine.State = PlayerMovementState.Sprinting;
+            else
+                Parent.MovementEngine.State = TargetFpc.CurrentMovementState;
         }
+
+        public override void OnEnabled() { }
 
         public bool HasTarget => Parent.HasFollowTarget;
 
@@ -57,7 +56,7 @@ namespace SwiftNPCs.Core.World.AIModules
             get
             {
                 if (HasTarget)
-                    return Vector3.Distance(Target.Position, Position);
+                    return Vector3.Distance(Target.Position, Parent.Position);
                 return 0f;
             }
         }

@@ -1,5 +1,4 @@
 ﻿using Interactables.Interobjects.DoorUtils;
-using PlayerRoles.FirstPersonControl;
 using SwiftAPI.API.BreakableToys;
 using SwiftNPCs.Core.Pathing;
 using System.Collections.Generic;
@@ -36,13 +35,15 @@ namespace SwiftNPCs.Core.World.AIModules
         public override void OnDisabled()
         {
             MovementEngine.WishDir = Vector3.zero;
-            MovementEngine.State = PlayerMovementState.Walking;
         }
 
         public override void OnEnabled() { }
 
         public override void Tick()
         {
+            if (!Enabled)
+                return;
+
             if (Path == null)
             {
                 MovementEngine.WishDir = Vector3.zero;
@@ -54,6 +55,13 @@ namespace SwiftNPCs.Core.World.AIModules
                 if (EnableMovement)
                     MovementEngine.WishDir = GetDirection(waypoint);
 
+                if (!Path.TryGetDistance(Position, CurrentIndex, out float dist) || dist <= Path.WaypointRadius)
+                {
+                    CurrentIndex++;
+                    if (CurrentIndex >= Path.Waypoints.Count)
+                        OnEndPath();
+                }
+
                 if (LookAtWaypoint)
                 {
                     Vector3 w = waypoint;
@@ -61,17 +69,12 @@ namespace SwiftNPCs.Core.World.AIModules
                     MovementEngine.LookPos = w;
                 }
 
-                if (TryGetDoor(out DoorVariant door))
+                if (TryGetDoor(out DoorVariant door, out bool inVision))
                 {
-                    Parent.TrySetDoor(door, true);
-                    OnSetDoor(door);
-                }
-
-                if (!Path.TryGetDistance(Position, CurrentIndex, out float dist) || dist < Path.WaypointRadius)
-                {
-                    CurrentIndex++;
-                    if (CurrentIndex >= Path.Waypoints.Count)
-                        OnEndPath();
+                    if (!inVision)
+                        Parent.MovementEngine.LookPos = door.transform.position;
+                    else if (Parent.TrySetDoor(door, true))
+                        OnSetDoor(door);
                 }
             }
             else
@@ -115,25 +118,27 @@ namespace SwiftNPCs.Core.World.AIModules
                 CurrentIndex = Path.GetNearestIndex(Position);
         }
 
-        public DoorVariant GetDoor()
+        public DoorVariant GetDoor(out bool inVision)
         {
             DoorVariant door = null;
             float doorDist = Mathf.Infinity;
             foreach (DoorVariant d in DoorVariant.AllDoors)
             {
                 float dist = GetDoorDistance(d);
-                if (dist <= DoorDistance && Parent.GetDotProduct(d.transform.position) > 0f && (door == null || dist < doorDist))
+                if (dist <= DoorDistance && (door == null || dist < doorDist))
                 {
                     door = d;
                     doorDist = dist;
                 }
             }
+
+            inVision = door == null || Parent.GetDotProduct(door.transform.position) > 0f;
             return door;
         }
 
-        public bool TryGetDoor(out DoorVariant door)
+        public bool TryGetDoor(out DoorVariant door, out bool inVision)
         {
-            door = GetDoor();
+            door = GetDoor(out inVision);
             return door != null;
         }
 

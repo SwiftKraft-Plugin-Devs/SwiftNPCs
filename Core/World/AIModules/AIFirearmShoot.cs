@@ -48,10 +48,18 @@ namespace SwiftNPCs.Core.World.AIModules
         public bool InfiniteAmmo = true;
 
         public float HipfireRange = 7f;
+        public float RandomAimRangeFar = 1f;
+        public float RandomAimRangeFarDistance = 40f;
+        public float RandomAimRangeClose = 0.05f;
+        public float RandomAimRangeCloseDistance = 10f;
+        public float RandomAimTimer = 0.5f;
 
         protected float Timer;
 
         protected FirearmState State;
+
+        Vector3 randomAim;
+        float randomAimTimer;
 
         public override bool Condition() => Parent.HasItemOfCategory(ItemCategory.Firearm);
 
@@ -79,6 +87,14 @@ namespace SwiftNPCs.Core.World.AIModules
                 return;
             }
 
+            if (randomAimTimer > 0f)
+                randomAimTimer -= Time.fixedDeltaTime;
+            else
+            {
+                randomAimTimer = RandomAimTimer;
+                randomAim = Random.insideUnitSphere * Mathf.Lerp(RandomAimRangeClose, RandomAimRangeFar, Mathf.InverseLerp(RandomAimRangeCloseDistance, RandomAimRangeFarDistance, Parent.GetDistance(Target)));
+            }
+
             if (Parent.TryGetItem(out Firearm f))
             {
                 if (Timer > 0f)
@@ -100,7 +116,7 @@ namespace SwiftNPCs.Core.World.AIModules
                 Parent.EquipItem<Firearm>();
 
             if (HasLOS(out Vector3 pos))
-                Parent.MovementEngine.LookPos = pos;
+                Parent.MovementEngine.LookPos = pos + randomAim;
         }
 
         public bool StartReload(Firearm f)
