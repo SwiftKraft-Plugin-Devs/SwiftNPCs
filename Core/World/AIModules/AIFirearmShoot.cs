@@ -1,5 +1,4 @@
 ﻿using InventorySystem;
-using InventorySystem.Items;
 using InventorySystem.Items.Firearms;
 using InventorySystem.Items.Firearms.BasicMessages;
 using PluginAPI.Core;
@@ -47,12 +46,14 @@ namespace SwiftNPCs.Core.World.AIModules
         public bool Headshots;
         public bool InfiniteAmmo = true;
 
+        public float ShootingDotRequirement = 0.6f;
         public float HipfireRange = 7f;
-        public float RandomAimRangeFar = 1f;
+        public float RandomAimRangeFar = 1.25f;
         public float RandomAimRangeFarDistance = 40f;
         public float RandomAimRangeClose = 0.05f;
         public float RandomAimRangeCloseDistance = 10f;
         public float RandomAimTimer = 0.5f;
+        public float ShootingTurnSpeed = 30f;
 
         protected float Timer;
 
@@ -60,19 +61,25 @@ namespace SwiftNPCs.Core.World.AIModules
 
         Vector3 randomAim;
         float randomAimTimer;
+        float originalTurnSpeed;
 
         public override bool Condition() => Parent.HasItemOfCategory(ItemCategory.Firearm);
 
         public override void OnDisabled()
         {
+            Parent.MovementEngine.LookSpeed = originalTurnSpeed;
             IsAiming = false;
         }
 
-        public override void OnEnabled() { }
+        public override void OnEnabled()
+        {
+            originalTurnSpeed = Parent.MovementEngine.LookSpeed;
+        }
 
         public override void Init()
         {
             Tags = [AIBehaviorBase.AttackerTag];
+            originalTurnSpeed = Parent.MovementEngine.LookSpeed;
             Headshots = Random.Range(0, 2) == 0;
         }
 
@@ -95,16 +102,24 @@ namespace SwiftNPCs.Core.World.AIModules
                 randomAim = Random.insideUnitSphere * Mathf.Lerp(RandomAimRangeClose, RandomAimRangeFar, Mathf.InverseLerp(RandomAimRangeCloseDistance, RandomAimRangeFarDistance, Parent.GetDistance(Target)));
             }
 
+            bool hasLOS = HasLOS(out Vector3 pos);
+
+            if (hasLOS)
+                Parent.MovementEngine.LookPos = pos + randomAim;
+
             if (Parent.TryGetItem(out Firearm f))
             {
                 if (Timer > 0f)
                     Timer -= Time.fixedDeltaTime;
                 else
+                {
+                    Parent.MovementEngine.LookSpeed = originalTurnSpeed;
                     State = FirearmState.Standby;
+                }
 
                 if (f.Status.Ammo <= 0)
                     StartReload(f);
-                else if (HasLOS(out _))
+                else if (hasLOS && Parent.GetDotProduct(pos) < ShootingDotRequirement)
                     Shoot(f);
                 else
                     Target = null;
@@ -114,9 +129,6 @@ namespace SwiftNPCs.Core.World.AIModules
             }
             else
                 Parent.EquipItem<Firearm>();
-
-            if (HasLOS(out Vector3 pos))
-                Parent.MovementEngine.LookPos = pos + randomAim;
         }
 
         public bool StartReload(Firearm f)
@@ -147,6 +159,8 @@ namespace SwiftNPCs.Core.World.AIModules
 
             State = FirearmState.Shooting;
             Timer = 1f / f.ActionModule.CyclicRate;
+
+            Parent.MovementEngine.LookSpeed = ShootingTurnSpeed;
 
             if (f.ActionModule.ServerAuthorizeShot() && f.HitregModule.ClientCalculateHit(out ShotMessage shot))
             {
