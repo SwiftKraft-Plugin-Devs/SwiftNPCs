@@ -2,9 +2,10 @@
 
   <PropertyGroup>
 	<LangVersion>12.0</LangVersion>
-    <TargetFramework>net4.8</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
+    <AssemblyName>0$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
