@@ -1,10 +1,12 @@
 ﻿using MapGeneration;
+using Mirror;
 using PlayerRoles;
 using SwiftNPCs.Core.Management;
 using SwiftNPCs.Core.Pathing;
 using SwiftNPCs.Core.World.AIModules;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityStandardAssets.CinematicEffects.TonemappingColorGrading;
 
 namespace SwiftNPCs
 {
@@ -40,6 +42,17 @@ namespace SwiftNPCs
             { RoleTypeId.Scp939, 3 },
             { RoleTypeId.Scp3114, 0 },
         };
+
+        public static Quaternion SmoothDampQuaternion(this Quaternion current, Quaternion target, ref Vector3 currentVelocity, float smoothTime)
+        {
+            Vector3 c = current.eulerAngles;
+            Vector3 t = target.eulerAngles;
+            return Quaternion.Euler(
+              Mathf.SmoothDampAngle(c.x, t.x, ref currentVelocity.x, smoothTime),
+              Mathf.SmoothDampAngle(c.y, t.y, ref currentVelocity.y, smoothTime),
+              Mathf.SmoothDampAngle(c.z, t.z, ref currentVelocity.z, smoothTime)
+            );
+        }
 
         public static bool TryGetComponentInParent<T>(this Component go, out T component) where T : Component
         {

@@ -24,7 +24,7 @@ namespace SwiftNPCs.Core.World.AIModules
         {
             if (Parent.HasItem(out Consumable cons))
             {
-                cachedDuration = cons.UseTime + 0.25f;
+                cachedDuration = cons.UseTime + 0.5f;
                 return Parent.Health.CurValue <= Parent.Health.MaxValue * HealPercentage;
             }
             return false;

@@ -10,6 +10,7 @@ namespace SwiftNPCs.Core.World.AIModules
     {
         public float DoorDistance = 1.5f;
         public float DoorFacing = 1.5f;
+        public float DoorDotMinimum = 0.1f;
 
         public AIMovementEngine MovementEngine => Parent.MovementEngine;
 
@@ -132,7 +133,7 @@ namespace SwiftNPCs.Core.World.AIModules
                 }
             }
 
-            inVision = door == null || Parent.GetDotProduct(door.transform.position) > 0f;
+            inVision = door == null || Parent.GetDotProduct(door.transform.position) >= DoorDotMinimum;
             return door;
         }
 

@@ -1,7 +1,5 @@
 ﻿using PlayerRoles.FirstPersonControl;
-using PluginAPI.Core;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace SwiftNPCs.Core.World
 {
@@ -63,7 +61,7 @@ namespace SwiftNPCs.Core.World
         }
 
         public float SpeedOverride = -1f;
-        public float LookSpeed = 200f;
+        public float LookSpeed = 210f;
 
         public Vector3 WishDir;
         public Vector3 LookDir
@@ -116,6 +114,7 @@ namespace SwiftNPCs.Core.World
             CharCont.skinWidth = 0.1f;
 
             CurrentLookRot = Quaternion.RotateTowards(CurrentLookRot, TargetLookRot, LookSpeed * Time.fixedDeltaTime);
+
             UpdateMove(WishDir);
         }
 

@@ -35,7 +35,7 @@ namespace SwiftNPCs.Core.World
             {
                 Items.Clear();
                 List<string> item = [.. value];
-                item.RemoveAt(0);
+                item.RemoveRange(0, 2);
                 foreach (string s in item)
                 {
                     if (Enum.TryParse(s, out ItemType ite))
