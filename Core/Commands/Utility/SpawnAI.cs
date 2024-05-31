@@ -50,8 +50,9 @@ namespace SwiftNPCs.Core.Commands.Utility
                 ItemBase ite = prof.Player.AddItem(i);
                 if (ite is Firearm f)
                     f.Status = new FirearmStatus(f.AmmoManagerModule.MaxAmmo, f.Status.Flags, AttachmentsUtils.GetRandomAttachmentsCode(i));
-                result += i.ToString() + ", ";
             }
+
+            result += string.Join(", ", items);
 
             return true;
         }

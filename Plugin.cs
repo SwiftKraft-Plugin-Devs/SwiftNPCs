@@ -2,6 +2,8 @@
 using PluginAPI.Core.Attributes;
 using PluginAPI.Enums;
 using PluginAPI.Events;
+using SwiftAPI.Utility.Spawners;
+using SwiftNPCs.Core.World;
 using SwiftNPCs.HarmonyPatching;
 
 namespace SwiftNPCs
@@ -31,6 +33,8 @@ namespace SwiftNPCs
             HarmonyPatcher.InitHarmony();
 
             EventManager.RegisterEvents<EventHandler>(this);
+
+            SpawnerManager.RegisterSpawnerType<AISpawner>("NPC");
 
             Log.Info($"SwiftNPCs {Version} Loaded! ");
         }
