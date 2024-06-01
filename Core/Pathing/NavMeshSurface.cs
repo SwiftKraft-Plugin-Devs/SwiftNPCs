@@ -142,8 +142,8 @@ namespace UnityEngine.AI
             var buildSettings = new NavMeshBuildSettings()
             {
                 agentTypeID = 0,
-                agentClimb = 0.5f,
-                agentHeight = 1.5f,
+                agentClimb = 0.2f,
+                agentHeight = 1.7f,
                 agentRadius = 0.5f,
                 agentSlope = 45f,
             };
