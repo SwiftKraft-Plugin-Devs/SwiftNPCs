@@ -77,7 +77,7 @@ namespace SwiftNPCs.Core.World.AIModules
                 Parent.ChangeModule(AutonomyTag, false);
                 Parent.ChangeModule(AggroTag, false);
             }
-            else if (!Parent.HasEnemyTarget && Parent.HasFollowTarget)
+            else if (Parent.HasFollowTarget)
             {
                 Parent.ChangeModule(AttackerTag, false);
                 Parent.ChangeModule(AggroTag, false);
