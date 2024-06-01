@@ -17,7 +17,7 @@ namespace SwiftNPCs.Core.World.AIModules
             set => Parent.EnemyTarget = value;
         }
 
-        public bool HasLOS(out Vector3 pos, out bool canShoot) => Parent.HasLOSOnEnemy(out pos, out canShoot, Headshots);
+        public bool HasLOS(out Vector3 pos, out bool hasCollider) => Parent.HasLOSOnEnemy(out pos, out hasCollider, Headshots);
         public bool HasTarget => Parent.HasEnemyTarget;
 
         public bool IsAiming
@@ -63,7 +63,7 @@ namespace SwiftNPCs.Core.World.AIModules
         Vector3 randomAim;
         float randomAimTimer;
 
-        public override bool Condition() => Parent.HasItemOfCategory(ItemCategory.Firearm);
+        public override bool Condition() => HasTarget && Parent.HasItemOfCategory(ItemCategory.Firearm) && HasLOS(out _, out bool hasCollider) && !hasCollider;
 
         public override void OnDisabled()
         {
@@ -97,7 +97,7 @@ namespace SwiftNPCs.Core.World.AIModules
                 randomAim = Random.Range(0, 2) == 1 ? Random.insideUnitSphere * Mathf.Lerp(RandomAimRangeClose, RandomAimRangeFar, Mathf.InverseLerp(RandomAimRangeCloseDistance, RandomAimRangeFarDistance, Parent.GetDistance(Target))) : Vector3.zero;
             }
 
-            bool hasLOS = HasLOS(out Vector3 pos, out bool canShoot);
+            bool hasLOS = HasLOS(out Vector3 pos, out bool hasCollider);
 
             if (hasLOS)
                 Parent.MovementEngine.LookPos = pos + randomAim;
@@ -111,7 +111,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
                 if (f.Status.Ammo <= 0)
                     StartReload(f);
-                else if (hasLOS && canShoot && Parent.GetDotProduct(pos) >= ShootDotMinimum)
+                else if (hasLOS && !hasCollider && Parent.GetDotProduct(pos) >= ShootDotMinimum)
                     Shoot(f);
 
                 if (!HasTarget && State == FirearmState.Standby)

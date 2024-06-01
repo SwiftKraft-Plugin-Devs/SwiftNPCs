@@ -2,6 +2,7 @@
 using Interactables.Interobjects;
 using Interactables.Interobjects.DoorUtils;
 using InventorySystem;
+using InventorySystem.Disarming;
 using InventorySystem.Items;
 using InventorySystem.Items.Keycards;
 using MapGeneration;
@@ -28,7 +29,7 @@ namespace SwiftNPCs.Core.World
         public const float RetargetTime = 0.25f;
 
         public float DotViewMinimum = 0.25f;
-        public float FollowDistanceMax = 400f;
+        public float FollowDistanceMax = 200f;
 
         public readonly List<AIModuleBase> Modules = [];
 
@@ -89,6 +90,8 @@ namespace SwiftNPCs.Core.World
 
             if (RetargetTimer > 0f)
                 RetargetTimer -= Time.fixedDeltaTime;
+
+            HasEnemyTarget = UpdateHasEnemyTarget();
 
             foreach (AIModuleBase module in Modules)
                 module.Tick();
@@ -209,6 +212,7 @@ namespace SwiftNPCs.Core.World
         public bool CheckLOS(Vector3 pos, out bool hasCollider)
         {
             RaycastHit[] hits = Physics.RaycastAll(CameraPosition, (pos - CameraPosition).normalized, Vector3.Distance(CameraPosition, pos), AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore);
+            
             if (hits.Length <= 0)
             {
                 hasCollider = false;
@@ -233,7 +237,7 @@ namespace SwiftNPCs.Core.World
             if (p == null)
             {
                 position = Vector3.zero;
-                hasCollider = false;
+                hasCollider = true;
                 return false;
             }
 
@@ -396,35 +400,42 @@ namespace SwiftNPCs.Core.World
             }
         }
 
-        public bool HasEnemyTarget
-        {
-            get
-            {
-                if (!CanTarget(EnemyTarget, out _))
-                {
-                    if (EnemyTarget != null)
-                    {
-                        OnLostEnemy?.Invoke(EnemyTarget, EnemyTarget.Position);
-                        EnemyTarget = null;
-                    }
+        private bool prevHasCollider;
 
-                    return false;
+        public bool HasEnemyTarget { get; private set; }
+
+        private bool UpdateHasEnemyTarget()
+        {
+            if (!CanTarget(EnemyTarget, out bool hasCollider))
+            {
+                if (EnemyTarget != null)
+                {
+                    OnLostEnemy?.Invoke(EnemyTarget, EnemyTarget.IsAlive ? EnemyTarget.Position : Position);
+                    EnemyTarget = null;
                 }
 
-                return true;
+                return false;
             }
+            else if (hasCollider && hasCollider != prevHasCollider)
+                OnLostEnemy?.Invoke(EnemyTarget, EnemyTarget.Position);
+
+            prevHasCollider = hasCollider;
+
+            return true;
         }
 
-        public bool HasLOSOnEnemy(out Vector3 pos, out bool canShoot, bool prioritizeHead = false) { pos = Vector3.zero; canShoot = false; return HasEnemyTarget && HasLOS(EnemyTarget, out pos, out canShoot, prioritizeHead); }
+        public bool HasLOSOnEnemy(out Vector3 pos, out bool hasCollider, bool prioritizeHead = false) { pos = Vector3.zero; hasCollider = true; return HasEnemyTarget && HasLOS(EnemyTarget, out pos, out hasCollider, prioritizeHead); }
 
         public const string NoKOS = "npckos";
 
         public static bool DisableKOS => ServerVariableManager.TryGetVar(NoKOS, out ServerVariable svar) && bool.TryParse(svar.Value, out bool v) && !v;
 
-        public bool CanTarget(Player p, out bool canShoot)
+        public bool CanTarget(Player p, out bool hasCollider)
         {
-            canShoot = true;
-            return p != null
+            hasCollider = false;
+            return !IsDisarmed(out _)
+            && !HasEffect<Blinded>()
+            && p != null
             && p.ReferenceHub != ReferenceHub
             && p.IsAlive
             && !p.IsDisarmed
@@ -432,17 +443,22 @@ namespace SwiftNPCs.Core.World
             && !IsInvisible(p)
             && IsEnemy(p)
             && (!DisableKOS || !IsCivilian(p) || IsArmed(p))
-            && HasLOS(p, out _, out canShoot);
+            && HasLOS(p, out _, out hasCollider);
         }
 
-        public bool CanFollow(Player p) =>
-            p != null
+        public bool CanFollow(Player p)
+        {
+            return !HasEffect<Blinded>()
+            && p != null
             && p.ReferenceHub != ReferenceHub
             && p.IsAlive
             && !p.IsGodModeEnabled
             && !IsInvisible(p)
-            && !IsEnemy(p)
+            && (!IsEnemy(p) || (IsDisarmed(out Player disarmer) && disarmer == p))
             && WithinDistance(p, FollowDistanceMax);
+        }
+
+        public bool HasEffect<T>() where T : StatusEffectBase => ReferenceHub.playerEffectsController.TryGetEffect(out T effect) && effect.IsEnabled;
 
         public int GetFollowWeight(Player p)
         {
@@ -471,6 +487,13 @@ namespace SwiftNPCs.Core.World
         public float GetDistance(Player p) => Vector3.Distance(Position, p.Position);
 
         public bool WithinDistance(Player p, float dist) => GetDistance(p) <= dist;
+
+        public bool IsDisarmed(out Player disarmer)
+        {
+            bool isDisarmed = ReferenceHub.inventory.IsDisarmed();
+            disarmer = isDisarmed ? Player.Get<Player>(DisarmedPlayers.Entries.Find((DisarmedPlayers.DisarmedEntry x) => x.DisarmedPlayer == ReferenceHub.netId).Disarmer) : null;
+            return isDisarmed;
+        }
 
         public event Action<Player, Vector3> OnLostEnemy;
         public event Action<Player, Vector3> OnLostFollow;

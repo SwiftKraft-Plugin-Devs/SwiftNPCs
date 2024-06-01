@@ -17,7 +17,7 @@ namespace SwiftNPCs.Core.World.AIModules
             set => Parent.EnemyTarget = value;
         }
 
-        public bool HasLOS(out Vector3 pos, out bool canThrow) => Parent.HasLOSOnEnemy(out pos, out canThrow);
+        public bool HasLOS(out Vector3 pos, out bool hasCollider) => Parent.HasLOSOnEnemy(out pos, out hasCollider);
 
         public float Delay = 1f;
         public float DistanceOffsetScaler = 0.25f;
@@ -33,7 +33,7 @@ namespace SwiftNPCs.Core.World.AIModules
             Tags = [AIBehaviorBase.AttackerTag];
         }
 
-        public override bool Condition() => Parent.HasItemOfCategory(ItemCategory.Grenade) && delay <= 0f;
+        public override bool Condition() => delay <= 0f && Parent.HasEnemyTarget && Parent.HasItemOfCategory(ItemCategory.Grenade) && HasLOS(out _, out bool hasCollider) && !hasCollider;
 
         public override void OnDisabled() { }
 
@@ -47,14 +47,14 @@ namespace SwiftNPCs.Core.World.AIModules
             if (!Enabled || !Parent.HasEnemyTarget)
                 return;
 
-            bool hasLOS = HasLOS(out Vector3 pos, out bool canThrow);
+            bool hasLOS = HasLOS(out Vector3 pos, out bool hasCollider);
 
             if (hasLOS)
                 Parent.MovementEngine.LookPos = pos + Mathf.Clamp(Vector3.Distance(Parent.EnemyTarget.Position, Parent.CameraPosition) * DistanceOffsetScaler, 0f, DistanceOffsetCap) * Vector3.up;
 
             if (Parent.TryGetItem(out ThrowableItem throwable))
             {
-                if (hasLOS && canThrow)
+                if (hasLOS && !hasCollider)
                     Throw(throwable);
             }
             else
