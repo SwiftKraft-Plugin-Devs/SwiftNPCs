@@ -9,13 +9,15 @@ namespace SwiftNPCs.Core.World.AIModules
 {
     public class AIFirearmShoot : AIModuleBase
     {
+        public override float Duration => 4f;
+
         public Player Target
         {
             get => Parent.EnemyTarget;
             set => Parent.EnemyTarget = value;
         }
 
-        public bool HasLOS(out Vector3 pos) => Parent.HasLOSOnEnemy(out pos, Headshots);
+        public bool HasLOS(out Vector3 pos, out bool canShoot) => Parent.HasLOSOnEnemy(out pos, out canShoot, Headshots);
         public bool HasTarget => Parent.HasEnemyTarget;
 
         public bool IsAiming
@@ -95,7 +97,7 @@ namespace SwiftNPCs.Core.World.AIModules
                 randomAim = Random.Range(0, 2) == 1 ? Random.insideUnitSphere * Mathf.Lerp(RandomAimRangeClose, RandomAimRangeFar, Mathf.InverseLerp(RandomAimRangeCloseDistance, RandomAimRangeFarDistance, Parent.GetDistance(Target))) : Vector3.zero;
             }
 
-            bool hasLOS = HasLOS(out Vector3 pos);
+            bool hasLOS = HasLOS(out Vector3 pos, out bool canShoot);
 
             if (hasLOS)
                 Parent.MovementEngine.LookPos = pos + randomAim;
@@ -109,10 +111,8 @@ namespace SwiftNPCs.Core.World.AIModules
 
                 if (f.Status.Ammo <= 0)
                     StartReload(f);
-                else if (hasLOS && Parent.GetDotProduct(pos) >= ShootDotMinimum)
+                else if (hasLOS && canShoot && Parent.GetDotProduct(pos) >= ShootDotMinimum)
                     Shoot(f);
-                else
-                    Target = null;
 
                 if (!HasTarget && State == FirearmState.Standby)
                     IsAiming = false;

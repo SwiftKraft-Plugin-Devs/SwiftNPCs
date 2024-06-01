@@ -1,5 +1,4 @@
 ﻿using InventorySystem;
-using InventorySystem.Items;
 using InventorySystem.Items.ThrowableProjectiles;
 using PluginAPI.Core;
 using UnityEngine;
@@ -18,7 +17,7 @@ namespace SwiftNPCs.Core.World.AIModules
             set => Parent.EnemyTarget = value;
         }
 
-        public bool HasLOS(out Vector3 pos) => Parent.HasLOSOnEnemy(out pos);
+        public bool HasLOS(out Vector3 pos, out bool canThrow) => Parent.HasLOSOnEnemy(out pos, out canThrow);
 
         public float Delay = 1f;
         public float DistanceOffsetScaler = 0.25f;
@@ -48,13 +47,18 @@ namespace SwiftNPCs.Core.World.AIModules
             if (!Enabled || !Parent.HasEnemyTarget)
                 return;
 
+            bool hasLOS = HasLOS(out Vector3 pos, out bool canThrow);
+
+            if (hasLOS)
+                Parent.MovementEngine.LookPos = pos + Mathf.Clamp(Vector3.Distance(Parent.EnemyTarget.Position, Parent.CameraPosition) * DistanceOffsetScaler, 0f, DistanceOffsetCap) * Vector3.up;
+
             if (Parent.TryGetItem(out ThrowableItem throwable))
-                Throw(throwable);
+            {
+                if (hasLOS && canThrow)
+                    Throw(throwable);
+            }
             else
                 Parent.EquipItem<ThrowableItem>();
-
-            if (HasLOS(out Vector3 pos))
-                Parent.MovementEngine.LookPos = pos + Mathf.Clamp(Vector3.Distance(Parent.EnemyTarget.Position, Parent.CameraPosition) * DistanceOffsetScaler, 0f, DistanceOffsetCap) * Vector3.up;
         }
 
         public void Throw(ThrowableItem item)

@@ -206,22 +206,45 @@ namespace SwiftNPCs.Core.World
             return false;
         }
 
-        public bool HasLOS(Player p, out Vector3 position, bool prioritizeHead = false)
+        public bool CheckLOS(Vector3 pos, out bool hasCollider)
+        {
+            RaycastHit[] hits = Physics.RaycastAll(CameraPosition, (pos - CameraPosition).normalized, Vector3.Distance(CameraPosition, pos), AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore);
+            if (hits.Length <= 0)
+            {
+                hasCollider = false;
+                return true;
+            }
+
+            foreach (RaycastHit hit in hits)
+            {
+                if ((!hit.collider.TryGetComponentInParent(out DoorVariant door) && !hit.collider.TryGetComponent(out door)) || !door.CanSeeThrough)
+                {
+                    hasCollider = true;
+                    return false;
+                }
+            }
+
+            hasCollider = true;
+            return true;
+        }
+
+        public bool HasLOS(Player p, out Vector3 position, out bool hasCollider, bool prioritizeHead = false)
         {
             if (p == null)
             {
                 position = Vector3.zero;
+                hasCollider = false;
                 return false;
             }
 
             if (!prioritizeHead)
             {
-                if (!Physics.Linecast(CameraPosition, p.Position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
+                if (CheckLOS(p.Position, out hasCollider))
                 {
                     position = p.Position + Vector3.up * AimOffset;
                     return true;
                 }
-                else if (!Physics.Linecast(CameraPosition, p.Camera.position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
+                else if (CheckLOS(p.Camera.position, out hasCollider))
                 {
                     position = p.Camera.position + Vector3.down * AimOffset;
                     return true;
@@ -229,12 +252,12 @@ namespace SwiftNPCs.Core.World
             }
             else
             {
-                if (!Physics.Linecast(CameraPosition, p.Camera.position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
+                if (CheckLOS(p.Camera.position, out hasCollider))
                 {
                     position = p.Camera.position + Vector3.down * AimOffset;
                     return true;
                 }
-                else if (!Physics.Linecast(CameraPosition, p.Position, AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore))
+                else if (CheckLOS(p.Position, out hasCollider))
                 {
                     position = p.Position + Vector3.up * AimOffset;
                     return true;
@@ -377,7 +400,7 @@ namespace SwiftNPCs.Core.World
         {
             get
             {
-                if (!CanTarget(EnemyTarget))
+                if (!CanTarget(EnemyTarget, out _))
                 {
                     if (EnemyTarget != null)
                     {
@@ -392,14 +415,16 @@ namespace SwiftNPCs.Core.World
             }
         }
 
-        public bool HasLOSOnEnemy(out Vector3 pos, bool prioritizeHead = false) { pos = Vector3.zero; return HasEnemyTarget && HasLOS(EnemyTarget, out pos, prioritizeHead); }
+        public bool HasLOSOnEnemy(out Vector3 pos, out bool canShoot, bool prioritizeHead = false) { pos = Vector3.zero; canShoot = false; return HasEnemyTarget && HasLOS(EnemyTarget, out pos, out canShoot, prioritizeHead); }
 
         public const string NoKOS = "npckos";
 
         public static bool DisableKOS => ServerVariableManager.TryGetVar(NoKOS, out ServerVariable svar) && bool.TryParse(svar.Value, out bool v) && !v;
 
-        public bool CanTarget(Player p) =>
-            p != null
+        public bool CanTarget(Player p, out bool canShoot)
+        {
+            canShoot = true;
+            return p != null
             && p.ReferenceHub != ReferenceHub
             && p.IsAlive
             && !p.IsDisarmed
@@ -407,7 +432,8 @@ namespace SwiftNPCs.Core.World
             && !IsInvisible(p)
             && IsEnemy(p)
             && (!DisableKOS || !IsCivilian(p) || IsArmed(p))
-            && HasLOS(p, out _);
+            && HasLOS(p, out _, out canShoot);
+        }
 
         public bool CanFollow(Player p) =>
             p != null

@@ -10,7 +10,8 @@ namespace SwiftNPCs.Core.World.AIModules
     {
         public float WanderTimerMin = 10f;
         public float WanderTimerMax = 30f;
-        public float SurfaceRadius = 15f;
+        public float SurfaceRadius = 30f;
+        public float RoomRadius = 60f;
 
         public bool ActiveWhenFollow;
 
@@ -23,7 +24,7 @@ namespace SwiftNPCs.Core.World.AIModules
             List<FacilityRoom> rooms = [];
 
             foreach (FacilityRoom room in Facility.Rooms)
-                if (room.GameObject.activeSelf && RoomIsInLayer(room))
+                if (room.GameObject.activeSelf && Vector3.Distance(Parent.Position, room.Position) <= RoomRadius && RoomIsInLayer(room))
                     rooms.Add(room);
 
             return rooms.Count > 0 ? rooms.RandomItem() : null;

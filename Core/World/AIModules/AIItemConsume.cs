@@ -58,7 +58,7 @@ namespace SwiftNPCs.Core.World.AIModules
             else
                 Parent.EquipItem<Consumable>();
 
-            if (Parent.HasLOSOnEnemy(out Vector3 pos))
+            if (Parent.HasLOSOnEnemy(out Vector3 pos, out _))
                 Parent.MovementEngine.LookPos = pos;
         }
 

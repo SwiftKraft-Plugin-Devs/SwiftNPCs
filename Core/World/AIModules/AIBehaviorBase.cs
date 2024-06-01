@@ -49,7 +49,7 @@ namespace SwiftNPCs.Core.World.AIModules
             Parent.ChangeModule(MoverTag, true);
             Parent.ChangeModule(AutonomyTag, false);
             TimerStopCondition = () => Parent.HasEnemyTarget;
-            Timer = 7f;
+            Timer = Mathf.Lerp(3f, 10f, Mathf.InverseLerp(0f, 70f, Vector3.Distance(Parent.Position, lastLocation)));
         }
 
         public override void Tick()
