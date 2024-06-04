@@ -92,6 +92,9 @@ namespace SwiftNPCs.Core.World.AIModules
             SetDestination();
         }
 
-        public override void OnDisabled() { }
+        public override void OnDisabled()
+        {
+            Pathfinder.ClearDestination();
+        }
     }
 }

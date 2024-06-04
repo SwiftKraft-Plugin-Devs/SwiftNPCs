@@ -64,6 +64,7 @@ namespace SwiftNPCs.Core.World
 
         public float RetargetTimer;
         public bool CanStealth = false;
+        public bool DeleteOnDeath = true;
 
         protected float AimOffset;
 
@@ -76,9 +77,9 @@ namespace SwiftNPCs.Core.World
             }
 
             Core.OnDamage -= OnDamage;
-            Core.OnRoleChange -= OnRoleChange;
+            Core.OnRoleChange -= RoleChange;
             Core.OnDamage += OnDamage;
-            Core.OnRoleChange += OnRoleChange;
+            Core.OnRoleChange += RoleChange;
 
             AimOffset = Random.Range(0.18f, 0.31f);
         }
@@ -100,7 +101,7 @@ namespace SwiftNPCs.Core.World
         private void OnDestroy()
         {
             Core.OnDamage -= OnDamage;
-            Core.OnRoleChange -= OnRoleChange;
+            Core.OnRoleChange -= RoleChange;
         }
 
         public virtual void OnDamage(Player attacker)
@@ -112,13 +113,15 @@ namespace SwiftNPCs.Core.World
             }
         }
 
-        public virtual void OnRoleChange(RoleTypeId role)
+        protected virtual void RoleChange(RoleTypeId role)
         {
             FollowTarget = null;
             EnemyTarget = null;
             RetargetTimer = 0f;
 
-            if (role == RoleTypeId.None || role == RoleTypeId.Spectator)
+            OnRoleChange?.Invoke(role);
+
+            if ((role == RoleTypeId.None || role == RoleTypeId.Spectator) && DeleteOnDeath)
                 Core.Profile.Delete();
         }
 
@@ -497,5 +500,6 @@ namespace SwiftNPCs.Core.World
 
         public event Action<Player, Vector3> OnLostEnemy;
         public event Action<Player, Vector3> OnLostFollow;
+        public event Action<RoleTypeId> OnRoleChange;
     }
 }

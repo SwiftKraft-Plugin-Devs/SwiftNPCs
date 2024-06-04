@@ -73,7 +73,7 @@ namespace SwiftNPCs.Core.World.AIModules
             if (Parent.HasEnemyTarget && Parent.ActivateRandomModuleByTag(AttackerTag, out AIModuleBase mod, true))
             {
                 Timer = mod.Duration;
-                Parent.ChangeModule(MoverTag, false);
+                Parent.ChangeModule(MoverTag, true);
                 Parent.ChangeModule(AutonomyTag, false);
                 Parent.ChangeModule(AggroTag, false);
             }

@@ -28,6 +28,7 @@ namespace SwiftNPCs.Core.World.AIModules
         public override void OnDisabled()
         {
             Pathfinder.LookAtWaypoint = true;
+            Pathfinder.ClearDestination();
         }
 
         public override void Tick()
