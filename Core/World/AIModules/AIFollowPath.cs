@@ -1,4 +1,5 @@
-﻿using Interactables.Interobjects.DoorUtils;
+﻿using Interactables.Interobjects;
+using Interactables.Interobjects.DoorUtils;
 using SwiftAPI.API.BreakableToys;
 using SwiftNPCs.Core.Pathing;
 using System.Collections.Generic;
@@ -125,6 +126,9 @@ namespace SwiftNPCs.Core.World.AIModules
             float doorDist = Mathf.Infinity;
             foreach (DoorVariant d in DoorVariant.AllDoors)
             {
+                if (d is BasicNonInteractableDoor)
+                    continue;
+
                 float dist = GetDoorDistance(d);
                 if (dist <= DoorDistance && (door == null || dist < doorDist))
                 {
