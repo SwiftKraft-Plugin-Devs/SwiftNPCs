@@ -1,6 +1,7 @@
 ﻿using MapGeneration;
 using Mirror;
 using PlayerRoles;
+using PluginAPI.Core;
 using SwiftNPCs.Core.Management;
 using SwiftNPCs.Core.Pathing;
 using SwiftNPCs.Core.World.AIModules;
