@@ -1,4 +1,4 @@
-﻿namespace SwiftNPCs.Core.World.AIModules
+﻿namespace SwiftNPCs.Core.World.Modules
 {
     public abstract class AIModuleBase
     {

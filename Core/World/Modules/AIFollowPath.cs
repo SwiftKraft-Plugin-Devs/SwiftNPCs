@@ -5,7 +5,7 @@ using SwiftNPCs.Core.Pathing;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SwiftNPCs.Core.World.AIModules
+namespace SwiftNPCs.Core.World.Modules
 {
     public class AIFollowPath : AIModuleBase
     {

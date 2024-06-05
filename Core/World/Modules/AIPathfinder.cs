@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using FacilityZone = MapGeneration.FacilityZone;
 
-namespace SwiftNPCs.Core.World.AIModules
+namespace SwiftNPCs.Core.World.Modules
 {
     public class AIPathfinder : AIFollowPath
     {

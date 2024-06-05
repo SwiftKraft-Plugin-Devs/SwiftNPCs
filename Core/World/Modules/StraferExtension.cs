@@ -2,7 +2,7 @@
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace SwiftNPCs.Core.World.AIModules
+namespace SwiftNPCs.Core.World.Modules
 {
     public static class StraferExtension
     {

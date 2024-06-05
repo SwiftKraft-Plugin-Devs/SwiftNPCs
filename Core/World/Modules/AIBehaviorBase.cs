@@ -4,7 +4,7 @@ using PluginAPI.Core;
 using System;
 using UnityEngine;
 
-namespace SwiftNPCs.Core.World.AIModules
+namespace SwiftNPCs.Core.World.Modules
 {
     public class AIBehaviorBase : AIModuleBase
     {

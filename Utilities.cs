@@ -3,7 +3,7 @@ using Mirror;
 using PlayerRoles;
 using SwiftNPCs.Core.Management;
 using SwiftNPCs.Core.Pathing;
-using SwiftNPCs.Core.World.AIModules;
+using SwiftNPCs.Core.World.Modules;
 using System.Collections.Generic;
 using UnityEngine;
 using static UnityStandardAssets.CinematicEffects.TonemappingColorGrading;

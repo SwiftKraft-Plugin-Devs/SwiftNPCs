@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace SwiftNPCs.Core.World.AIModules
+namespace SwiftNPCs.Core.World.Modules
 {
     public class Strafer(AIModuleRunner parent, float max = 2f, float min = 1f)
     {
