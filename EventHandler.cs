@@ -8,7 +8,6 @@ using PluginAPI.Events;
 using SwiftNPCs.Core.Management;
 using SwiftNPCs.Core.Pathing;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 
 namespace SwiftNPCs
 {
