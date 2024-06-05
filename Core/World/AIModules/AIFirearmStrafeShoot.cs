@@ -1,6 +1,6 @@
-﻿namespace SwiftNPCs.Core.World.Modules
+﻿namespace SwiftNPCs.Core.World.AIModules
 {
-    public class AIGrenadeStrafeThrow : AIGrenadeThrow
+    public class AIFirearmStrafeShoot : AIFirearmShoot
     {
         public Strafer Strafer { get; private set; }
 
@@ -22,7 +22,7 @@
         {
             base.Tick();
 
-            if (!Enabled || !Parent.HasEnemyTarget)
+            if (!Enabled || !HasTarget)
                 return;
 
             Strafer.Tick();

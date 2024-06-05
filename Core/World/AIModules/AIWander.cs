@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace SwiftNPCs.Core.World.Modules
+namespace SwiftNPCs.Core.World.AIModules
 {
     public class AIWander : AIModuleBase
     {

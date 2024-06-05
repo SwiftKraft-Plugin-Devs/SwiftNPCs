@@ -1,4 +1,4 @@
-﻿namespace SwiftNPCs.Core.World.Modules
+﻿namespace SwiftNPCs.Core.World.AIModules
 {
     public class AIItemStrafeConsume : AIItemConsume
     {

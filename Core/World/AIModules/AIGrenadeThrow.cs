@@ -3,7 +3,7 @@ using InventorySystem.Items.ThrowableProjectiles;
 using PluginAPI.Core;
 using UnityEngine;
 
-namespace SwiftNPCs.Core.World.Modules
+namespace SwiftNPCs.Core.World.AIModules
 {
     public class AIGrenadeThrow : AIModuleBase
     {

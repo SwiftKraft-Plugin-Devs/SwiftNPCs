@@ -11,7 +11,7 @@ using PlayerStatsSystem;
 using PluginAPI.Core;
 using SwiftAPI.API.ServerVariables;
 using SwiftNPCs.Core.Management;
-using SwiftNPCs.Core.World.Modules;
+using SwiftNPCs.Core.World.AIModules;
 using System;
 using System.Collections.Generic;
 using System.Linq;

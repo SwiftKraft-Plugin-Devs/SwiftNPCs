@@ -1,7 +1,7 @@
 ﻿using PluginAPI.Core;
 using System.Collections.Generic;
 
-namespace SwiftNPCs.Core.World.Modules
+namespace SwiftNPCs.Core.World.AIModules
 {
     public class AIScanner : AIModuleBase
     {

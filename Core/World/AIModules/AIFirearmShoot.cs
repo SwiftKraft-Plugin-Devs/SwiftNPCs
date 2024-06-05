@@ -5,7 +5,7 @@ using PluginAPI.Core;
 using UnityEngine;
 using Utils.Networking;
 
-namespace SwiftNPCs.Core.World.Modules
+namespace SwiftNPCs.Core.World.AIModules
 {
     public class AIFirearmShoot : AIModuleBase
     {

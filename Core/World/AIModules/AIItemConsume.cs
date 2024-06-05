@@ -3,7 +3,7 @@ using InventorySystem.Items.Usables;
 using UnityEngine;
 using Utils.Networking;
 
-namespace SwiftNPCs.Core.World.Modules
+namespace SwiftNPCs.Core.World.AIModules
 {
     public class AIItemConsume : AIModuleBase
     {
