@@ -1,7 +1,6 @@
-﻿using Mirror;
+﻿using MEC;
 using PlayerRoles;
 using PlayerRoles.PlayableScps.Scp049.Zombies;
-using System;
 
 namespace SwiftNPCs.Core.World.AIModules
 {
@@ -9,9 +8,14 @@ namespace SwiftNPCs.Core.World.AIModules
     {
         public override RoleTypeId[] Roles => [RoleTypeId.Scp0492];
 
-        public override bool CanAttack() => 
-            Parent.GetDistance(Parent.EnemyTarget) <= Attacker._detectionRadius * 2f
-            && Attacker.CanTriggerAbility
+        public override bool CanAttack() =>
+            Parent.GetDistance(Parent.EnemyTarget) <= TryAttackRange
             && Attacker.Cooldown.IsReady;
+
+        public override void Attack()
+        {
+            base.Attack();
+            SendSubroutineMessage();
+        }
     }
 }

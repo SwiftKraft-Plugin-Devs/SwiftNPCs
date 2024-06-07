@@ -8,8 +8,7 @@ namespace SwiftNPCs.Core.World.AIModules
         public override RoleTypeId[] Roles => [RoleTypeId.Scp939];
 
         public override bool CanAttack() =>
-            Parent.GetDistance(Parent.EnemyTarget) <= Attacker._detectionRadius * 2f
-            && Attacker.CanTriggerAbility
+            Parent.GetDistance(Parent.EnemyTarget) <= TryAttackRange
             && Attacker.Cooldown.IsReady;
     }
 }

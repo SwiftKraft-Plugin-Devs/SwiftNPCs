@@ -1,6 +1,5 @@
 ﻿using PlayerRoles;
 using PlayerRoles.PlayableScps.Scp106;
-using System;
 
 namespace SwiftNPCs.Core.World.AIModules
 {
@@ -8,8 +7,8 @@ namespace SwiftNPCs.Core.World.AIModules
     {
         public override RoleTypeId[] Roles => [RoleTypeId.Scp106];
 
-        public override bool CanAttack() => 
+        public override bool CanAttack() =>
             !Attacker.IsSubmerged
-            && Parent.WithinDistance(Parent.EnemyTarget, Attacker._maxRangeSqr);
+            && Parent.WithinDistance(Parent.EnemyTarget, TryAttackRange);
     }
 }

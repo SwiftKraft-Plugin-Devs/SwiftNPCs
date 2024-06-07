@@ -445,7 +445,7 @@ namespace SwiftNPCs.Core.World
             && !p.IsGodModeEnabled
             && !IsInvisible(p)
             && IsEnemy(p)
-            && (!DisableKOS || !IsCivilian(p) || IsArmed(p))
+            && (!DisableKOS || ReferenceHub.IsSCP(true) || !IsCivilian(p) || IsArmed(p))
             && HasLOS(p, out _, out hasCollider);
         }
 

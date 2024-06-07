@@ -1,6 +1,5 @@
 ﻿using PlayerRoles;
 using PlayerRoles.PlayableScps.Scp049;
-using System;
 
 namespace SwiftNPCs.Core.World.AIModules
 {
@@ -8,7 +7,7 @@ namespace SwiftNPCs.Core.World.AIModules
     {
         public override RoleTypeId[] Roles => [RoleTypeId.Scp049];
 
-        public override bool CanAttack() => 
+        public override bool CanAttack() =>
             Parent.WithinDistance(Parent.EnemyTarget, Scp049AttackAbility.AttackDistance)
             && Attacker.Cooldown.IsReady;
     }

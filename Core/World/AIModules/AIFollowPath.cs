@@ -24,6 +24,20 @@ namespace SwiftNPCs.Core.World.AIModules
         public bool LookAtWaypoint = true;
         public bool EnableMovement = true;
 
+        public Vector3 OverrideWishDir { get; set; }
+
+        public Vector3 WishDir
+        {
+            get => MovementEngine.WishDir;
+            set
+            {
+                if (OverrideWishDir != Vector3.zero)
+                    MovementEngine.WishDir = OverrideWishDir;
+                else
+                    MovementEngine.WishDir = value;
+            }
+        }
+
         public static bool DebugMode = false;
 
         public readonly List<BreakableToyBase> Markers = [];
@@ -36,7 +50,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void OnDisabled()
         {
-            MovementEngine.WishDir = Vector3.zero;
+            WishDir = Vector3.zero;
         }
 
         public override void OnEnabled() { }
@@ -48,14 +62,14 @@ namespace SwiftNPCs.Core.World.AIModules
 
             if (Path == null)
             {
-                MovementEngine.WishDir = Vector3.zero;
+                WishDir = Vector3.zero;
                 return;
             }
 
             if (Path.TryGetWaypoint(CurrentIndex, out Vector3 waypoint))
             {
                 if (EnableMovement)
-                    MovementEngine.WishDir = GetDirection(waypoint);
+                    WishDir = GetDirection(waypoint);
 
                 if (!Path.TryGetDistance(Position, CurrentIndex, out float dist) || dist <= Path.WaypointRadius)
                 {
@@ -80,7 +94,7 @@ namespace SwiftNPCs.Core.World.AIModules
                 }
             }
             else
-                MovementEngine.WishDir = Vector3.zero;
+                WishDir = Vector3.zero;
 
             DebugUpdatePath();
         }
