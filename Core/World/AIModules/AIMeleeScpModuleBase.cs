@@ -87,24 +87,17 @@ namespace SwiftNPCs.Core.World.AIModules
         {
             UpdateAttackTriggered(false);
             UpdateClients();
-            UpdateAttackTriggered(true);
-            UpdateClients();
-            Timing.CallDelayed(0.2f, UpdateAttackTriggeredFalse);
+            Timing.CallDelayed(0.3f, () =>
+            {
+                UpdateAttackTriggered(true);
+                UpdateClients();
+                Timing.CallDelayed(0.5f, () => { UpdateAttackTriggered(false); });
+            });
         }
 
         public void UpdateAttackTriggered(bool value)
         {
             Attacker.SetBaseProperty("AttackTriggered", value);
-        }
-
-        private void UpdateAttackTriggeredFalse()
-        {
-            Attacker.SetBaseProperty("AttackTriggered", false);
-        }
-
-        private void UpdateAttackTriggeredTrue()
-        {
-            Attacker.SetBaseProperty("AttackTriggered", false);
         }
 
         public void UpdateClients()
