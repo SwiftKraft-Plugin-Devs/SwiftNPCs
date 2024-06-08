@@ -10,7 +10,7 @@ namespace SwiftNPCs.Core.World.AIModules
     public abstract class AIMeleeScpModuleBase<TRole, TAttacker> : AIRoleModuleBase where TRole : FpcStandardScp where TAttacker : KeySubroutine<TRole>
     {
         public float TryAttackRange = 2f;
-        public float MinAttackDistance = 0.2f;
+        public float MinAttackDistance = 0.3f;
 
         public TRole RoleBase
         {
@@ -61,6 +61,11 @@ namespace SwiftNPCs.Core.World.AIModules
             if (hasLOS)
                 Parent.MovementEngine.LookPos = pos;
 
+            if (!Parent.WithinDistance(Parent.EnemyTarget, MinAttackDistance))
+                Pathfinder.OverrideWishDir = (Parent.EnemyTarget.Position - Parent.Position).normalized;
+            else
+                Pathfinder.OverrideWishDir = Vector3.zero;
+
             if (!hasLOS || hasCollider || Attacker == null || !CanAttack())
             {
                 Pathfinder.OverrideWishDir = Vector3.zero;
@@ -68,8 +73,6 @@ namespace SwiftNPCs.Core.World.AIModules
             }
             else
             {
-                if (!Parent.WithinDistance(Parent.EnemyTarget, MinAttackDistance))
-                    Pathfinder.OverrideWishDir = (Parent.EnemyTarget.Position - Parent.Position).normalized;
                 Attack();
             }
         }
@@ -80,29 +83,6 @@ namespace SwiftNPCs.Core.World.AIModules
             NetworkWriter writer = new();
             Attacker.ClientWriteCmd(writer);
             Attacker.ServerProcessCmd(new(writer));
-
-        }
-
-        public void SendSubroutineMessage()
-        {
-            UpdateAttackTriggered(false);
-            UpdateClients();
-            Timing.CallDelayed(0.3f, () =>
-            {
-                UpdateAttackTriggered(true);
-                UpdateClients();
-                Timing.CallDelayed(0.5f, () => { UpdateAttackTriggered(false); });
-            });
-        }
-
-        public void UpdateAttackTriggered(bool value)
-        {
-            Attacker.SetBaseProperty("AttackTriggered", value);
-        }
-
-        public void UpdateClients()
-        {
-            NetworkClient.Send(new SubroutineMessage(Attacker, false));
         }
 
         public abstract bool CanAttack();
