@@ -1,6 +1,7 @@
 ﻿using InventorySystem.Items.Firearms;
 using PlayerRoles;
 using PluginAPI.Core;
+using SwiftNPCs.Core.World.Targetables;
 using System;
 using UnityEngine;
 
@@ -42,7 +43,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void OnEnabled() { }
 
-        public void OnLostEnemy(Player enemy, Vector3 lastLocation)
+        public void OnLostEnemy(TargetableBase enemy, Vector3 lastLocation)
         {
             Parent.ChangeModule(AttackerTag, false);
             Parent.ChangeModule(AggroTag, true);

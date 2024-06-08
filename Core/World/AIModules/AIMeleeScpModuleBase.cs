@@ -79,7 +79,6 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public virtual void Attack()
         {
-            Log.Info("Attacking1!");
             NetworkWriter writer = new();
             Attacker.ClientWriteCmd(writer);
             Attacker.ServerProcessCmd(new(writer));

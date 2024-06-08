@@ -1,4 +1,5 @@
 ﻿using PluginAPI.Core;
+using SwiftNPCs.Core.World.Targetables;
 using System.Collections.Generic;
 
 namespace SwiftNPCs.Core.World.AIModules
@@ -8,7 +9,7 @@ namespace SwiftNPCs.Core.World.AIModules
         public float SearchRadiusEnemy = 70f;
         public float SearchRadiusFollow = 20f;
 
-        public Player LookTarget => Parent.FollowTarget;
+        public TargetableBase LookTarget => Parent.FollowTarget;
 
         public override void Init()
         {
@@ -27,8 +28,8 @@ namespace SwiftNPCs.Core.World.AIModules
 
                 List<Player> players = Player.GetPlayers();
 
-                Player target = null;
-                Player follow = null;
+                TargetableBase target = null;
+                TargetableBase follow = null;
 
                 foreach (Player p in players)
                 {

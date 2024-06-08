@@ -2,6 +2,7 @@
 using InventorySystem.Items.Firearms;
 using InventorySystem.Items.Firearms.BasicMessages;
 using PluginAPI.Core;
+using SwiftNPCs.Core.World.Targetables;
 using UnityEngine;
 using Utils.Networking;
 
@@ -11,7 +12,7 @@ namespace SwiftNPCs.Core.World.AIModules
     {
         public override float Duration => 4f;
 
-        public Player Target
+        public TargetableBase Target
         {
             get => Parent.EnemyTarget;
             set => Parent.EnemyTarget = value;
@@ -44,6 +45,8 @@ namespace SwiftNPCs.Core.World.AIModules
                 }
             }
         }
+
+        public bool HasAmmo { get; protected set; }
 
         public bool Headshots;
         public bool InfiniteAmmo = true;
@@ -109,7 +112,9 @@ namespace SwiftNPCs.Core.World.AIModules
                 else
                     State = FirearmState.Standby;
 
-                if (f.Status.Ammo <= 0)
+                HasAmmo = f.Status.Ammo > 0;
+
+                if (!HasAmmo)
                     StartReload(f);
                 else if (hasLOS && !hasCollider && Parent.GetDotProduct(pos) >= ShootDotMinimum)
                     Shoot(f);
@@ -127,6 +132,8 @@ namespace SwiftNPCs.Core.World.AIModules
 
             if (f == null || State != FirearmState.Standby)
                 return false;
+
+            HasAmmo = false;
 
             if (InfiniteAmmo && Parent.Inventory.GetCurAmmo(f.AmmoType) < f.AmmoManagerModule.MaxAmmo)
                 Parent.Inventory.ServerAddAmmo(f.AmmoType, f.AmmoManagerModule.MaxAmmo);

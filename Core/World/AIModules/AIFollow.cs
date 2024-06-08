@@ -6,8 +6,8 @@ namespace SwiftNPCs.Core.World.AIModules
 {
     public class AIFollow : AIModuleBase
     {
-        public float FollowDistance = 4f;
-        public float FollowRandomRange = 2f;
+        public float FollowDistance = 3f;
+        public float FollowRandomRange = 1.5f;
         public float SprintDistance = 7f;
 
         AIPathfinder Pathfinder;

@@ -12,6 +12,7 @@ using PluginAPI.Core;
 using SwiftAPI.API.ServerVariables;
 using SwiftNPCs.Core.Management;
 using SwiftNPCs.Core.World.AIModules;
+using SwiftNPCs.Core.World.Targetables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,8 +34,8 @@ namespace SwiftNPCs.Core.World
 
         public readonly List<AIModuleBase> Modules = [];
 
-        public Player EnemyTarget;
-        public Player FollowTarget;
+        public TargetableBase EnemyTarget;
+        public TargetableBase FollowTarget;
 
         public RoomIdentifier Room => Core.Profile.Player.Room;
 
@@ -215,7 +216,7 @@ namespace SwiftNPCs.Core.World
         public bool CheckLOS(Vector3 pos, out bool hasCollider)
         {
             RaycastHit[] hits = Physics.RaycastAll(CameraPosition, (pos - CameraPosition).normalized, Vector3.Distance(CameraPosition, pos), AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore);
-            
+
             if (hits.Length <= 0)
             {
                 hasCollider = false;
@@ -235,7 +236,7 @@ namespace SwiftNPCs.Core.World
             return true;
         }
 
-        public bool HasLOS(Player p, out Vector3 position, out bool hasCollider, bool prioritizeHead = false)
+        public bool HasLOS(TargetableBase p, out Vector3 position, out bool hasCollider, bool prioritizeHead = false)
         {
             if (p == null)
             {
@@ -251,17 +252,17 @@ namespace SwiftNPCs.Core.World
                     position = p.Position + Vector3.up * AimOffset;
                     return true;
                 }
-                else if (CheckLOS(p.Camera.position, out hasCollider))
+                else if (CheckLOS(p.HeadPosition, out hasCollider))
                 {
-                    position = p.Camera.position + Vector3.down * AimOffset;
+                    position = p.HeadPosition + Vector3.down * AimOffset;
                     return true;
                 }
             }
             else
             {
-                if (CheckLOS(p.Camera.position, out hasCollider))
+                if (CheckLOS(p.HeadPosition, out hasCollider))
                 {
-                    position = p.Camera.position + Vector3.down * AimOffset;
+                    position = p.HeadPosition + Vector3.down * AimOffset;
                     return true;
                 }
                 else if (CheckLOS(p.Position, out hasCollider))
@@ -275,7 +276,7 @@ namespace SwiftNPCs.Core.World
             return false;
         }
 
-        public bool IsInView(Player p) => !CanStealth || GetDotProduct(p.Position) >= DotViewMinimum;
+        public bool IsInView(TargetableBase p) => !CanStealth || GetDotProduct(p.Position) >= DotViewMinimum;
 
         public bool EquipItem<T>(Predicate<T> filter) where T : ItemBase
         {
@@ -433,38 +434,29 @@ namespace SwiftNPCs.Core.World
 
         public static bool DisableKOS => ServerVariableManager.TryGetVar(NoKOS, out ServerVariable svar) && bool.TryParse(svar.Value, out bool v) && !v;
 
-        public bool CanTarget(Player p, out bool hasCollider)
+        public bool CanTarget(TargetableBase p, out bool hasCollider)
         {
             hasCollider = false;
             return !IsDisarmed(out _)
             && !HasEffect<Blinded>()
             && p != null
-            && p.ReferenceHub != ReferenceHub
-            && p.IsAlive
-            && !p.IsDisarmed
-            && !p.IsGodModeEnabled
-            && !IsInvisible(p)
-            && IsEnemy(p)
-            && (!DisableKOS || ReferenceHub.IsSCP(true) || !IsCivilian(p) || IsArmed(p))
-            && HasLOS(p, out _, out hasCollider);
+            && p.CanTarget(this, out hasCollider);
         }
 
-        public bool CanFollow(Player p)
+        public bool CanFollow(TargetableBase p)
         {
             return !HasEffect<Blinded>()
             && p != null
-            && p.ReferenceHub != ReferenceHub
-            && p.IsAlive
-            && !p.IsGodModeEnabled
-            && !IsInvisible(p)
-            && (!IsEnemy(p) || (IsDisarmed(out Player disarmer) && disarmer == p))
-            && WithinDistance(p, FollowDistanceMax);
+            && p.CanFollow(this);
         }
 
         public bool HasEffect<T>() where T : StatusEffectBase => ReferenceHub.playerEffectsController.TryGetEffect(out T effect) && effect.IsEnabled;
 
         public int GetFollowWeight(Player p)
         {
+            if (p == null)
+                return -1;
+
             int weight = 0;
 
             if (!p.IsAI())
@@ -479,17 +471,9 @@ namespace SwiftNPCs.Core.World
             return weight;
         }
 
-        public bool IsCivilian(Player p) => p.Role == RoleTypeId.ClassD || p.Role == RoleTypeId.Scientist;
+        public float GetDistance(TargetableBase p) => Vector3.Distance(Position, p.Position);
 
-        public bool IsArmed(Player p) => p.CurrentItem != null && (p.CurrentItem.Category == ItemCategory.Firearm || p.CurrentItem.Category == ItemCategory.Grenade);
-
-        public bool IsInvisible(Player p) => p.EffectsManager.TryGetEffect(out Invisible inv) && inv.IsEnabled;
-
-        public bool IsEnemy(Player p) => p.Role.GetFaction() != Role.GetFaction();
-
-        public float GetDistance(Player p) => Vector3.Distance(Position, p.Position);
-
-        public bool WithinDistance(Player p, float dist) => GetDistance(p) <= dist;
+        public bool WithinDistance(TargetableBase p, float dist) => GetDistance(p) <= dist;
 
         public bool IsDisarmed(out Player disarmer)
         {
@@ -498,8 +482,8 @@ namespace SwiftNPCs.Core.World
             return isDisarmed;
         }
 
-        public event Action<Player, Vector3> OnLostEnemy;
-        public event Action<Player, Vector3> OnLostFollow;
+        public event Action<TargetableBase, Vector3> OnLostEnemy;
+        public event Action<TargetableBase, Vector3> OnLostFollow;
         public event Action<RoleTypeId> OnRoleChange;
     }
 }

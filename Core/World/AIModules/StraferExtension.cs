@@ -6,18 +6,21 @@ namespace SwiftNPCs.Core.World.AIModules
 {
     public static class StraferExtension
     {
-        public static void Strafe(this AIModuleRunner parent, float strafeTimerMin, float strafeTimerMax, ref float timer, ref StrafeState strafeState)
+        public static void Strafe(this AIModuleRunner parent, float strafeTimerMin, float strafeTimerMax, ref float timer, ref StrafeState strafeState, bool backtrack = false)
         {
             if (timer > 0f)
             {
                 timer -= Time.fixedDeltaTime;
 
-                parent.MovementEngine.WishDir = strafeState switch
-                {
-                    StrafeState.Left => -parent.transform.right,
-                    StrafeState.Right => parent.transform.right,
-                    _ => Vector3.zero,
-                };
+                if (!backtrack)
+                    parent.MovementEngine.WishDir = strafeState switch
+                    {
+                        StrafeState.Left => -parent.transform.right,
+                        StrafeState.Right => parent.transform.right,
+                        _ => default,
+                    };
+                else
+                    parent.MovementEngine.WishDir = -parent.transform.forward;
                 
                 return;
             }

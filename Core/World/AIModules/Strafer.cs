@@ -6,6 +6,7 @@ namespace SwiftNPCs.Core.World.AIModules
     {
         public AIModuleRunner Parent { get; private set; } = parent;
 
+        public float BacktrackDistance = 6f;
         public float StrafeTimerMax = max;
         public float StrafeTimerMin = min;
 
@@ -18,6 +19,6 @@ namespace SwiftNPCs.Core.World.AIModules
             Parent.MovementEngine.WishDir = Vector3.zero;
         }
 
-        public void Tick() => Parent.Strafe(StrafeTimerMin, StrafeTimerMax, ref timer, ref strafeState);
+        public void Tick() => Parent.Strafe(StrafeTimerMin, StrafeTimerMax, ref timer, ref strafeState, Parent.WithinDistance(Parent.EnemyTarget, BacktrackDistance));
     }
 }

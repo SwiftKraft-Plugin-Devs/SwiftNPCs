@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using SwiftNPCs.Core.World.Targetables;
+using UnityEngine;
 
 namespace SwiftNPCs.Core.World.AIModules
 {
@@ -15,7 +16,7 @@ namespace SwiftNPCs.Core.World.AIModules
             Tags = [AIBehaviorBase.AggroTag];
         }
 
-        private void OnLostEnemy(PluginAPI.Core.Player enemy, Vector3 pos)
+        private void OnLostEnemy(TargetableBase enemy, Vector3 pos)
         {
             lastEnemyPosition = pos;
         }

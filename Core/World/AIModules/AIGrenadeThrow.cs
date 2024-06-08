@@ -1,6 +1,6 @@
 ﻿using InventorySystem;
 using InventorySystem.Items.ThrowableProjectiles;
-using PluginAPI.Core;
+using SwiftNPCs.Core.World.Targetables;
 using UnityEngine;
 
 namespace SwiftNPCs.Core.World.AIModules
@@ -11,7 +11,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public Inventory Inventory => Parent.Inventory;
 
-        public Player Target
+        public TargetableBase Target
         {
             get => Parent.EnemyTarget;
             set => Parent.EnemyTarget = value;

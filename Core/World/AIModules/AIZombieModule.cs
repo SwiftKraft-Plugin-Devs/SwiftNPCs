@@ -2,7 +2,6 @@
 using PlayerRoles;
 using PlayerRoles.PlayableScps.Scp049.Zombies;
 using PlayerRoles.Subroutines;
-using PluginAPI.Core;
 
 namespace SwiftNPCs.Core.World.AIModules
 {
@@ -10,8 +9,7 @@ namespace SwiftNPCs.Core.World.AIModules
     {
         public override RoleTypeId[] Roles => [RoleTypeId.Scp0492];
 
-        public override bool CanAttack() =>
-            Parent.GetDistance(Parent.EnemyTarget) <= TryAttackRange;
+        public override bool CanAttack() => Parent.GetDistance(Parent.EnemyTarget) <= TryAttackRange;
 
         public override void Attack()
         {
