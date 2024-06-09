@@ -1,4 +1,5 @@
-﻿using SwiftAPI.API.BreakableToys;
+﻿using PlayerRoles;
+using SwiftAPI.API.BreakableToys;
 using UnityEngine;
 
 namespace SwiftNPCs.Core.World.Targetables
@@ -17,7 +18,10 @@ namespace SwiftNPCs.Core.World.Targetables
         public override bool CanTarget(AIModuleRunner module, out bool cannotAttack)
         {
             cannotAttack = false;
-            return true;
+            return 
+                Toy.MaxHealth >= 0f
+                && module.Role.GetFaction() != Toy.Faction
+                && module.HasLOS(this, out _, out cannotAttack);
         }
 
         public static implicit operator BreakableToyBase(TargetableBreakableToy t) => t.Toy;

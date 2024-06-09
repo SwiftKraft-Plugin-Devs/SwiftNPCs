@@ -31,6 +31,7 @@ namespace SwiftNPCs.Core.World
 
         public float DotViewMinimum = 0.25f;
         public float FollowDistanceMax = 200f;
+        public float ItemDistance = 30f;
 
         public readonly List<AIModuleBase> Modules = [];
 

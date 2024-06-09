@@ -17,18 +17,20 @@ namespace SwiftNPCs.Core.World.Targetables
         public override bool CanTarget(AIModuleRunner module, out bool cannotAttack)
         {
             cannotAttack = false;
-            return Player != null
-            && Player.ReferenceHub != module.ReferenceHub
-            && Player.IsAlive
-            && !Player.IsDisarmed
-            && !Player.IsGodModeEnabled
-            && !IsInvisible(Player)
-            && IsEnemy(module)
-            && (!AIModuleRunner.DisableKOS || module.ReferenceHub.IsSCP(true) || !IsCivilian(Player) || IsArmed(Player))
-            && module.HasLOS(this, out _, out cannotAttack);
+            return 
+                Player != null
+                && Player.ReferenceHub != module.ReferenceHub
+                && IsAlive
+                && !Player.IsDisarmed
+                && !Player.IsGodModeEnabled
+                && !IsInvisible(Player)
+                && IsEnemy(module)
+                && (!AIModuleRunner.DisableKOS || module.ReferenceHub.IsSCP() || !IsCivilian(Player) || IsArmed(Player))
+                && module.HasLOS(this, out _, out cannotAttack);
         }
 
-        public override bool CanFollow(AIModuleRunner module) => Player != null
+        public override bool CanFollow(AIModuleRunner module) => 
+            Player != null
             && Player.ReferenceHub != module.ReferenceHub
             && Player.IsAlive
             && !Player.IsGodModeEnabled

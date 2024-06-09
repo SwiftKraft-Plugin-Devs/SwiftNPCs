@@ -1,4 +1,6 @@
-﻿using PluginAPI.Core;
+﻿using PlayerRoles;
+using PluginAPI.Core;
+using SwiftAPI.API.BreakableToys;
 using SwiftNPCs.Core.World.Targetables;
 using System.Collections.Generic;
 
@@ -7,7 +9,10 @@ namespace SwiftNPCs.Core.World.AIModules
     public class AIScanner : AIModuleBase
     {
         public float SearchRadiusEnemy = 70f;
+        public float BreakBreakableRadius = 5f;
         public float SearchRadiusFollow = 20f;
+
+        public bool CanBreakBreakables = true;
 
         public TargetableBase LookTarget => Parent.FollowTarget;
 
@@ -38,6 +43,13 @@ namespace SwiftNPCs.Core.World.AIModules
                     else if (!Parent.HasFollowTarget && Parent.GetFollowWeight(p) > 0 && Parent.WithinDistance(p, SearchRadiusFollow) && Parent.CanFollow(p) && Parent.IsInView(p) && (follow == null || Parent.GetFollowWeight(follow) < Parent.GetFollowWeight(p) || Parent.GetDistance(follow) > Parent.GetDistance(p)))
                         follow = p;
                 }
+
+                if (CanBreakBreakables)
+                    foreach (BreakableToyBase toy in BreakableToyManager.Breakables)
+                    {
+                        if (Parent.WithinDistance(toy, BreakBreakableRadius) && Parent.CanTarget(toy, out _) && Parent.IsInView(toy) && (target == null || Parent.GetDistance(target) > Parent.GetDistance(toy)))
+                            target = toy;
+                    }
 
                 Parent.EnemyTarget = target;
 
