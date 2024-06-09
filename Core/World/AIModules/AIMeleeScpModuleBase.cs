@@ -53,7 +53,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Tick()
         {
-            if (!Parent.HasEnemyTarget || !Roles.Contains(Parent.Role))
+            if (Parent.EnemyTarget == null || !Parent.HasEnemyTarget || !Roles.Contains(Parent.Role))
                 return;
 
             bool hasLOS = Parent.HasLOS(Parent.EnemyTarget, out Vector3 pos, out bool hasCollider);
@@ -72,9 +72,7 @@ namespace SwiftNPCs.Core.World.AIModules
                 Pathfinder.SetDestination(Parent.EnemyTarget.GetPosition(Parent));
             }
             else
-            {
                 Attack();
-            }
         }
 
         public virtual void Attack()

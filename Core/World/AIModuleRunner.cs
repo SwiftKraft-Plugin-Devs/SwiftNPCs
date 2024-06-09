@@ -472,7 +472,12 @@ namespace SwiftNPCs.Core.World
             return weight;
         }
 
-        public float GetDistance(TargetableBase p) => Vector3.Distance(Position, p.GetPosition(this));
+        public float GetDistance(TargetableBase p) 
+        {
+            if (p == null)
+                return Mathf.Infinity;
+            return Vector3.Distance(Position, p.GetPosition(this)); 
+        }
 
         public bool WithinDistance(TargetableBase p, float dist) => GetDistance(p) <= dist;
 
