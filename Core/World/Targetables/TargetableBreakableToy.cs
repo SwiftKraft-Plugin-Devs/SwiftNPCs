@@ -12,6 +12,9 @@ namespace SwiftNPCs.Core.World.Targetables
 
         public override Vector3 GetPosition(AIModuleRunner module)
         {
+            if (Collider == null || module == null)
+                return Toy.Toy.Position;
+
             Vector3 point = Collider.ClosestPoint(module.CameraPosition);
             return point + (module.CameraPosition - point).normalized * 0.02f;
         }
