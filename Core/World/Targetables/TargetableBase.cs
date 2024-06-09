@@ -7,8 +7,9 @@ namespace SwiftNPCs.Core.World.Targetables
 {
     public abstract class TargetableBase
     {
-        public abstract Vector3 Position { get; }
-        public abstract Vector3 HeadPosition { get; }
+        public abstract Vector3 GetPosition(AIModuleRunner module);
+
+        public abstract Vector3 GetHeadPosition(AIModuleRunner module);
 
         public abstract bool IsAlive { get; }
 

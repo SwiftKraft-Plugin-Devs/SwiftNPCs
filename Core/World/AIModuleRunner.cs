@@ -248,27 +248,27 @@ namespace SwiftNPCs.Core.World
 
             if (!prioritizeHead)
             {
-                if (CheckLOS(p.Position, out hasCollider))
+                if (CheckLOS(p.GetPosition(this), out hasCollider))
                 {
-                    position = p.Position + Vector3.up * AimOffset;
+                    position = p.GetPosition(this) + Vector3.up * AimOffset;
                     return true;
                 }
-                else if (CheckLOS(p.HeadPosition, out hasCollider))
+                else if (CheckLOS(p.GetHeadPosition(this), out hasCollider))
                 {
-                    position = p.HeadPosition + Vector3.down * AimOffset;
+                    position = p.GetHeadPosition(this) + Vector3.down * AimOffset;
                     return true;
                 }
             }
             else
             {
-                if (CheckLOS(p.HeadPosition, out hasCollider))
+                if (CheckLOS(p.GetHeadPosition(this), out hasCollider))
                 {
-                    position = p.HeadPosition + Vector3.down * AimOffset;
+                    position = p.GetHeadPosition(this) + Vector3.down * AimOffset;
                     return true;
                 }
-                else if (CheckLOS(p.Position, out hasCollider))
+                else if (CheckLOS(p.GetPosition(this), out hasCollider))
                 {
-                    position = p.Position + Vector3.up * AimOffset;
+                    position = p.GetPosition(this) + Vector3.up * AimOffset;
                     return true;
                 }
             }
@@ -277,7 +277,7 @@ namespace SwiftNPCs.Core.World
             return false;
         }
 
-        public bool IsInView(TargetableBase p) => !CanStealth || GetDotProduct(p.Position) >= DotViewMinimum;
+        public bool IsInView(TargetableBase p) => !CanStealth || GetDotProduct(p.GetPosition(this)) >= DotViewMinimum;
 
         public bool EquipItem<T>(Predicate<T> filter) where T : ItemBase
         {
@@ -394,7 +394,7 @@ namespace SwiftNPCs.Core.World
                 {
                     if (FollowTarget != null)
                     {
-                        OnLostFollow?.Invoke(FollowTarget, FollowTarget.Position);
+                        OnLostFollow?.Invoke(FollowTarget, FollowTarget.GetPosition(this));
                         FollowTarget = null;
                     }
 
@@ -415,14 +415,14 @@ namespace SwiftNPCs.Core.World
             {
                 if (EnemyTarget != null)
                 {
-                    OnLostEnemy?.Invoke(EnemyTarget, EnemyTarget.IsAlive ? EnemyTarget.Position : Position);
+                    OnLostEnemy?.Invoke(EnemyTarget, EnemyTarget.IsAlive ? EnemyTarget.GetPosition(this) : Position);
                     EnemyTarget = null;
                 }
 
                 return false;
             }
             else if (hasCollider && hasCollider != prevHasCollider)
-                OnLostEnemy?.Invoke(EnemyTarget, EnemyTarget.Position);
+                OnLostEnemy?.Invoke(EnemyTarget, EnemyTarget.GetPosition(this));
 
             prevHasCollider = hasCollider;
 
@@ -472,7 +472,7 @@ namespace SwiftNPCs.Core.World
             return weight;
         }
 
-        public float GetDistance(TargetableBase p) => Vector3.Distance(Position, p.Position);
+        public float GetDistance(TargetableBase p) => Vector3.Distance(Position, p.GetPosition(this));
 
         public bool WithinDistance(TargetableBase p, float dist) => GetDistance(p) <= dist;
 

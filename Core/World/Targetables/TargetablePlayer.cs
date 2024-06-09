@@ -9,8 +9,9 @@ namespace SwiftNPCs.Core.World.Targetables
     {
         public readonly Player Player = p;
 
-        public override Vector3 Position => Player.Position;
-        public override Vector3 HeadPosition => Player.Camera.position;
+        public override Vector3 GetPosition(AIModuleRunner module) => Player.Position;
+
+        public override Vector3 GetHeadPosition(AIModuleRunner module) => Player.Camera.position;
 
         public override bool IsAlive => Player.IsAlive;
 

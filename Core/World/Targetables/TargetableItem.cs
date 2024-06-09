@@ -14,9 +14,9 @@ namespace SwiftNPCs.Core.World.Targetables
     {
         public readonly ItemPickup Item = item;
 
-        public override Vector3 Position => Item.Position;
+        public override Vector3 GetPosition(AIModuleRunner module) => Item.Position;
 
-        public override Vector3 HeadPosition => Item.Position;
+        public override Vector3 GetHeadPosition(AIModuleRunner module) => Item.Position;
 
         public override bool IsAlive => true;
 

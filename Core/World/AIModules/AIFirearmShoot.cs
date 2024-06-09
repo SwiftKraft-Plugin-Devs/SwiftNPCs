@@ -152,7 +152,7 @@ namespace SwiftNPCs.Core.World.AIModules
             if (f.Status.Ammo <= 0 || State != FirearmState.Standby || !f.EquipperModule.Standby || !f.ActionModule.Standby || !f.AdsModule.Standby || !f.AmmoManagerModule.Standby || !f.HitregModule.Standby)
                 return false;
 
-            IsAiming = HasTarget && (Vector3.Distance(Target.Position, Parent.CameraPosition) > HipfireRange);
+            IsAiming = HasTarget && (Vector3.Distance(Target.GetPosition(Parent), Parent.CameraPosition) > HipfireRange);
 
             State = FirearmState.Shooting;
             Timer = 1f / f.ActionModule.CyclicRate;

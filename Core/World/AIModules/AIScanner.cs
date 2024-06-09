@@ -46,10 +46,8 @@ namespace SwiftNPCs.Core.World.AIModules
 
                 if (CanBreakBreakables)
                     foreach (BreakableToyBase toy in BreakableToyManager.Breakables)
-                    {
-                        if (Parent.WithinDistance(toy, BreakBreakableRadius) && Parent.CanTarget(toy, out _) && Parent.IsInView(toy) && (target == null || Parent.GetDistance(target) > Parent.GetDistance(toy)))
+                        if (Parent.WithinDistance(toy, BreakBreakableRadius) && Parent.CanTarget(toy, out _) && (target == null || target is TargetablePlayer || Parent.GetDistance(target) > Parent.GetDistance(toy)))
                             target = toy;
-                    }
 
                 Parent.EnemyTarget = target;
 

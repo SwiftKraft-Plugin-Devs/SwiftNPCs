@@ -50,7 +50,7 @@ namespace SwiftNPCs.Core.World.AIModules
             bool hasLOS = HasLOS(out Vector3 pos, out bool hasCollider);
 
             if (hasLOS)
-                Parent.MovementEngine.LookPos = pos + Mathf.Clamp(Vector3.Distance(Parent.EnemyTarget.Position, Parent.CameraPosition) * DistanceOffsetScaler, 0f, DistanceOffsetCap) * Vector3.up;
+                Parent.MovementEngine.LookPos = pos + Mathf.Clamp(Vector3.Distance(Parent.EnemyTarget.GetPosition(Parent), Parent.CameraPosition) * DistanceOffsetScaler, 0f, DistanceOffsetCap) * Vector3.up;
 
             if (Parent.TryGetItem(out ThrowableItem throwable))
             {

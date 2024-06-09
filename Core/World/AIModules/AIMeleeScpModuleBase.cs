@@ -62,14 +62,14 @@ namespace SwiftNPCs.Core.World.AIModules
                 Parent.MovementEngine.LookPos = pos;
 
             if (!Parent.WithinDistance(Parent.EnemyTarget, MinAttackDistance))
-                Pathfinder.OverrideWishDir = (Parent.EnemyTarget.Position - Parent.Position).normalized;
+                Pathfinder.OverrideWishDir = (Parent.EnemyTarget.GetPosition(Parent) - Parent.Position).normalized;
             else
                 Pathfinder.OverrideWishDir = Vector3.zero;
 
             if (!hasLOS || hasCollider || Attacker == null || !CanAttack())
             {
                 Pathfinder.OverrideWishDir = Vector3.zero;
-                Pathfinder.SetDestination(Parent.EnemyTarget.Position);
+                Pathfinder.SetDestination(Parent.EnemyTarget.GetPosition(Parent));
             }
             else
             {
