@@ -1,4 +1,5 @@
 ﻿using PlayerRoles.FirstPersonControl;
+using PlayerRoles.PlayableScps.Scp049.Zombies;
 using UnityEngine;
 
 namespace SwiftNPCs.Core.World
@@ -91,6 +92,10 @@ namespace SwiftNPCs.Core.World
             if (FirstPersonMovement == null || wishDir == Vector3.zero)
                 return;
 
+            CharCont.stepOffset = 0.35f;
+            CharCont.slopeLimit = 45f;
+            CharCont.skinWidth = 0.1f;
+
             CharCont.Move(wishDir * (CurrentSpeed * Time.fixedDeltaTime));
         }
 
@@ -109,9 +114,6 @@ namespace SwiftNPCs.Core.World
         {
             // WishDir = transform.forward;
             // TargetLookRot = Quaternion.LookRotation(transform.right, Vector3.up);
-            CharCont.stepOffset = 0.35f;
-            CharCont.slopeLimit = 45f;
-            CharCont.skinWidth = 0.1f;
 
             CurrentLookRot = Quaternion.RotateTowards(CurrentLookRot, TargetLookRot, LookSpeed * Time.fixedDeltaTime);
 
