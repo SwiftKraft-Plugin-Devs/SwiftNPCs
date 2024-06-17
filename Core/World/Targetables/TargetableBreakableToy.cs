@@ -8,10 +8,13 @@ namespace SwiftNPCs.Core.World.Targetables
     {
         public readonly BreakableToyBase Toy = toy;
 
-        public readonly Collider Collider = toy.GetComponentInChildren<Collider>();
+        public Collider Collider { get; private set; }
 
         public override Vector3 GetPosition(AIModuleRunner module)
         {
+            if (Collider == null)
+                Collider = Toy.GetComponentInChildren<Collider>();
+
             if (Collider == null || module == null)
                 return Toy.Toy.Position;
 
