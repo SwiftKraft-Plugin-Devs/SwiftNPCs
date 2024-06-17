@@ -66,6 +66,7 @@ namespace SwiftNPCs.Core.World
 
         public float RetargetTimer;
         public bool CanStealth = false;
+        public bool CanWallhack = false;
         public bool DeleteOnDeath = true;
 
         protected float AimOffset;
