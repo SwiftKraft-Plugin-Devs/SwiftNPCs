@@ -22,6 +22,9 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override bool Condition()
         {
+            if (delay > 0f)
+                return false;
+
             if (Parent.HasItem(out Consumable cons))
             {
                 cachedDuration = cons.UseTime + 0.5f;
@@ -32,7 +35,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Init()
         {
-            Tags = [AIBehaviorBase.AttackerTag];
+            Tags = [AIBehaviorBase.AutonomyTag];
         }
 
         public override void OnDisabled()
@@ -57,9 +60,6 @@ namespace SwiftNPCs.Core.World.AIModules
                 Consume(con);
             else
                 Parent.EquipItem<Consumable>();
-
-            if (Parent.HasLOSOnEnemy(out Vector3 pos, out _))
-                Parent.MovementEngine.LookPos = pos;
         }
 
         public void Consume(Consumable item)
