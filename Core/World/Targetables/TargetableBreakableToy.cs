@@ -8,13 +8,10 @@ namespace SwiftNPCs.Core.World.Targetables
     {
         public readonly BreakableToyBase Toy = toy;
 
-        public Collider Collider { get; private set; }
+        public Collider Collider { get; private set; } = toy.GetComponentInChildren<Collider>();
 
         public override Vector3 GetPosition(AIModuleRunner module)
         {
-            if (Collider == null)
-                Collider = Toy.GetComponentInChildren<Collider>();
-
             if (Collider == null || module == null)
                 return Toy.Toy.Position;
 
@@ -31,13 +28,18 @@ namespace SwiftNPCs.Core.World.Targetables
         public override bool CanTarget(AIModuleRunner module, out bool cannotAttack)
         {
             cannotAttack = false;
-            return 
+            return
                 Toy.MaxHealth >= 0f
                 && module.Role.GetFaction() != Toy.Faction
                 && module.HasLOS(this, out _, out cannotAttack);
         }
 
         public static implicit operator BreakableToyBase(TargetableBreakableToy t) => t.Toy;
-        public static implicit operator TargetableBreakableToy(BreakableToyBase t) => new(t);
+        public static implicit operator TargetableBreakableToy(BreakableToyBase t)
+        {
+            if (t != null)
+                return new(t);
+            return null;
+        }
     }
 }

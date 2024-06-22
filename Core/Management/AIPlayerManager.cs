@@ -63,9 +63,9 @@ namespace SwiftNPCs.Core.Management
             return ai != null;
         }
 
-        public static bool IsAI(this Player p) => p.ReferenceHub.IsAI();
+        public static bool IsAI(this Player p) => p != null && p.ReferenceHub.IsAI();
 
-        public static bool IsAI(this ReferenceHub p) => p.TryGetAI(out _);
+        public static bool IsAI(this ReferenceHub p) => p != null && p.TryGetAI(out _);
 
         public static void Delete(this AIPlayerProfile prof)
         {

@@ -51,13 +51,14 @@ namespace SwiftNPCs.Core.World.AIModules
         public bool Headshots;
         public bool InfiniteAmmo = true;
 
-        public float ShootDotMinimum = 0.4f;
+        public float ShootDotMinimum = 0.6f;
         public float HipfireRange = 7f;
-        public float RandomAimRangeFar = 1.25f;
-        public float RandomAimRangeFarDistance = 40f;
-        public float RandomAimRangeClose = 0.05f;
+        public float RandomAimRangeFar = 2f;
+        public float RandomAimRangeFarDistance = 50f;
+        public float RandomAimRangeClose = 0.25f;
         public float RandomAimRangeCloseDistance = 10f;
         public float RandomAimTimer = 0.5f;
+        public float RandomAimChance = 0.7f;
 
         protected float Timer;
 
@@ -97,7 +98,7 @@ namespace SwiftNPCs.Core.World.AIModules
             else
             {
                 randomAimTimer = RandomAimTimer;
-                randomAim = Random.Range(0, 2) == 1 ? Random.insideUnitSphere * Mathf.Lerp(RandomAimRangeClose, RandomAimRangeFar, Mathf.InverseLerp(RandomAimRangeCloseDistance, RandomAimRangeFarDistance, Parent.GetDistance(Target))) : Vector3.zero;
+                randomAim = (Random.Range(0f, 1f) < RandomAimChance) ? Random.insideUnitSphere * Mathf.Lerp(RandomAimRangeClose, RandomAimRangeFar, Mathf.InverseLerp(RandomAimRangeCloseDistance, RandomAimRangeFarDistance, Parent.GetDistance(Target))) : Vector3.zero;
             }
 
             bool hasLOS = HasLOS(out Vector3 pos, out bool hasCollider);
