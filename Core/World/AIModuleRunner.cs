@@ -217,7 +217,7 @@ namespace SwiftNPCs.Core.World
 
         public bool CheckLOS(Vector3 pos, out bool hasCollider)
         {
-            RaycastHit[] hits = Physics.RaycastAll(CameraPosition, (pos - CameraPosition).normalized, Vector3.Distance(CameraPosition, pos), AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore);
+            RaycastHit[] hits = Physics.RaycastAll(pos, (CameraPosition - pos).normalized, Vector3.Distance(CameraPosition, pos), AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore);
 
             if (hits.Length <= 0)
             {
@@ -230,7 +230,7 @@ namespace SwiftNPCs.Core.World
                 if ((!hit.collider.TryGetComponentInParent(out DoorVariant door) && !hit.collider.TryGetComponent(out door)) || !door.CanSeeThrough)
                 {
                     hasCollider = true;
-                    return false;
+                    return CanWallhack;
                 }
             }
 
