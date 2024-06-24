@@ -70,7 +70,7 @@ namespace SwiftNPCs.Core.Management
         public static void Delete(this AIPlayerProfile prof)
         {
             Registered.Remove(prof);
-            NetworkServer.RemovePlayerForConnection(prof.Connection, true);
+            NetworkServer.RemovePlayerForConnection(prof.Connection, false);
         }
     }
 }
