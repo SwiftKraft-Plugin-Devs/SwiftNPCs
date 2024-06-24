@@ -71,7 +71,6 @@ namespace SwiftNPCs.Core.Management
         {
             Registered.Remove(prof);
             NetworkServer.RemovePlayerForConnection(prof.Connection, true);
-            Object.Destroy(prof.WorldPlayer.gameObject);
         }
     }
 }

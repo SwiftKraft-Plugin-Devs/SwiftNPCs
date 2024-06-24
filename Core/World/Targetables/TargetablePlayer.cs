@@ -27,7 +27,7 @@ namespace SwiftNPCs.Core.World.Targetables
                 && !IsInvisible(Player)
                 && IsEnemy(module)
                 && (!AIModuleRunner.DisableKOS || module.ReferenceHub.IsSCP() || !IsCivilian(Player) || IsArmed(Player))
-                && module.HasLOS(this, out _, out cannotAttack);
+                && module.HasLOS(this, out _, out cannotAttack, allowWallHack: true);
         }
 
         public override bool CanFollow(AIModuleRunner module) => 

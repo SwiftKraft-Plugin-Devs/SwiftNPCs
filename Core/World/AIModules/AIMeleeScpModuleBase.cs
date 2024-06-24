@@ -56,7 +56,7 @@ namespace SwiftNPCs.Core.World.AIModules
             if (Parent.EnemyTarget == null || !Parent.HasEnemyTarget || !Roles.Contains(Parent.Role))
                 return;
 
-            bool hasLOS = Parent.HasLOS(Parent.EnemyTarget, out Vector3 pos, out bool hasCollider);
+            bool hasLOS = Parent.HasLOSOnEnemy(out Vector3 pos, out bool hasCollider);
 
             if (hasLOS)
                 Parent.MovementEngine.LookPos = pos;

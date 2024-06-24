@@ -215,7 +215,7 @@ namespace SwiftNPCs.Core.World
             return false;
         }
 
-        public bool CheckLOS(Vector3 pos, out bool hasCollider)
+        public bool CheckLOS(Vector3 pos, out bool hasCollider, bool canWallHack = false)
         {
             RaycastHit[] hits = Physics.RaycastAll(pos, (CameraPosition - pos).normalized, Vector3.Distance(CameraPosition, pos), AIPlayer.MapLayerMask, QueryTriggerInteraction.Ignore);
 
@@ -230,7 +230,7 @@ namespace SwiftNPCs.Core.World
                 if ((!hit.collider.TryGetComponentInParent(out DoorVariant door) && !hit.collider.TryGetComponent(out door)) || !door.CanSeeThrough)
                 {
                     hasCollider = true;
-                    return CanWallhack;
+                    return canWallHack;
                 }
             }
 
@@ -238,7 +238,7 @@ namespace SwiftNPCs.Core.World
             return true;
         }
 
-        public bool HasLOS(TargetableBase p, out Vector3 position, out bool hasCollider, bool prioritizeHead = false)
+        public bool HasLOS(TargetableBase p, out Vector3 position, out bool hasCollider, bool prioritizeHead = false, bool allowWallHack = false)
         {
             if (p == null)
             {
@@ -249,12 +249,12 @@ namespace SwiftNPCs.Core.World
 
             if (!prioritizeHead)
             {
-                if (CheckLOS(p.GetPosition(this), out hasCollider))
+                if (CheckLOS(p.GetPosition(this), out hasCollider, allowWallHack && CanWallhack))
                 {
                     position = p.GetPosition(this) + Vector3.up * AimOffset;
                     return true;
                 }
-                else if (CheckLOS(p.GetHeadPosition(this), out hasCollider))
+                else if (CheckLOS(p.GetHeadPosition(this), out hasCollider, allowWallHack && CanWallhack))
                 {
                     position = p.GetHeadPosition(this) + Vector3.down * AimOffset;
                     return true;
@@ -262,12 +262,12 @@ namespace SwiftNPCs.Core.World
             }
             else
             {
-                if (CheckLOS(p.GetHeadPosition(this), out hasCollider))
+                if (CheckLOS(p.GetHeadPosition(this), out hasCollider, allowWallHack && CanWallhack))
                 {
                     position = p.GetHeadPosition(this) + Vector3.down * AimOffset;
                     return true;
                 }
-                else if (CheckLOS(p.GetPosition(this), out hasCollider))
+                else if (CheckLOS(p.GetPosition(this), out hasCollider, allowWallHack && CanWallhack))
                 {
                     position = p.GetPosition(this) + Vector3.up * AimOffset;
                     return true;
@@ -430,7 +430,7 @@ namespace SwiftNPCs.Core.World
             return true;
         }
 
-        public bool HasLOSOnEnemy(out Vector3 pos, out bool hasCollider, bool prioritizeHead = false) { pos = Vector3.zero; hasCollider = true; return HasEnemyTarget && HasLOS(EnemyTarget, out pos, out hasCollider, prioritizeHead); }
+        public bool HasLOSOnEnemy(out Vector3 pos, out bool hasCollider, bool prioritizeHead = false) { pos = Vector3.zero; hasCollider = true; return HasEnemyTarget && HasLOS(EnemyTarget, out pos, out hasCollider, prioritizeHead, true); }
 
         public const string NoKOS = "npckos";
 
