@@ -1,18 +1,21 @@
-﻿using PlayerRoles;
+﻿using InventorySystem.Items.Pickups;
 using PluginAPI.Core;
 using SwiftAPI.API.BreakableToys;
 using SwiftNPCs.Core.World.Targetables;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace SwiftNPCs.Core.World.AIModules
 {
     public class AIScanner : AIModuleBase
     {
         public float SearchRadiusEnemy = 70f;
-        public float BreakBreakableRadius = 5f;
         public float SearchRadiusFollow = 20f;
+        public float BreakBreakableRadius = 5f;
+        public float ItemPickupRadius = 6f;
 
         public bool CanBreakBreakables = true;
+        public bool CanPickupItems = true;
 
         public TargetableBase LookTarget => Parent.FollowTarget;
 
@@ -49,10 +52,24 @@ namespace SwiftNPCs.Core.World.AIModules
                         if (Parent.WithinDistance(toy, BreakBreakableRadius) && Parent.CanTarget(toy, out _) && (target == null || target is TargetablePlayer || Parent.GetDistance(target) > Parent.GetDistance(toy)))
                             target = toy;
 
+                if (CanPickupItems && Parent.WithinDistance(Parent.FollowTarget, ItemPickupRadius) && target == null)
+                {
+                    ItemPickupBase[] all = Object.FindObjectsOfType<ItemPickupBase>();
+                    foreach (ItemPickupBase it in all)
+                        if (Parent.CanFollow(it) && Parent.WithinDistance(it, Parent.ItemDistance) && Parent.GetDistance(follow) > Parent.GetDistance(it))
+                        {
+                            follow = it;
+                            Log.Info("Found item! " + it.name);
+                        }
+                }
+
                 Parent.EnemyTarget = target;
 
                 if (follow != null)
+                {
+                    Log.Info("Searching for follow target! " + follow);
                     Parent.FollowTarget = follow;
+                }
             }
         }
     }

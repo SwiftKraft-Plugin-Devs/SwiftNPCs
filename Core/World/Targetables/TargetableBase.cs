@@ -1,4 +1,5 @@
-﻿using PluginAPI.Core;
+﻿using InventorySystem.Items.Pickups;
+using PluginAPI.Core;
 using PluginAPI.Core.Items;
 using SwiftAPI.API.BreakableToys;
 using UnityEngine;
@@ -34,13 +35,13 @@ namespace SwiftNPCs.Core.World.Targetables
 
         public static implicit operator TargetableBase(BreakableToyBase t) => new TargetableBreakableToy(t);
 
-        public static implicit operator ItemPickup(TargetableBase it)
+        public static implicit operator ItemPickupBase(TargetableBase it)
         {
             if (it is TargetableItem item)
                 return item;
             return null;
         }
 
-        public static implicit operator TargetableBase(ItemPickup it) => new TargetableItem(it);
+        public static implicit operator TargetableBase(ItemPickupBase it) => new TargetableItem(it);
     }
 }

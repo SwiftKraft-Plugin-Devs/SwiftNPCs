@@ -1,5 +1,6 @@
 ﻿using PlayerRoles.FirstPersonControl;
 using PluginAPI.Core;
+using SwiftNPCs.Core.World.Targetables;
 using UnityEngine;
 
 namespace SwiftNPCs.Core.World.AIModules
@@ -12,7 +13,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         AIPathfinder Pathfinder;
 
-        public Player Target
+        public TargetableBase Target
         {
             get => Parent.FollowTarget;
             set => Parent.FollowTarget = value;
@@ -33,18 +34,18 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Tick()
         {
-            if (!Enabled || !HasTarget || Parent.GetDistance(Target) < FollowDistance)
+            if (!Enabled || !HasTarget || Parent.WithinDistance(Target, FollowDistance))
                 return;
 
-            Pathfinder.LookAtWaypoint = Parent.HasLOS(Parent.FollowTarget, out _, out _);
+            Pathfinder.LookAtWaypoint = Parent.HasLOS(Target, out _, out _);
 
             if (!Pathfinder.LookAtWaypoint)
-                Parent.MovementEngine.LookPos = Target.Camera.position;
+                Parent.MovementEngine.LookPos = Target.GetHeadPosition(Parent);
 
-            Pathfinder.SetDestination(Target.Position);
+            Pathfinder.SetDestination(Target.GetPosition(Parent));
             if (DistanceToTarget > SprintDistance)
                 Parent.MovementEngine.State = PlayerMovementState.Sprinting;
-            else
+            else if (TargetFpc != null)
                 Parent.MovementEngine.State = TargetFpc.CurrentMovementState;
         }
 
@@ -57,7 +58,7 @@ namespace SwiftNPCs.Core.World.AIModules
             get
             {
                 if (HasTarget)
-                    return Vector3.Distance(Target.Position, Parent.Position);
+                    return Vector3.Distance(Target.GetPosition(Parent), Parent.Position);
                 return 0f;
             }
         }
@@ -69,7 +70,7 @@ namespace SwiftNPCs.Core.World.AIModules
                 if (!HasTarget)
                     return null;
 
-                if (Target.RoleBase is IFpcRole fpc)
+                if (Target is TargetablePlayer p && p.Player.RoleBase is IFpcRole fpc)
                     return fpc.FpcModule;
 
                 return null;

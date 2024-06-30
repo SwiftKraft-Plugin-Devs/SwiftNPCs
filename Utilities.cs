@@ -77,6 +77,7 @@ namespace SwiftNPCs
             AIFirearmShoot s = prof.WorldPlayer.ModuleRunner.AddModule<AIFirearmStrafeShoot>();
             AIGrenadeStrafeThrow g = prof.WorldPlayer.ModuleRunner.AddModule<AIGrenadeStrafeThrow>();
             AIItemConsume c = prof.WorldPlayer.ModuleRunner.AddModule<AIItemConsume>();
+            AIItemPickup ip = prof.WorldPlayer.ModuleRunner.AddModule<AIItemPickup>();
             prof.WorldPlayer.ModuleRunner.AddModule<AIZombieModule>();
             prof.WorldPlayer.ModuleRunner.AddModule<AIScp049Module>();
             prof.WorldPlayer.ModuleRunner.AddModule<AIScp106Module>();

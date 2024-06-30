@@ -1,4 +1,6 @@
-﻿using PluginAPI.Core;
+﻿using CustomPlayerEffects;
+using InventorySystem.Items.Pickups;
+using PluginAPI.Core;
 using PluginAPI.Core.Items;
 using SwiftAPI.API.BreakableToys;
 using System;
@@ -7,21 +9,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace SwiftNPCs.Core.World.Targetables
 {
-    public class TargetableItem(ItemPickup item) : TargetableBase
+    public class TargetableItem(ItemPickupBase item) : TargetableBase
     {
-        public readonly ItemPickup Item = item;
+        public readonly ItemPickupBase Item = item;
 
-        public override Vector3 GetPosition(AIModuleRunner module) => Item.Position;
+        public override Vector3 GetPosition(AIModuleRunner module)
+        {
+            if (NavMesh.SamplePosition(Item.transform.position, out NavMeshHit hit, 3f, NavMesh.AllAreas))
+                return hit.position;
+            return Item.transform.position;
+        }
 
-        public override Vector3 GetHeadPosition(AIModuleRunner module) => Item.Position;
+        public override Vector3 GetHeadPosition(AIModuleRunner module) => Item.transform.position;
 
-        public override bool IsAlive => true;
+        public override bool IsAlive => Item != null;
 
         public override bool CanFollow(AIModuleRunner module) =>
-            !module.IsDisarmed(out _)
+            IsAlive
+            && !module.IsDisarmed(out _)
+            && !module.HasEffect<Blinded>()
             && module.WithinDistance(this, module.ItemDistance);
 
         public override bool CanTarget(AIModuleRunner module, out bool cannotAttack)
@@ -30,7 +40,7 @@ namespace SwiftNPCs.Core.World.Targetables
             return false;
         }
 
-        public static implicit operator ItemPickup(TargetableItem t) => t.Item;
-        public static implicit operator TargetableItem(ItemPickup t) => new(t);
+        public static implicit operator ItemPickupBase(TargetableItem t) => t.Item;
+        public static implicit operator TargetableItem(ItemPickupBase t) => new(t);
     }
 }

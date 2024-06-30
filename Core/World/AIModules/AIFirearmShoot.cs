@@ -53,9 +53,9 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public float ShootDotMinimum = 0.6f;
         public float HipfireRange = 7f;
-        public float RandomAimRangeFar = 2f;
+        public float RandomAimRangeFar = 2.5f;
         public float RandomAimRangeFarDistance = 50f;
-        public float RandomAimRangeClose = 0.4f;
+        public float RandomAimRangeClose = 0.75f;
         public float RandomAimRangeCloseDistance = 10f;
         public float RandomAimTimer = 0.5f;
         public float RandomAimChance = 0.95f;

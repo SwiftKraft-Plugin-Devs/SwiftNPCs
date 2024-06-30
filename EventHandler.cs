@@ -51,6 +51,12 @@ namespace SwiftNPCs
                     prof.Delete();
         }
 
+        [PluginEvent(ServerEventType.PlayerMakeNoise)]
+        public void PlayerMakeNoise(PlayerMakeNoiseEvent _event)
+        {
+            
+        }
+
         [PluginEvent(ServerEventType.MapGenerated)]
         public void MapGenerated(MapGeneratedEvent _event)
         {
