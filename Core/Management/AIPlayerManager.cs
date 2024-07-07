@@ -1,4 +1,5 @@
-﻿using Mirror;
+﻿using MEC;
+using Mirror;
 using PluginAPI.Core;
 using SwiftNPCs.Core.World;
 using System.Collections.Generic;
@@ -69,8 +70,7 @@ namespace SwiftNPCs.Core.Management
 
         public static void Delete(this AIPlayerProfile prof)
         {
-            Registered.Remove(prof);
-            NetworkServer.RemovePlayerForConnection(prof.Connection, true);
+            Timing.CallDelayed(1f, () => { Registered.Remove(prof); NetworkServer.RemovePlayerForConnection(prof.Connection, true); });
         }
     }
 }

@@ -1,7 +1,8 @@
 ﻿using InventorySystem;
+using InventorySystem.Configs;
 using InventorySystem.Items;
+using InventorySystem.Items.Firearms.Ammo;
 using InventorySystem.Items.Pickups;
-using PluginAPI.Core;
 using SwiftNPCs.Core.World.Targetables;
 
 namespace SwiftNPCs.Core.World.AIModules
@@ -10,7 +11,7 @@ namespace SwiftNPCs.Core.World.AIModules
     {
         public float PickupDistance = 3f;
 
-        public override bool Condition() => Parent.FollowTarget != null && Parent.FollowTarget is TargetableItem;
+        public override bool Condition() => !Parent.IsDisarmed(out _) && Parent.FollowTarget != null && Parent.FollowTarget is TargetableItem it && !InventoryFull(it);
 
         public override void Init()
         {
@@ -33,10 +34,18 @@ namespace SwiftNPCs.Core.World.AIModules
         }
 
         public ItemBase PickupItem(ItemPickupBase it)
-        { 
+        {
             ItemBase itm = Parent.Inventory.ServerAddItem(it.Info.ItemId, it.Info.Serial, it);
             it.DestroySelf();
             return itm;
+        }
+
+        public bool InventoryFull(ItemPickupBase item)
+        {
+            if (item is AmmoPickup ammo)
+                return Parent.Inventory.GetCurAmmo(ammo.Info.ItemId) <= InventoryLimits.GetAmmoLimit(ammo.Info.ItemId, Parent.ReferenceHub);
+            else
+                return Parent.Inventory.UserInventory.Items.Count < 8;
         }
     }
 }

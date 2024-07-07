@@ -15,7 +15,7 @@ namespace SwiftNPCs.Core.World.AIModules
         public float ItemPickupRadius = 6f;
 
         public bool CanBreakBreakables = true;
-        public bool CanPickupItems = true;
+        public bool CanPickupItems = false;
 
         public TargetableBase LookTarget => Parent.FollowTarget;
 
@@ -56,20 +56,16 @@ namespace SwiftNPCs.Core.World.AIModules
                 {
                     ItemPickupBase[] all = Object.FindObjectsOfType<ItemPickupBase>();
                     foreach (ItemPickupBase it in all)
-                        if (Parent.CanFollow(it) && Parent.WithinDistance(it, Parent.ItemDistance) && Parent.GetDistance(follow) > Parent.GetDistance(it))
+                        if (Parent.CanFollow(it) && Parent.HasLOS(it, out _, out bool hasCollider) && !hasCollider && Parent.WithinDistance(it, Parent.ItemDistance) && Parent.GetDistance(follow) > Parent.GetDistance(it))
                         {
                             follow = it;
-                            Log.Info("Found item! " + it.name);
                         }
                 }
 
                 Parent.EnemyTarget = target;
 
                 if (follow != null)
-                {
-                    Log.Info("Searching for follow target! " + follow);
                     Parent.FollowTarget = follow;
-                }
             }
         }
     }

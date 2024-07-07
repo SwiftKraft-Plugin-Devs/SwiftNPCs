@@ -37,7 +37,7 @@ namespace SwiftNPCs.Core.World.AIModules
             if (!Enabled || !HasTarget || Parent.WithinDistance(Target, FollowDistance))
                 return;
 
-            Pathfinder.LookAtWaypoint = Parent.HasLOS(Target, out _, out _);
+            Pathfinder.LookAtWaypoint = Parent.HasLOS(Target, out _, out bool hasCollider) && !hasCollider;
 
             if (!Pathfinder.LookAtWaypoint)
                 Parent.MovementEngine.LookPos = Target.GetHeadPosition(Parent);

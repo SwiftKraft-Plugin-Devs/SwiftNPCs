@@ -1,4 +1,5 @@
-﻿using MapGeneration;
+﻿using InventorySystem.Items.Pickups;
+using MapGeneration;
 using Mirror;
 using PlayerRoles;
 using PluginAPI.Core;
@@ -150,5 +151,7 @@ namespace SwiftNPCs
 
             return prof;
         }
+
+        public static float GetPickupTime(this ItemPickupBase item) => item.Info.WeightKg * ItemPickupBase.WeightToTime + ItemPickupBase.MinimalPickupTime;
     }
 }

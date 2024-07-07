@@ -22,7 +22,7 @@ namespace SwiftNPCs
 
         private const string Description = "An Open Source NPC API for NWAPI SCP: SL Servers. ";
 
-        private const string Version = "v1.2";
+        private const string Version = "v1.3";
 
         [PluginPriority(LoadPriority.High)]
         [PluginEntryPoint(Name, Version, Description, Author)]
