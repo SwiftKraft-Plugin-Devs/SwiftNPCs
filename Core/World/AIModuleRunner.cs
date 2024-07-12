@@ -6,6 +6,7 @@ using InventorySystem.Disarming;
 using InventorySystem.Items;
 using InventorySystem.Items.Keycards;
 using MapGeneration;
+using MEC;
 using PlayerRoles;
 using PlayerStatsSystem;
 using PluginAPI.Core;
@@ -125,7 +126,7 @@ namespace SwiftNPCs.Core.World
             OnRoleChange?.Invoke(role);
 
             if ((role == RoleTypeId.None || role == RoleTypeId.Spectator) && DeleteOnDeath)
-                Core.Profile.Delete();
+                Timing.CallDelayed(15f, () => { if ((Role == RoleTypeId.None || Role == RoleTypeId.Spectator) && DeleteOnDeath) Core.Profile.Delete(); }); 
         }
 
         public T AddModule<T>() where T : AIModuleBase
