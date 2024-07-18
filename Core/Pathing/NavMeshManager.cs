@@ -1,6 +1,4 @@
 ﻿using MapGeneration;
-using PluginAPI.Core;
-using PluginAPI.Core.Zones;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,8 +7,6 @@ namespace SwiftNPCs.Core.Pathing
 {
     public static class NavMeshManager
     {
-        public static readonly List<NavMeshSurface> Surfaces = [];
-
         public static void InitializeMap()
         {
             LayerMask layer = 0;
@@ -21,11 +17,13 @@ namespace SwiftNPCs.Core.Pathing
                 {
                     Collider[] colliders = room.gameObject.GetComponentsInChildren<Collider>();
                     foreach (Collider col in colliders)
+                    {
                         if (!layers.Contains(col.gameObject.layer))
                         {
                             layers.Add(col.gameObject.layer);
                             layer |= col.gameObject.layer;
                         }
+                    }
                 }
 
             Bake(layer);
