@@ -2,6 +2,7 @@
 using InventorySystem.Items;
 using InventorySystem.Items.Firearms;
 using InventorySystem.Items.Firearms.Attachments;
+using MEC;
 using PlayerRoles;
 using PluginAPI.Core;
 using SwiftAPI.Commands;
@@ -45,12 +46,14 @@ namespace SwiftNPCs.Core.Commands.Utility
 
             result = "Created AI Player! Inventory: ";
 
-            foreach (ItemType i in items)
-            {
-                ItemBase ite = prof.Player.AddItem(i);
-                if (ite is Firearm f)
-                    f.Status = new FirearmStatus(f.AmmoManagerModule.MaxAmmo, f.Status.Flags, AttachmentsUtils.GetRandomAttachmentsCode(i));
-            }
+            Timing.CallDelayed(0.1f, () => {
+                foreach (ItemType i in items)
+                {
+                    ItemBase ite = prof.Player.AddItem(i);
+                    if (ite is Firearm f)
+                        f.Status = new FirearmStatus(f.AmmoManagerModule.MaxAmmo, f.Status.Flags, AttachmentsUtils.GetRandomAttachmentsCode(i));
+                }
+            });
 
             result += string.Join(", ", items);
 

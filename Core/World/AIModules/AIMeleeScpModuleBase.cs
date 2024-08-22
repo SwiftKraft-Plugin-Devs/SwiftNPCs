@@ -1,8 +1,6 @@
-﻿using MEC;
-using Mirror;
+﻿using Mirror;
 using PlayerRoles.PlayableScps;
 using PlayerRoles.Subroutines;
-using PluginAPI.Core;
 using UnityEngine;
 
 namespace SwiftNPCs.Core.World.AIModules
@@ -22,16 +20,7 @@ namespace SwiftNPCs.Core.World.AIModules
             }
         }
 
-        public TAttacker Attacker
-        {
-            get
-            {
-                if (RoleBase == null || RoleBase is not ISubroutinedRole role || !role.SubroutineModule.TryGetSubroutine(out TAttacker ability))
-                    return null;
-
-                return ability;
-            }
-        }
+        public TAttacker Attacker => GetSubroutine<TAttacker>();
 
         protected AIPathfinder Pathfinder { get; private set; }
 
@@ -83,5 +72,13 @@ namespace SwiftNPCs.Core.World.AIModules
         }
 
         public abstract bool CanAttack();
+
+        public T GetSubroutine<T>() where T : SubroutineBase
+        {
+            if (RoleBase == null || RoleBase is not ISubroutinedRole role || !role.SubroutineModule.TryGetSubroutine(out T ability))
+                return null;
+
+            return ability;
+        }
     }
 }

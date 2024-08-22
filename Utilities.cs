@@ -2,11 +2,13 @@
 using MapGeneration;
 using Mirror;
 using PlayerRoles;
+using PlayerRoles.Ragdolls;
 using PluginAPI.Core;
 using SwiftNPCs.Core.Management;
 using SwiftNPCs.Core.Pathing;
 using SwiftNPCs.Core.World.AIModules;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static UnityStandardAssets.CinematicEffects.TonemappingColorGrading;
 
@@ -150,6 +152,19 @@ namespace SwiftNPCs
             prof.WorldPlayer.ModuleRunner.AddModule<AIBehaviorBase>();
 
             return prof;
+        }
+
+        public static BasicRagdoll[] GetRagdolls() => Object.FindObjectsOfType<BasicRagdoll>();
+
+        public static BasicRagdoll[] GetRagdolls(this Vector3 position, float radius)
+        {
+            List<BasicRagdoll> ragdolls = [];
+            BasicRagdoll[] all = GetRagdolls();
+            foreach (BasicRagdoll ragdoll in all)
+                if (Vector3.Distance(position, ragdoll.CenterPoint.position) <= radius)
+                    ragdolls.Add(ragdoll);
+            ragdolls.OrderBy((r) => Vector3.Distance(r.CenterPoint.position, position));
+            return [.. ragdolls];
         }
 
         public static float GetPickupTime(this ItemPickupBase item) => item.Info.WeightKg * ItemPickupBase.WeightToTime + ItemPickupBase.MinimalPickupTime;

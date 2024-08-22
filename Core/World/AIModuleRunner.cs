@@ -129,9 +129,9 @@ namespace SwiftNPCs.Core.World
                 Timing.CallDelayed(15f, () => { if ((Role == RoleTypeId.None || Role == RoleTypeId.Spectator) && DeleteOnDeath) Core.Profile.Delete(); }); 
         }
 
-        public T AddModule<T>() where T : AIModuleBase
+        public T AddModule<T>() where T : AIModuleBase, new()
         {
-            T obj = Activator.CreateInstance<T>();
+            T obj = new();
             Modules.Add(obj);
             obj.Parent = this;
             obj.Init();
