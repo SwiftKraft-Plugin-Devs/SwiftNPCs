@@ -3,6 +3,7 @@ using PlayerRoles;
 using PlayerRoles.PlayableScps.Scp049.Zombies;
 using PlayerRoles.Ragdolls;
 using PlayerRoles.Subroutines;
+using PluginAPI.Core;
 using SwiftNPCs.Core.World.Targetables;
 using UnityEngine;
 
@@ -14,13 +15,16 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public float BodyCheckRadius = 20f;
         public float BodyCheckTime = 3f;
+        public float ConsumeRadius = 4f;
 
         public override RoleTypeId[] Roles => [RoleTypeId.Scp0492];
+
+        BasicRagdoll curRagdoll;
 
         float _bodyCheckTime;
         float _consumeTime;
 
-        bool _consuming => _consumeTime > 0f;
+        bool Consuming => _consumeTime > 0f;
 
         public override bool CanAttack() => Parent.GetDistance(Parent.EnemyTarget) <= TryAttackRange;
 
@@ -40,22 +44,31 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Tick()
         {
-            if (_consuming)
+            if (Consuming)
             {
                 _consumeTime -= Time.fixedDeltaTime;
+
+                if (_consumeTime <= 0f && curRagdoll != null)
+                {
+                    curRagdoll = null;
+                    Parent.Health.CurValue += ZombieConsumeAbility.ConsumeHeal;
+                }
+
                 return;
             }
 
             base.Tick();
 
-            if (Parent.HasEnemyTarget || Parent.Health.CurValue <= Parent.Health.MaxValue / 2f || Consume == null)
+            if (Parent.HasEnemyTarget || Parent.Health.CurValue > Parent.Health.MaxValue / 2f || Consume == null)
                 return;
 
             if (Parent.FollowTarget is TargetableRagdoll ragdoll)
             {
-                if (!ZombieConsumeAbility.ConsumedRagdolls.Contains(ragdoll) && Consume.IsCloseEnough(Parent.Position, ragdoll.GetPosition(Parent)))
+                Log.Info("Follow target is ragdoll");
+                if (!ZombieConsumeAbility.ConsumedRagdolls.Contains(ragdoll) && Vector3.Distance(Parent.Position, ragdoll.GetPosition(Parent)) <= ConsumeRadius)
                 {
-                    Consume.CurRagdoll = ragdoll;
+                    Log.Info("Consuming body");
+                    curRagdoll = ragdoll;
                     Consume.ServerSendRpc(true);
                     _consumeTime = Consume.Duration;
                     return;
@@ -75,6 +88,7 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public void CheckBodies()
         {
+            Log.Info("Checking bodies!");
             BasicRagdoll[] ragdolls = Parent.Position.GetRagdolls(BodyCheckRadius);
             BasicRagdoll target = null;
             foreach (BasicRagdoll ragdoll in ragdolls)
