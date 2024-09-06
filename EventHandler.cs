@@ -5,9 +5,11 @@ using PluginAPI.Core;
 using PluginAPI.Core.Attributes;
 using PluginAPI.Enums;
 using PluginAPI.Events;
+using SwiftAPI.API.BreakableToys;
 using SwiftNPCs.Core.Management;
 using SwiftNPCs.Core.Pathing;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace SwiftNPCs
 {

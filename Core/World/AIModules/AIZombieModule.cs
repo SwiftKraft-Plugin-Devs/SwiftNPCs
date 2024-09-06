@@ -19,12 +19,8 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override RoleTypeId[] Roles => [RoleTypeId.Scp0492];
 
-        BasicRagdoll curRagdoll;
-
         float _bodyCheckTime;
         float _consumeTime;
-
-        bool Consuming => _consumeTime > 0f;
 
         public override bool CanAttack() => Parent.GetDistance(Parent.EnemyTarget) <= TryAttackRange;
 
@@ -44,15 +40,13 @@ namespace SwiftNPCs.Core.World.AIModules
 
         public override void Tick()
         {
-            if (Consuming)
+            if (_consumeTime > 0f)
             {
+                Log.Info("Consume time: " + _consumeTime);
                 _consumeTime -= Time.fixedDeltaTime;
 
-                if (_consumeTime <= 0f && curRagdoll != null)
-                {
-                    curRagdoll = null;
+                if (_consumeTime <= 0f)
                     Parent.Health.CurValue += ZombieConsumeAbility.ConsumeHeal;
-                }
 
                 return;
             }
@@ -65,13 +59,15 @@ namespace SwiftNPCs.Core.World.AIModules
             if (Parent.FollowTarget is TargetableRagdoll ragdoll)
             {
                 Log.Info("Follow target is ragdoll");
-                if (!ZombieConsumeAbility.ConsumedRagdolls.Contains(ragdoll) && Vector3.Distance(Parent.Position, ragdoll.GetPosition(Parent)) <= ConsumeRadius)
+                if (!ZombieConsumeAbility.ConsumedRagdolls.Contains(ragdoll))
                 {
-                    Log.Info("Consuming body");
-                    curRagdoll = ragdoll;
-                    Consume.ServerSendRpc(true);
-                    _consumeTime = Consume.Duration;
-                    return;
+                    if (Vector3.Distance(Parent.Position, ragdoll.GetPosition(Parent)) <= ConsumeRadius)
+                    {
+                        Log.Info("Consuming body");
+                        NetworkServer.SendToReady(new SubroutineMessage(Consume, true));
+                        _consumeTime = 7f;
+                        return;
+                    }
                 }
                 else
                     Parent.FollowTarget = null;

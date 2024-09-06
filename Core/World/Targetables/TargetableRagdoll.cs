@@ -23,7 +23,7 @@ namespace SwiftNPCs.Core.World.Targetables
 
         public override Vector3 GetHeadPosition(AIModuleRunner module) => Ragdoll.CenterPoint.transform.position;
 
-        public override Vector3 GetPosition(AIModuleRunner module) => Ragdoll._originPoint.position;
+        public override Vector3 GetPosition(AIModuleRunner module) => Ragdoll.CenterPoint.position;
 
         public static implicit operator BasicRagdoll(TargetableRagdoll t) => t.Ragdoll;
         public static implicit operator TargetableRagdoll(BasicRagdoll d) => new(d);
